@@ -16,7 +16,7 @@ int main(int argc,char** argv){
     RexLang ll = RexLang_New("./bin",PATH_SRC,PATH_ASM,64);
     //RexLang_Print(&ll);
     RexLang_Build(&ll);
-    RexLang_Print(&ll);
+    //RexLang_Print(&ll);
     RexLang_Free(&ll);
     
     return 0;

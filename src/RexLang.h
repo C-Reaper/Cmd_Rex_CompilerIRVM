@@ -280,8 +280,14 @@ Boolean RexLang_Compress_function(RexLang* ll,TokenMap* tm){
             //Boolean bconstant = False;
 
             TokenMap rettypem = TokenMap_SubToToken(tm,TOKEN_PARENTHESES_L);
-            TT_Iter it_pub = TokenMap_Find(&rettypem,TOKEN_REXLANG_PUB);
-            Boolean bpub = it_pub>=0;
+
+            const TT_Iter it_pub = TokenMap_Find(&rettypem,TOKEN_REXLANG_PUB);
+            const TT_Iter it_gbl = TokenMap_Find(&rettypem,TOKEN_REXLANG_GLOBAL);
+            const TT_Iter it_ext = TokenMap_Find(&rettypem,TOKEN_REXLANG_EXTERN);
+            if(it_gbl >= 0 && it_ext >= 0){
+                Environment_ErrorHandler(&ll->ev,"Function should be global or extern, not both!");
+            }
+
             TokenMap_Free(&rettypem);
 
             Vector_Push(&params,(Member[]){ MEMBER_END });
@@ -292,8 +298,11 @@ Boolean RexLang_Compress_function(RexLang* ll,TokenMap* tm){
             CallPosition cp = CallPosition_New(TOKEN_FUNCTIONDECL,ll->ev.iter);
             Vector_Push(&ll->ev.cs,&cp);
 
-            Function f = Function_MakeX(ll->ev.iter,bpub,realname,ttype->str,(Member*)params.Memory);
+            Function f = Function_MakeX(ll->ev.iter,it_pub >= 0,realname,ttype->str,(Member*)params.Memory);
+            f.f_global = it_gbl >= 0;
+            f.f_extern = it_ext >= 0;
             Vector_Push(&ll->ev.fs,&f);
+
             Vector_Free(&params);
             CStr_Free(&realname);
 
@@ -927,6 +936,10 @@ Boolean RexLang_Function(RexLang* ll,TokenMap* tm){
         Function* f = (Function*)Vector_Get(&ll->ev.fs,it_func);
         RexLang_AppendFunc(ll,tfunc->str,f->rettype,&f->params);
 
+        IRVM_Function* irvm_f = (IRVM_Function*)Vector_Get(&ll->vm.fns,ll->vm.fns.size - 1);
+        if(f->f_extern)         IRVM_Function_SetAccess(irvm_f,IRVM_ACCESS_EXTERN);
+        else if(f->f_global)    IRVM_Function_SetAccess(irvm_f,IRVM_ACCESS_GLOBAL);
+
         ll->ssas = 0;
         ll->ev.sc.range++;
 
@@ -1261,6 +1274,8 @@ RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
             KeywordRP_New("asm",TOKEN_REXLANG_ASMBY),
             KeywordRP_New("sizeof",TOKEN_REXLANG_SIZE),
             KeywordRP_New("pub",TOKEN_REXLANG_PUB),
+            KeywordRP_New("global",TOKEN_REXLANG_GLOBAL),
+            KeywordRP_New("extern",TOKEN_REXLANG_EXTERN),
             KeywordRP_New("false",TOKEN_REXLANG_BOOLEAN),
             KeywordRP_New("true",TOKEN_REXLANG_BOOLEAN),
             KeywordRP_New("null",TOKEN_REXLANG_NULL),
@@ -1566,6 +1581,8 @@ RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
             KeywordExecuter_New(TOKEN_PARENTHESES_L,       (void*)RexLang_Compress),
             KeywordExecuter_New(TOKEN_REXLANG_DRF,         (void*)RexLang_Compress),
             KeywordExecuter_New(TOKEN_REXLANG_PUB,         (void*)RexLang_Compress),
+            KeywordExecuter_New(TOKEN_REXLANG_EXTERN,      (void*)RexLang_Compress),
+            KeywordExecuter_New(TOKEN_REXLANG_GLOBAL,      (void*)RexLang_Compress),
 
             KeywordExecuter_New(TOKEN_REXLANG_STRUCT,      (void*)RexLang_Compress_staticmethods),
             KeywordExecuter_New(TOKEN_REXLANG_STRUCT,      (void*)RexLang_Compress_pointer),
@@ -1664,7 +1681,7 @@ void RexLang_Build(RexLang* ll) {
     Compiler_Begin(&ll->ev);
     
     if(!ll->ev.error){
-        IRVM_Print(&ll->vm);
+        IRVM_PrintFn(&ll->vm);
         IRVM_Save(&ll->vm,ll->output);
     }else{
         Compiler_FlushLogs(&ll->ev);

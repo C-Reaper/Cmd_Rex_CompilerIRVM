@@ -1,16 +1,56 @@
-define i64 @fn_add i64 i64
+global i64 @fn_ext i64 i64
+
+global i64 @fn_add i64 i64
+    alloca i64 %c 
     add i64 %0 &1 &2 
-    ass i64 &0 %0 
+    store i64 %c %0 
+    alloca i64 %d 
+    sub i64 %1 &1 &2 
+    store i64 %d %1 
+    alloca i64 %e 
+    mul i64 %2 &1 &2 
+    store i64 %e %2 
+    alloca i64 %f 
+    div i64 %3 &1 &2 
+    store i64 %f %3 
+    alloca i64 %g 
+    add i64 %4 &1 &2 
+    store i64 %g %4 
+    alloca i64 %h 
+    add i64 %5 &1 &2 
+    store i64 %h %5 
+    alloca i64 %i 
+    add i64 %6 &1 &2 
+    store i64 %i %6 
+    load i64 %7 %c 
+    ass i64 &0 %7 
+    destroy %i 
+    destroy %h 
+    destroy %g 
+    destroy %f 
+    destroy %e 
+    destroy %d 
+    destroy %c 
     ret 
+    destroy %i 
+    destroy %h 
+    destroy %g 
+    destroy %f 
+    destroy %e 
+    destroy %d 
+    destroy %c 
     ret 
 
-
-define i64 @main
-    ass i64 %3 1 
-    ass i64 %5 2 
-    call @f.fn_add 
-    ass i64 &0 %2 
+global i64 @main
+    alloca i64 %a 
+    ass i64 %1 1 
+    ass i64 %2 2 
+    call @f.fn_add %0 %1 %2 
+    store i64 %a %0 
+    load i64 %3 %a 
+    ass i64 &0 %3 
+    destroy %a 
     ret 
+    destroy %a 
     ret 
-
 

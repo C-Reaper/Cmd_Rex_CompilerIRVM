@@ -1056,6 +1056,26 @@ Token RexLang_ExecuteAss(RexLang* ll,Token* dst,Token* a){
 Token RexLang_ExecuteCast(RexLang* ll,CStr tname,Token* a){
     if(RexLang_ErrorsInArg(ll,a))   return Token_Null();
 
+    if(!tname){
+        String ret = String_New();
+        
+        if(a->tt==TOKEN_NUMBER){
+            String_AppendNumber(&ret,a->v_i64);
+        }else{
+            Variable* v = Scope_FindVariable(&ll->ev.sc,a->str);
+            if(v){
+                RexLangVariable* sv = (RexLangVariable*)Variable_Data(v);
+                String_Appendf(&ret,"T: %s [&:%d]",v->typename,sv->destroy);
+            }else{
+                Environment_ErrorHandler(&ll->ev,"Cast -> Error!");
+                String_Append(&ret,"ERROR");
+            }
+        }
+    
+        String_AppendChar(&ret,'\0');
+        return Token_Move(TOKEN_CONSTSTRING_DOUBLE,(CStr)ret.Memory);
+    }
+
     Type* type = Scope_FindType(&ll->ev.sc,tname);
     if(!type){
         Compiler_ErrorHandler(&ll->ev,"type of cast %s invalid!",tname);
