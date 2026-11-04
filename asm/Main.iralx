@@ -1,0 +1,16 @@
+define i64 @fn_add i64 i64
+    add i64 %0 &1 &2 
+    ass i64 &0 %0 
+    ret 
+    ret 
+
+
+define i64 @main
+    ass i64 %3 1 
+    ass i64 %5 2 
+    call @f.fn_add 
+    ass i64 &0 %2 
+    ret 
+    ret 
+
+
