@@ -232,6 +232,11 @@ CStr RexLang_TokenType(RexLang* ll,Token* a){
     if(a->tt==TOKEN_REXLANG_NULL)       return NULL_TYPE;
     return NULL;
 }
+CStr RexLang_GetPtrType(RexLang* ll,Token* a){
+    CStr type = RexLang_TokenType(ll,a);
+    if(type) return CStr_Concat(type,"*");
+    return NULL;
+}
 CStr RexLang_GetDrefType(RexLang* ll,CStr type){
     const int size = CStr_Size(type);
     
@@ -1224,7 +1229,7 @@ Token RexLang_ExecuteAdr(RexLang* ll,Token* a){
 
     const Number ssa_id = ll->ssas++;
 
-    CStr typename_a = RexLang_VariableType(ll,a);
+    CStr typename_a = RexLang_GetPtrType(ll,a);
     CStr stack_name = CStr_Format("%%%d",ssa_id);
     RexLang_Variable_Build_SSA(ll,stack_name,typename_a,ssa_id);
     CStr_Free(&typename_a);
