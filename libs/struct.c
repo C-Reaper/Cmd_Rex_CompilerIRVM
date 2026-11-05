@@ -82,14 +82,28 @@ Token Struct_Struct_Ass_LSplitSSA(RexLang* ll,CStr type,Token* a,Token* b){
             Token_New_I64(TOKEN_NUMBER,offset),
             Token_Null()
         }));
-        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-            Token_By(TOKEN_IRVM_LOAD,IRVM_OP_LOAD),
-            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
-            Token_Move(tt,(CStr)Number_Get(va_sv->id + i)),
-            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
-            Token_Null()
-        }));
 
+        if(va_sv->storage == REXLANG_STORAGE_RETURN){
+            Token ssa = Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ll->ssas++));
+            Vec_CStr_Push(&ll->return_ssas,CStr_Cpy(ssa.str));
+            
+            RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                Token_By(TOKEN_IRVM_LOAD,IRVM_OP_LOAD),
+                Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+                ssa,
+                Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
+                Token_Null()
+            }));
+        }else{
+            RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                Token_By(TOKEN_IRVM_LOAD,IRVM_OP_LOAD),
+                Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+                Token_Move(tt,(CStr)Number_Get(va_sv->id + i)),
+                Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
+                Token_Null()
+            }));
+        }
+        
         offset += t_size;
     }
 
@@ -151,13 +165,26 @@ Token Struct_Struct_Ass_LRSplitSSA(RexLang* ll,CStr type,Token* a,Token* b){
         CStr t = *(CStr*)Vector_Get(&types,i);
         const int t_size = RexLang_Size(ll,t);
 
-        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-            (tt_a == TOKEN_IRVM_PARAM ? Token_By(TOKEN_IRVM_ASS,IRVM_OP_ASS) : Token_By(TOKEN_IRVM_STORE,IRVM_OP_STORE)),
-            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
-            Token_Move(tt_a,(CStr)Number_Get(va_sv->id + i)),
-            Token_Move(tt_b,(CStr)Number_Get(vb_sv->id + i)),
-            Token_Null()
-        }));
+        if(va_sv->storage == REXLANG_STORAGE_RETURN){
+            Token ssa = Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ll->ssas++));
+            Vec_CStr_Push(&ll->return_ssas,CStr_Cpy(ssa.str));
+            
+            RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                Token_By(TOKEN_IRVM_ASS,IRVM_OP_ASS),
+                Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+                ssa,
+                Token_Move(tt_b,(CStr)Number_Get(vb_sv->id + i)),
+                Token_Null()
+            }));
+        }else{
+            RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                Token_By(TOKEN_IRVM_STORE,IRVM_OP_STORE),
+                Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+                Token_Move(tt_a,(CStr)Number_Get(va_sv->id + i)),
+                Token_Move(tt_b,(CStr)Number_Get(vb_sv->id + i)),
+                Token_Null()
+            }));
+        }
 
         offset += t_size;
     }

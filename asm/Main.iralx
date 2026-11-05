@@ -1,4 +1,4 @@
-define i64 i64 i64 @Human::new i64
+define i64 i64 i64 @f.Human.new i64
     allocs 24 %h 
     add ptr %0 %h 0 
     add ptr %1 %0 0 
@@ -10,17 +10,17 @@ define i64 i64 i64 @Human::new i64
     store i64 %4 &3 
     ass ptr %5 %h 
     add i64 %6 %5 0 
-    load i64 &0 %6 
-    add i64 %7 %5 8 
-    load i64 &1 %7 
-    add i64 %8 %5 16 
-    load i64 &2 %8 
+    load i64 %7 %6 
+    add i64 %8 %5 8 
+    load i64 %9 %8 
+    add i64 %10 %5 16 
+    load i64 %11 %10 
     destroy %h 
-    ret 
+    ret %7 %9 %11 
     destroy %h 
     ret 
 
-define i64 i64 i64 @Human::add i64 i64 i64
+define i64 i64 i64 @f.Human.add i64 i64 i64
     allocs 24 %set 
     add ptr %0 %set 0 
     add ptr %1 %0 0 
@@ -32,24 +32,24 @@ define i64 i64 i64 @Human::add i64 i64 i64
     store i64 %8 &5 
     ass ptr %10 %set 
     add i64 %11 %10 0 
-    load i64 &0 %11 
-    add i64 %12 %10 8 
-    load i64 &1 %12 
-    add i64 %13 %10 16 
-    load i64 &2 %13 
+    load i64 %12 %11 
+    add i64 %13 %10 8 
+    load i64 %14 %13 
+    add i64 %15 %10 16 
+    load i64 %16 %15 
     destroy %set 
-    ret 
+    ret %12 %14 %16 
     destroy %set 
     ret 
 
-define i64 i64 i64 @Human::sub i64 i64 i64
-    ass i64 &0 &3 
-    ass i64 &1 &4 
-    ass i64 &2 &5 
-    ret 
+define i64 i64 i64 @f.Human.sub i64 i64 i64
+    ass i64 %0 &3 
+    ass i64 %1 &4 
+    ass i64 %2 &5 
+    ret %0 %1 %2 
     ret 
 
-global i64 @main
+global i64 @f.main
     allocs 24 %a 
     ass i64 %3 10 
     call @f.Human.new %0 %1 %2 %3 
@@ -70,9 +70,9 @@ global i64 @main
     add ptr %15 %a 16 
     load i64 %16 %15 
     add i64 %17 %14 %16 
-    ass i64 &0 %17 
+    ass i64 %18 %17 
     destroy %a 
-    ret 
+    ret %18 
     destroy %a 
     ret 
 

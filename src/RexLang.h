@@ -1062,10 +1062,19 @@ Boolean RexLang_Return(RexLang* ll,TokenMap* tm){
 
     RexLang_FromTo_DestroyOnly(ll,1,ll->ev.sc.range);
     
-    RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+    
+    TokenMap ret_tm = TokenMap_Make((Token[]){
         Token_By(TOKEN_IRVM_RET,"ret"),
         Token_Null()
-    }));
+    });
+
+    for(int i = 0;i<ll->return_ssas.size;i++){
+        CStr ssa = *(CStr*)Vector_Get(&ll->return_ssas,i);
+        TokenMap_Push(&ret_tm,(Token[]){ Token_By(TOKEN_IRVM_SSA,ssa) });
+    }
+
+    Vec_CStr_Clear(&ll->return_ssas);
+    RexLang_AppendTM(ll,ret_tm);
     return False;
 }
 Boolean RexLang_Decl(RexLang* ll,TokenMap* tm){
@@ -1326,7 +1335,7 @@ TokenMap RexLang_Function_BuildTM(RexLang* ll,CStr name,Function* f){
 void RexLang_Function_Handler(RexLang* ll,Token* t,Function* f){
     if(t->tt==TOKEN_FUNCTION){
         if(f->pos >= 0){
-            CStr functionname = RexLang_FunctionName(ll,f->name);
+            CStr functionname = RexLang_FunctionName(f->name);
             TokenMap tm = RexLang_Function_BuildTM(ll,functionname,f);
             RexLang_AppendTM(ll,tm);
             CStr_Free(&functionname);
@@ -1976,8 +1985,12 @@ RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
         (void*)RexLang_Function_Handler
     );
     ll.vm = IRVM_New();
+    
+    ll.return_ssas = Vec_CStr_New();
+    ll.ssas = 0;
     ll.logic = TOKEN_NONE;
     ll.lcmps = 0U;
+
     ll.src = CStr_Cpy(src);
     ll.output = CStr_Cpy(output);
     ll.dllpath = CStr_Cpy(dllpath);
@@ -2034,6 +2047,7 @@ void RexLang_Free(RexLang* ll) {
     IRVM_Free(&ll->vm);
     Compiler_Free(&ll->ev);
 
+    Vec_CStr_Free(&ll->return_ssas);
     CStr_Free(&ll->dllpath);
     CStr_Free(&ll->src);
     CStr_Free(&ll->output);
