@@ -1988,7 +1988,7 @@ RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
     Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,"pointer","Ex_Packer",  (CStr[]){ POINTER_TYPE, NULL },&ll.ev.sc) });
     Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,"dref",   "Ex_Packer",  (CStr[]){ DREF_TYPE,    NULL },&ll.ev.sc) });
     Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,"str",    "Ex_Packer",  (CStr[]){ STR_TYPE,     NULL },&ll.ev.sc) });
-    //Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,"struct", "Ex_Packer",  (CStr[]){ STRUCT_TYPE,  NULL },&ll.ev.sc) });
+    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,"struct", "Ex_Packer",  (CStr[]){ STRUCT_TYPE,  NULL },&ll.ev.sc) });
     
     //Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,F32_TYPE, "Ex_Packer",  (CStr[]){ F32_TYPE,     NULL },&ll.ev.sc) });
     //Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,F64_TYPE, "Ex_Packer",  (CStr[]){ F64_TYPE,     NULL },&ll.ev.sc) });

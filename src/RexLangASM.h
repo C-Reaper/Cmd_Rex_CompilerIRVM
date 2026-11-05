@@ -78,6 +78,88 @@ Vec_CStr RexLang_UnfoldType(RexLang* ll,CStr name) {
         return Vec_CStr_Make((CStr[]){ CStr_Cpy(name) },1);
     }
 }
+Vec_CStr RexLang_UnfoldMembers(RexLang* ll,CStr name) {
+    if(!name) return Vec_CStr_New();
+    
+    Type* const t = Scope_FindType(&ll->ev.sc,name);
+    if(!t || t->related.size == 0) return Vec_CStr_New();
+
+    Vec_CStr types = Vec_CStr_New();
+        
+    for(int i = 0;i<t->related.size;i++){
+        Member* m = (Member*)Vector_Get(&t->related,i);
+        
+        Vec_CStr m_types = RexLang_UnfoldMembers(ll,m->type);
+        
+        if(m_types.size == 0){
+            Vec_CStr_Push(&types,m->name);
+        }else{
+            CStr mdot = CStr_Concat(m->name,".");
+            Vec_CStr_AddPre(&m_types,mdot);
+            CStr_Free(&mdot);
+
+            Vec_CStr_Add(&types,&m_types);
+        }
+
+        Vec_CStr_Free(&m_types);
+    }
+
+    return types;
+}
+Vec_CStr RexLang_UnfoldMemberTypes(RexLang* ll,CStr name) {
+    if(!name) return Vec_CStr_New();
+    
+    Type* const t = Scope_FindType(&ll->ev.sc,name);
+    if(!t || t->related.size == 0) return Vec_CStr_New();
+
+    Vec_CStr types = Vec_CStr_New();
+        
+    for(int i = 0;i<t->related.size;i++){
+        Member* m = (Member*)Vector_Get(&t->related,i);
+        
+        Vec_CStr m_types = RexLang_UnfoldMembers(ll,m->type);
+        
+        if(m_types.size == 0){
+            Vec_CStr_Push(&types,m->type);
+        }else{
+            Vec_CStr_Add(&types,&m_types);
+        }
+
+        Vec_CStr_Free(&m_types);
+    }
+
+    return types;
+}
+Vec_CStr RexLang_GetMembers(RexLang* ll,CStr name) {
+    if(!name) return Vec_CStr_New();
+    
+    Type* const t = Scope_FindType(&ll->ev.sc,name);
+    if(!t || t->related.size == 0) return Vec_CStr_New();
+
+    Vec_CStr types = Vec_CStr_New();
+        
+    for(int i = 0;i<t->related.size;i++){
+        Member* m = (Member*)Vector_Get(&t->related,i);
+        Vec_CStr_Push(&types,m->name);
+    }
+
+    return types;
+}
+Vec_CStr RexLang_GetMemberTypes(RexLang* ll,CStr name) {
+    if(!name) return Vec_CStr_New();
+    
+    Type* const t = Scope_FindType(&ll->ev.sc,name);
+    if(!t || t->related.size == 0) return Vec_CStr_New();
+
+    Vec_CStr types = Vec_CStr_New();
+        
+    for(int i = 0;i<t->related.size;i++){
+        Member* m = (Member*)Vector_Get(&t->related,i);
+        Vec_CStr_Push(&types,m->type);
+    }
+
+    return types;
+}
 
 Boolean RexLang_PointerType(CStr name){
     const int size = CStr_Size(name);
@@ -134,7 +216,7 @@ int RexLang_Size(RexLang* ll,CStr name){
             Token (*Handler)(void*,Token*,Vector*) = Scope_HandlerOf(&ll->ev.sc,&op,name,&othertypes);
             //for(int i = 0;i<types.size;i++) CStr_Free((CStr*)Vector_Get(&types,i));
             Vector_Free(&othertypes);
-        
+            
             if(Handler){
                 TokenMap args = TokenMap_Make((Token[]){ Token_By(TOKEN_STRING,t->name),Token_Null() });
                 Token Item = Handler(ll,&op,&args);
@@ -176,6 +258,26 @@ char RexLang_CompressStackType(TokenMap* tm,int start){
     return 0;
 }
 
+Boolean RexLang_StructType(RexLang* ll,CStr type){
+    const int size = CStr_Size(type);
+    
+    if(type[size - 1] == '*')           return False;
+    if(type[size - 1] == '&'){
+        CStr dtype = CStr_Sub(type,0,size - 1);
+        Boolean ret = RexLang_StructType(ll,dtype);
+        CStr_Free(&dtype);
+        return ret;
+    }else if(CStr_Cmp(type,BOOL_TYPE))  return False;
+    else if(CStr_Cmp(type,I8_TYPE))     return False;
+    else if(CStr_Cmp(type,I16_TYPE))    return False;
+    else if(CStr_Cmp(type,I32_TYPE))    return False;
+    else if(CStr_Cmp(type,I64_TYPE))    return False;
+    else if(CStr_Cmp(type,U8_TYPE))     return False;
+    else if(CStr_Cmp(type,U16_TYPE))    return False;
+    else if(CStr_Cmp(type,U32_TYPE))    return False;
+    else if(CStr_Cmp(type,U64_TYPE))    return False;
+    else                                return True;
+}
 CStr RexLang_Type(RexLang* ll,CStr type){
     const int size = CStr_Size(type);
     
@@ -388,34 +490,66 @@ CStr RexLang_BuildGlobal(RexLang* ll,CStr name,int size){
     return NULL;
 }
 
+RexLang_Storage RexLang_RealStorage(RexLang* ll,Range r,CStr type,RexLang_Storage storage){
+    if(storage == REXLANG_STORAGE_AUTO && r == 0) storage = REXLANG_STORAGE_GLOBAL;
+    if(storage == REXLANG_STORAGE_STACK && RexLang_StructType(ll,type))     storage = REXLANG_STORAGE_STACK_STRUCT;
+    if(storage == REXLANG_STORAGE_GLOBAL && RexLang_StructType(ll,type))    storage = REXLANG_STORAGE_GLOBAL_STRUCT;
+    if(storage == REXLANG_STORAGE_STACK_BLOCK && RexLang_StructType(ll,type))     storage = REXLANG_STORAGE_STACK_STRUCT_BLOCK;
+    if(storage == REXLANG_STORAGE_GLOBAL_BLOCK && RexLang_StructType(ll,type))    storage = REXLANG_STORAGE_GLOBAL_STRUCT_BLOCK;
+    return storage;
+}
+void RexLang_Variable_Decl(RexLang* ll,CStr name,CStr type,RexLang_Storage storage,uint64_t size){
+    if(storage == REXLANG_STORAGE_STACK){
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_ALLOCA,IRVM_OP_ALLOCA),
+            Token_By(TOKEN_TYPE,RexLang_Type(ll,type)),
+            Token_By(TOKEN_IRVM_VAR,name),
+            Token_Null()
+        }));
+    }else if(storage == REXLANG_STORAGE_STACK_BLOCK){
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_ALLOCA,IRVM_OP_ALLOCS),
+            Token_New_I64(TOKEN_NUMBER,RexLang_Size(ll,type) * size),
+            Token_By(TOKEN_IRVM_VAR,name),
+            Token_Null()
+        }));
+    }else if(storage == REXLANG_STORAGE_STACK_STRUCT){
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_ALLOCA,IRVM_OP_ALLOCS),
+            Token_New_I64(TOKEN_NUMBER,RexLang_Size(ll,type)),
+            Token_By(TOKEN_IRVM_VAR,name),
+            Token_Null()
+        }));
+    }else if(storage == REXLANG_STORAGE_STACK_STRUCT_BLOCK){
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_ALLOCA,IRVM_OP_ALLOCS),
+            Token_New_I64(TOKEN_NUMBER,RexLang_Size(ll,type) * size),
+            Token_By(TOKEN_IRVM_VAR,name),
+            Token_Null()
+        }));
+    }else if(storage == REXLANG_STORAGE_GLOBAL){
+                
+    }else if(storage == REXLANG_STORAGE_GLOBAL_BLOCK){
+        
+    }else if(storage == REXLANG_STORAGE_GLOBAL_STRUCT){
+                
+    }else if(storage == REXLANG_STORAGE_GLOBAL_STRUCT_BLOCK){
+        
+    }
+}
 void RexLang_Variable_BuildRange(RexLang* ll,CStr name,CStr type,Range r,RexLang_Storage storage,RexLang_Destroy destroy){
-    if(ll->ev.sc.range == 0){
+    if(r == 0){
         CStr g_value = RexLang_BuildGlobal(ll,name,RexLang_Size(ll,type));
         Variable* v = Scope_FindVariable(&ll->ev.sc,name);
         
-        RexLangVariable sv = RexLangVariable_New(ll,storage == REXLANG_STORAGE_AUTO ? REXLANG_STORAGE_GLOBAL : storage,destroy);
+        RexLangVariable sv = RexLangVariable_New(ll,RexLang_RealStorage(ll,r,type,storage),destroy);
         sv.global = g_value;
 
         Scope_BuildInitVariableRange(&ll->ev.sc,name,type,r,&sv);
     }else{
-        const RexLang_Storage real_storage = storage == REXLANG_STORAGE_AUTO ? REXLANG_STORAGE_STACK : storage;
-
-        if(real_storage == REXLANG_STORAGE_STACK){
-            RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-                Token_By(TOKEN_IRVM_ALLOCA,"alloca"),
-                Token_By(TOKEN_TYPE,RexLang_Type(ll,type)),
-                Token_By(TOKEN_IRVM_VAR,name),
-                Token_Null()
-            }));
-        }else if(real_storage == REXLANG_STORAGE_STACK_BLOCK){
-            RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-                Token_By(TOKEN_IRVM_ALLOCA,"alloca"),
-                Token_By(TOKEN_TYPE,RexLang_Type(ll,type)),
-                Token_By(TOKEN_IRVM_VAR,name),
-                Token_Null()
-            }));
-        }
-
+        const RexLang_Storage real_storage = RexLang_RealStorage(ll,r,type,storage);
+        RexLang_Variable_Decl(ll,name,type,real_storage,0U);
+        
         Scope_BuildInitVariableRange(&ll->ev.sc,name,type,r,(RexLangVariable[]){
             RexLangVariable_New(
                 ll,
@@ -715,14 +849,25 @@ void RexLang_Destroyer(Variable* v){
     if(v_sv->destroy == REXLANG_DESTROY_DESTRUCT || v_sv->destroy == REXLANG_DESTROY_FULL){
         if(v_sv->storage == REXLANG_STORAGE_STACK){
             RexLang_AppendTM(v_sv->parent,TokenMap_Make((Token[]){
-                Token_By(TOKEN_IRVM_DESTROY,"destroy"),
+                Token_By(TOKEN_IRVM_DESTROY,IRVM_OP_DESTROY),
                 Token_By(TOKEN_IRVM_VAR,v->name),
                 Token_Null()
             }));
         }else if(v_sv->storage == REXLANG_STORAGE_STACK_BLOCK){
             RexLang_AppendTM(v_sv->parent,TokenMap_Make((Token[]){
-                Token_By(TOKEN_IRVM_DESTROY,"destroyblock"),
-                Token_Move(TOKEN_NUMBER,(CStr)Number_Get(v_sv->size)),
+                Token_By(TOKEN_IRVM_DESTROY,IRVM_OP_DESTROY),
+                Token_By(TOKEN_IRVM_VAR,v->name),
+                Token_Null()
+            }));
+        }else if(v_sv->storage == REXLANG_STORAGE_STACK_STRUCT){
+            RexLang_AppendTM(v_sv->parent,TokenMap_Make((Token[]){
+                Token_By(TOKEN_IRVM_DESTROY,IRVM_OP_DESTROY),
+                Token_By(TOKEN_IRVM_VAR,v->name),
+                Token_Null()
+            }));
+        }else if(v_sv->storage == REXLANG_STORAGE_STACK_STRUCT_BLOCK){
+            RexLang_AppendTM(v_sv->parent,TokenMap_Make((Token[]){
+                Token_By(TOKEN_IRVM_DESTROY,IRVM_OP_DESTROY),
                 Token_By(TOKEN_IRVM_VAR,v->name),
                 Token_Null()
             }));
@@ -756,26 +901,7 @@ Token RexLang_Init(RexLang* ll,Token* op,Vector* args){
         }
 
         if(v_sv->destroy == REXLANG_DESTROY_DESTRUCT || v_sv->destroy == REXLANG_DESTROY_FULL){
-            if(v_sv->storage == REXLANG_STORAGE_STACK){
-                RexLang_AppendTM(v_sv->parent,TokenMap_Make((Token[]){
-                    Token_By(TOKEN_IRVM_ALLOCA,"alloca"),
-                    Token_By(TOKEN_TYPE,RexLang_Type(ll,v->typename)),
-                    Token_By(TOKEN_IRVM_VAR,v->name),
-                    Token_Null()
-                }));
-            }else if(v_sv->storage == REXLANG_STORAGE_STACK_BLOCK){
-                RexLang_AppendTM(v_sv->parent,TokenMap_Make((Token[]){
-                    Token_By(TOKEN_IRVM_ALLOCA,"allocablock"),
-                    Token_By(TOKEN_TYPE,RexLang_Type(ll,v->typename)),
-                    Token_Move(TOKEN_NUMBER,(CStr)Number_Get(v_sv->size)),
-                    Token_By(TOKEN_IRVM_VAR,v->name),
-                    Token_Null()
-                }));
-            }else if(v_sv->storage == REXLANG_STORAGE_GLOBAL){
-                
-            }else if(v_sv->storage == REXLANG_STORAGE_GLOBAL_BLOCK){
-                
-            }
+            RexLang_Variable_Decl(ll,v->name,v->typename,v_sv->storage,0U);
         }
     }
     return Token_Cpy(a);
@@ -941,14 +1067,18 @@ Token RexLang_GetIRVMToken(RexLang* ll,Token* a){
             else if(v->range == 1)
                 return Token_Move(TOKEN_IRVM_PARAM,(CStr)Number_Get(v_sv->id));
             else{
-                if(v_sv->storage == REXLANG_STORAGE_STACK)              return Token_By(TOKEN_IRVM_VAR,a->str);
-                else if(v_sv->storage == REXLANG_STORAGE_STACK_BLOCK)   return Token_By(TOKEN_IRVM_VAR,a->str);
-                else if(v_sv->storage == REXLANG_STORAGE_GLOBAL)        return Token_By(TOKEN_IRVM_STATIC,a->str);
-                else if(v_sv->storage == REXLANG_STORAGE_GLOBAL_BLOCK)  return Token_By(TOKEN_IRVM_STATIC,a->str);
-                else if(v_sv->storage == REXLANG_STORAGE_SSA)           return Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(v_sv->id));
-                else if(v_sv->storage == REXLANG_STORAGE_RETURN)        return Token_Move(TOKEN_IRVM_PARAM,(CStr)Number_Get(v_sv->id));
-                else if(v_sv->storage == REXLANG_STORAGE_PARAM)         return Token_Move(TOKEN_IRVM_PARAM,(CStr)Number_Get(v_sv->id));
-                else                                                    return Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(v_sv->id));
+                if(v_sv->storage == REXLANG_STORAGE_STACK)                      return Token_By(TOKEN_IRVM_VAR,a->str);
+                else if(v_sv->storage == REXLANG_STORAGE_STACK_BLOCK)           return Token_By(TOKEN_IRVM_VAR,a->str);
+                else if(v_sv->storage == REXLANG_STORAGE_STACK_STRUCT)          return Token_By(TOKEN_IRVM_VAR,a->str);
+                else if(v_sv->storage == REXLANG_STORAGE_STACK_STRUCT_BLOCK)    return Token_By(TOKEN_IRVM_VAR,a->str);
+                else if(v_sv->storage == REXLANG_STORAGE_GLOBAL)                return Token_By(TOKEN_IRVM_STATIC,a->str);
+                else if(v_sv->storage == REXLANG_STORAGE_GLOBAL_BLOCK)          return Token_By(TOKEN_IRVM_STATIC,a->str);
+                else if(v_sv->storage == REXLANG_STORAGE_GLOBAL_STRUCT)         return Token_By(TOKEN_IRVM_STATIC,a->str);
+                else if(v_sv->storage == REXLANG_STORAGE_GLOBAL_STRUCT_BLOCK)   return Token_By(TOKEN_IRVM_STATIC,a->str);
+                else if(v_sv->storage == REXLANG_STORAGE_SSA)                   return Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(v_sv->id));
+                else if(v_sv->storage == REXLANG_STORAGE_RETURN)                return Token_Move(TOKEN_IRVM_PARAM,(CStr)Number_Get(v_sv->id));
+                else if(v_sv->storage == REXLANG_STORAGE_PARAM)                 return Token_Move(TOKEN_IRVM_PARAM,(CStr)Number_Get(v_sv->id));
+                else                                                            return Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(v_sv->id));
             }
         }
         case TOKEN_FUNCTION:{
@@ -1049,6 +1179,12 @@ Token RexLang_GetIRVMTokenSSA(RexLang* ll,Token* a){
                 }));
 
                 return t_out;
+            }else if(v_sv->storage == REXLANG_STORAGE_STACK_STRUCT){
+                Compiler_ErrorHandler(&ll->ev,"struct %s can not be moved in to single ssa!",a->str);
+                return Token_Null();
+            }else if(v_sv->storage == REXLANG_STORAGE_STACK_STRUCT_BLOCK){
+                Compiler_ErrorHandler(&ll->ev,"struct block %s can not be moved in to single ssa!",a->str);
+                return Token_Null();
             }else if(v_sv->storage == REXLANG_STORAGE_GLOBAL){
                 Token t_out = Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ll->ssas++));
                 
@@ -1228,6 +1364,7 @@ Token RexLang_ExecuteAdr(RexLang* ll,Token* a){
     }
 
     const Number ssa_id = ll->ssas++;
+    const Token t_a = RexLang_GetIRVMTokenTarget(ll,a);
 
     CStr typename_a = RexLang_GetPtrType(ll,a);
     CStr stack_name = CStr_Format("%%%d",ssa_id);
@@ -1235,10 +1372,10 @@ Token RexLang_ExecuteAdr(RexLang* ll,Token* a){
     CStr_Free(&typename_a);
     
     RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-        Token_By(TOKEN_IRVM_ADR,IRVM_OP_ADR),
+        t_a.tt == TOKEN_IRVM_VAR ? Token_By(TOKEN_IRVM_ASS,IRVM_OP_ASS) : Token_By(TOKEN_IRVM_ADR,IRVM_OP_ADR),
         Token_By(TOKEN_TYPE,IRVM_TYPE_POINTER),
         Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id)),
-        RexLang_GetIRVMTokenTarget(ll,a),
+        t_a,
         Token_Null()
     }));
 
@@ -1441,6 +1578,86 @@ Token RexLang_ExecuteLor(RexLang* ll,Token* a,Token* b){
         Token_Null()
     }));
 
+    return Token_Move(TOKEN_STRING,stack_name);
+}
+
+Token RexLang_StructPtrSSA(RexLang* ll,Token* a){
+    if(a->tt == TOKEN_STRING){
+        Variable* v = Scope_FindVariable(&ll->ev.sc,a->str);
+        RexLangVariable* v_sv = (RexLangVariable*)Variable_Data(v);
+        CStr type = RexLang_TokenType(ll,a);
+        
+        if(RexLang_DrefType(type)){
+            return RexLang_GetIRVMTokenTarget(ll,a);
+        }else{
+            return RexLang_ExecuteAdr(ll,a);
+        }
+    }else{
+        Compiler_ErrorHandler(&ll->ev,"argument not a variable!");
+        return Token_Null();
+    }
+}
+Token RexLang_ExecuteAcs(RexLang* ll,Token* a,CStr member){
+    if(RexLang_ErrorsInArg(ll,a))   return Token_Null();
+
+    Type* type = Scope_TypeOf(&ll->ev.sc,a);
+    if(a->tt != TOKEN_STRING){
+        Compiler_ErrorHandler(&ll->ev,"drf on not a variable invalid!");
+        return Token_Null();
+    }
+    if(!type){
+        Compiler_ErrorHandler(&ll->ev,"type of %s invalid!",a->str);
+        return Token_Null();
+    }
+    if(!RexLang_StructType(ll,type->name)){
+        Compiler_ErrorHandler(&ll->ev,"type %s of acs not a struct!",type->name);
+        return Token_Null();
+    }
+
+    // Var ptr, SSA ref
+    Variable* va = Scope_FindVariable(&ll->ev.sc,a->str);
+    Vec_CStr types = RexLang_GetMemberTypes(ll,va->typename);
+    Vec_CStr membs = RexLang_GetMembers(ll,va->typename);
+
+    CStr acs_t = NULL;
+    CStr acs_m = NULL;
+    int offset = 0;
+
+    for(int i = 0;i<types.size;i++){
+        acs_t = *(CStr*)Vector_Get(&types,i);
+        acs_m = *(CStr*)Vector_Get(&membs,i);
+
+        if(CStr_Cmp(acs_m,member)) break;
+        offset += RexLang_Size(ll,acs_t);
+
+        if(i + 1 == types.size){
+            Vec_CStr_Free(&types);
+            Vec_CStr_Free(&membs);
+
+            Compiler_ErrorHandler(&ll->ev,"member not found %s!",member);
+            return Token_Null();
+        }
+    }
+
+    Token ssa_a = RexLang_GetIRVMTokenTarget(ll,a);
+    const Number ssa_id = ll->ssas++;
+
+    CStr typename_a = CStr_Concat(acs_t,"&");
+    CStr stack_name = CStr_Format("%%%d",ssa_id);
+    RexLang_Variable_Build_SSA(ll,stack_name,typename_a,ssa_id);
+    CStr_Free(&typename_a);
+    
+    RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+        Token_By(TOKEN_IRVM_ADD,IRVM_OP_ADD),
+        Token_By(TOKEN_TYPE,IRVM_TYPE_POINTER),
+        Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id)),
+        ssa_a,
+        Token_New_I64(TOKEN_NUMBER,offset),
+        Token_Null()
+    }));
+
+    Vec_CStr_Free(&types);
+    Vec_CStr_Free(&membs);
     return Token_Move(TOKEN_STRING,stack_name);
 }
 

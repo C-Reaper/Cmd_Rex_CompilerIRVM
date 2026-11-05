@@ -1,39 +1,26 @@
 global i64 @main
-    alloca i64 %a 
-    store i64 %a 0 
-    alloca ptr %b 
-    adr ptr %0 %a 
-    store ptr %b %0 
-    alloca ptr %c 
-    adr ptr %1 %b 
-    store ptr %c %1 
-    alloca ptr %d 
-    adr ptr %2 %c 
-    store ptr %d %2 
-    load ptr %3 %b 
-    store i64 %3 1 
-    load ptr %4 %c 
-    load ptr %5 %4 
-    store i64 %5 2 
-    load ptr %6 %d 
-    load ptr %7 %6 
-    load ptr %8 %7 
-    store i64 %8 3 
-    load ptr %9 %d 
-    load ptr %10 %9 
-    load ptr %11 %10 
-    add ptr %12 %11 0 
-    ass ptr %13 %12 
-    load i64 %14 %13 
+    allocs 20 %a 
+    add ptr %0 %a 0 
+    add ptr %1 %0 0 
+    store i64 %1 1 
+    add ptr %2 %a 0 
+    add ptr %3 %2 8 
+    store i64 %3 2 
+    add ptr %4 %a 16 
+    store i32 %4 3 
+    add ptr %5 %a 0 
+    add ptr %6 %5 0 
+    add ptr %7 %a 0 
+    add ptr %8 %7 8 
+    load i64 %9 %6 
+    load i64 %10 %8 
+    add i64 %11 %9 %10 
+    add ptr %12 %a 16 
+    load i32 %13 %12 
+    add i64 %14 %11 %13 
     ass i64 &0 %14 
-    destroy %d 
-    destroy %c 
-    destroy %b 
     destroy %a 
     ret 
-    destroy %d 
-    destroy %c 
-    destroy %b 
     destroy %a 
     ret 
 

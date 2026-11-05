@@ -128,11 +128,15 @@ typedef enum RexLang_Storage{
     REXLANG_STORAGE_AUTO = 1,
     REXLANG_STORAGE_STACK = 2,
     REXLANG_STORAGE_GLOBAL = 3,
-    REXLANG_STORAGE_STACK_BLOCK = 4,
-    REXLANG_STORAGE_GLOBAL_BLOCK = 5,
-    REXLANG_STORAGE_SSA = 6,
-    REXLANG_STORAGE_RETURN = 7,
-    REXLANG_STORAGE_PARAM = 8
+    REXLANG_STORAGE_STACK_STRUCT = 4,
+    REXLANG_STORAGE_GLOBAL_STRUCT = 5,
+    REXLANG_STORAGE_STACK_BLOCK = 6,
+    REXLANG_STORAGE_GLOBAL_BLOCK = 7,
+    REXLANG_STORAGE_STACK_STRUCT_BLOCK = 8,
+    REXLANG_STORAGE_GLOBAL_STRUCT_BLOCK = 9,
+    REXLANG_STORAGE_SSA = 10,
+    REXLANG_STORAGE_RETURN = 11,
+    REXLANG_STORAGE_PARAM = 12
 } RexLang_Storage;
 
 typedef enum RexLang_Destroy{
@@ -162,7 +166,12 @@ RexLangVariable RexLangVariable_New(void* parent,RexLang_Storage storage,RexLang
     return sv;
 }
 void RexLangVariable_Free(RexLangVariable* sv){
-    if(sv->storage == REXLANG_STORAGE_GLOBAL && sv->storage == REXLANG_STORAGE_GLOBAL_BLOCK){
+    if(
+        sv->storage == REXLANG_STORAGE_GLOBAL ||
+        sv->storage == REXLANG_STORAGE_GLOBAL_BLOCK ||
+        sv->storage == REXLANG_STORAGE_GLOBAL_STRUCT ||
+        sv->storage == REXLANG_STORAGE_GLOBAL_STRUCT_BLOCK
+    ){
         if(sv->destroy == REXLANG_DESTROY_FREE || sv->destroy == REXLANG_DESTROY_FULL){
             CStr_Free(&sv->global);
         }
