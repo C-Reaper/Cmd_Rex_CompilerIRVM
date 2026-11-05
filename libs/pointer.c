@@ -9,7 +9,6 @@ Token Pointer_Pointer_Handler_Ass(RexLang* ll,Token* op,Vector* args){
     Token* b = (Token*)Vector_Get(args,1);
     return RexLang_ExecuteAss(ll,a,b);
 }
-
 Token Pointer_Pointer_Handler_Asd(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
@@ -73,40 +72,6 @@ Token Pointer_Pointer_Handler_Grq(RexLang* ll,Token* op,Vector* args){
 Token Pointer_Handler_Adr(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     return RexLang_ExecuteAdr(ll,a);
-}
-
-Token Pointer_Null_Handler_Cast(RexLang* ll,Token* op,Vector* args){
-    Token* a = (Token*)Vector_Get(args,0);
-
-    //printf("[Pointer]: CAST: %s\n",a->str);
-
-    String ret = String_New();
-
-    if(a->tt==TOKEN_NUMBER){
-        String_AppendNumber(&ret,a->v_i64);
-    }else{
-        Variable* v = Scope_FindVariable(&ll->ev.sc,a->str);
-        if(v){
-            RexLangVariable* sv = (RexLangVariable*)Variable_Data(v);
-            String_Appendf(&ret,"T: %s [&:%d]",v->typename,sv->destroy);
-        }else{
-            Environment_ErrorHandler(&ll->ev,"Cast -> Error!");
-            String_Append(&ret,"ERROR");
-        }
-    }
-
-    CStr out = String_CStr(&ret);
-    String_Free(&ret);
-    return Token_Move(TOKEN_CONSTSTRING_DOUBLE,out);
-}
-Token Pointer_Handler_Cast(RexLang* ll,Token* op,Vector* args){
-    Token* a = (Token*)Vector_Get(args,0);
-    return RexLang_ExecuteCast(ll,op->str,a);
-}
-Token Pointer_Handler_Size(RexLang* ll,Token* op,Vector* args){
-    Token* a = (Token*)Vector_Get(args,0);
-    //printf("[Pointer]: SIZE: %s\n",a->str);
-    return Token_New_I64(TOKEN_NUMBER,POINTER_SIZE);
 }
 
 Token Pointer_Handler_Drf(RexLang* ll,Token* op,Vector* args){
@@ -211,6 +176,40 @@ Token Pointer_I64_Handler_Subs(RexLang* ll,Token* op,Vector* args){
     Token_Free(&drf);
     Token_Free(&add);
     return ret;
+}
+
+Token Pointer_Null_Handler_Cast(RexLang* ll,Token* op,Vector* args){
+    Token* a = (Token*)Vector_Get(args,0);
+
+    //printf("[Pointer]: CAST: %s\n",a->str);
+
+    String ret = String_New();
+
+    if(a->tt==TOKEN_NUMBER){
+        String_AppendNumber(&ret,a->v_i64);
+    }else{
+        Variable* v = Scope_FindVariable(&ll->ev.sc,a->str);
+        if(v){
+            RexLangVariable* sv = (RexLangVariable*)Variable_Data(v);
+            String_Appendf(&ret,"T: %s [&:%d]",v->typename,sv->destroy);
+        }else{
+            Environment_ErrorHandler(&ll->ev,"Cast -> Error!");
+            String_Append(&ret,"ERROR");
+        }
+    }
+
+    CStr out = String_CStr(&ret);
+    String_Free(&ret);
+    return Token_Move(TOKEN_CONSTSTRING_DOUBLE,out);
+}
+Token Pointer_Handler_Cast(RexLang* ll,Token* op,Vector* args){
+    Token* a = (Token*)Vector_Get(args,0);
+    return RexLang_ExecuteCast(ll,op->str,a);
+}
+Token Pointer_Handler_Size(RexLang* ll,Token* op,Vector* args){
+    Token* a = (Token*)Vector_Get(args,0);
+    //printf("[Pointer]: SIZE: %s\n",a->str);
+    return Token_New_I64(TOKEN_NUMBER,POINTER_SIZE);
 }
 
 void Ex_Packer(ExternFunctionMap* Extern_Functions,Vector* funcs,Scope* s){//Vector<CStr>

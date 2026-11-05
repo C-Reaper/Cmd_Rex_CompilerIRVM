@@ -59,7 +59,7 @@ Boolean RexLang_Compress_pointer(RexLang* ll,TokenMap* tm){
                 Vector_Remove(tm,i+1);
                 i--;
             }else if(next->tt==TOKEN_REXLANG_SUBS){
-                if(!RexLang_CompressStackType(ll,tm,i)) continue;
+                if(!RexLang_CompressStackType(tm,i)) continue;
                 type = (Token*)Vector_Get(tm,i);
 
                 RexLang_Compress(ll,(TokenMap*)Vector_Get(type->args,0));
@@ -1192,7 +1192,7 @@ Boolean RexLang_FunctionCall_Acs(RexLang* ll,TokenMap* tm,int i,int args,Token* 
             Variable* v = Scope_FindVariable(&ll->ev.sc,accssed->str);
 
             if(v){
-                CStr type = RexLang_TypeOfDref(ll,v->typename);
+                CStr type = RexLang_TypeOfDref(v->typename);
                 CStr oldname = CStr_Cpy(func->str);
                 CStr newname = CStr_Format("%s::%s",type,func->str);
                 CStr_Set((char**)&func->str,newname);
@@ -1244,7 +1244,7 @@ Boolean RexLang_FunctionCall_Arw(RexLang* ll,TokenMap* tm,int i,int args,Token* 
             Variable* v = Scope_FindVariable(&ll->ev.sc,accssed->str);
 
             if(v){
-                CStr type = RexLang_TypeOfPointer(ll,v->typename);
+                CStr type = RexLang_TypeOfPointer(v->typename);
                 CStr newname = CStr_Format("%s::%s",type,func->str);
 
                 TT_Iter it_f = FunctionMap_Find(&ll->ev.fs,newname);
