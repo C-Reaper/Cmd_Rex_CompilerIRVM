@@ -83,82 +83,10 @@ Token Pointer_Handler_Arw(RexLang* ll,Token* op,Vector* args){
     Token* b = (Token*)Vector_Get(args,1);
     //printf("[Pointer]: ARW: %s->%s\n",a->str,b->str);
     
-    /*
-    if(a->tt==TOKEN_STRING){
-        Variable* v = Scope_FindVariable(&ll->ev.sc,a->str);
-        
-        if(v){
-            CStr structtype = CStr_PopOff(v->typename);
-            Type* t = Scope_FindType(&ll->ev.sc,structtype);
-            CStr_Free(&structtype);
-            if(t){
-                Member* member = MemberMap_Find(&t->related,b->str);
-                if(member){
-                    if(member->access || CStr_Cmp(a->str,RexLang_SELF)){
-                        int offset = 0;
-                        for(int i = 0;i<t->related.size;i++){
-                            Member* m = (Member*)Vector_Get(&t->related,i);
-                            if(CStr_Cmp(b->str,m->name)) break;
-                            offset += RexLang_Size(ll,m->type);
-                        }
-
-                        CStr stack_name = RexLang_Variablename_Next(ll,".STACK",6);
-
-                        if(!RexLang_DrefType(ll,v->typename)){
-                            CStr type = CStr_Concat(member->type,"&");
-                            RexLang_Variable_Build_Decl(ll,stack_name,type);
-                            CStr_Free(&type);
-
-                            Token stack_t = Token_Move(TOKEN_STRING,stack_name);
-                            CStr location_a = RexLang_Location(ll,a->str);
-                            CStr location_s = RexLang_Location(ll,stack_name);
-
-                            RexLang_Indentation_Appendf(ll,&ll->text,"mov %s,%s",RexLang_REG_A_64,location_a);
-                            RexLang_Indentation_Appendf(ll,&ll->text,"mov %s,%s",location_s,RexLang_REG_A_64);
-                            RexLang_Indentation_Appendf(ll,&ll->text,"add %s,%d",location_s,offset);
-
-                            CStr_Free(&location_a);
-                            CStr_Free(&location_s);
-                        }else{
-                            CStr type = CStr_Concat(member->type,"&");
-                            RexLang_Variable_Build_Decl(ll,stack_name,type);
-                            CStr_Free(&type);
-
-                            Token stack_t = Token_Move(TOKEN_STRING,stack_name);
-                            CStr location_a = RexLang_Location(ll,a->str);
-                            CStr location_s = RexLang_Location(ll,stack_name);
-
-                            RexLang_Indentation_Appendf(ll,&ll->text,"mov %s,%s",RexLang_REG_A_64,location_a);
-                            RexLang_Indentation_Appendf(ll,&ll->text,"mov %s,%s[%s]",RexLang_REG_A_64,RexLang_DREF_64,RexLang_REG_A_64);
-                            RexLang_Indentation_Appendf(ll,&ll->text,"mov %s,%s",location_s,RexLang_REG_A_64);
-                            RexLang_Indentation_Appendf(ll,&ll->text,"add %s,%d",location_s,offset);
-
-                            CStr_Free(&location_a);
-                            CStr_Free(&location_s);
-                        }
-                        return Token_Move(TOKEN_STRING,stack_name);
-                    }else{
-                        Environment_ErrorHandler(&ll->ev,"Arw: Member %s isn't pub or non self %s tries to access!",b->str,a->str);
-                        return Token_Null();
-                    }
-                }else{
-                    Environment_ErrorHandler(&ll->ev,"Arw: Member %s not found!",b->str);
-                    return Token_Null();
-                }
-            }else{
-                Environment_ErrorHandler(&ll->ev,"Arw: Type %s not found!",v->typename);
-                return Token_Null();
-            }
-        }else{
-            Environment_ErrorHandler(&ll->ev,"Arw: Variable %s not found!",a->str);
-            return Token_Null();
-        }
-    }else{
-        Environment_ErrorHandler(&ll->ev,"Arw: Error -> %s has no dref op!",a->str);
-        return Token_Null();
-    }
-    */
-    return Token_Null();
+    Token dref = RexLang_ExecuteDrf(ll,a);
+    Token acs = RexLang_ExecuteAcs(ll,&dref,b->str);
+    Token_Free(&dref);
+    return acs;
 }
 Token Pointer_I64_Handler_Subs(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
