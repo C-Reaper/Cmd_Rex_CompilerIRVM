@@ -85,6 +85,7 @@
 #define REXLANG_LOG_TRUE                   "TRUE"
 #define REXLANG_LOG_END                    "END"
 
+#define LOGIC_TYPE                          "i8"
 #define BOOL_TYPE                           "bool"
 #define I8_TYPE                             "i8"
 #define I16_TYPE                            "i16"

@@ -1041,6 +1041,12 @@ Token RexLang_ExecuteAss(RexLang* ll,Token* dst,Token* a){
     }
 
     Token t_dst = RexLang_GetIRVMToken(ll,dst);
+    if(t_dst.tt == TOKEN_IRVM_PARAM && dst->str[0] != '.'){
+        Compiler_ErrorHandler(&ll->ev,"assignment not allowed to parameters!");
+        Token_Free(&t_dst);
+        return Token_Null();
+    }
+
     Token ssa = RexLang_GetIRVMTokenSSA(ll,a);
 
     RexLang_AppendTM(ll,TokenMap_Make((Token[]){
@@ -1210,11 +1216,109 @@ Token RexLang_Execute5(RexLang* ll,CStr inst,Token* a,Token* b){
 
     return Token_Move(TOKEN_STRING,stack_name);
 }
+Token RexLang_ExecuteAss4(RexLang* ll,CStr inst,Token* a){
+    Token ssa = RexLang_Execute4(ll,inst,a);
+    const Token ret = RexLang_ExecuteAss(ll,a,&ssa);
+    Token_Free(&ssa);
+    return ret;
+}
 Token RexLang_ExecuteAss5(RexLang* ll,CStr inst,Token* a,Token* b){
     Token ssa = RexLang_Execute5(ll,inst,a,b);
     const Token ret = RexLang_ExecuteAss(ll,a,&ssa);
     Token_Free(&ssa);
     return ret;
+}
+
+Token RexLang_ExecuteLot(RexLang* ll,Token* a){
+    if(RexLang_ErrorsInArg(ll,a))   return Token_Null();
+
+    Type* type = Scope_TypeOf(&ll->ev.sc,a);
+    if(!type){
+        Compiler_ErrorHandler(&ll->ev,"type of tokens invalid!");
+        return Token_Null();
+    }
+
+    const Token ssa_a = RexLang_GetIRVMTokenSSA(ll,a);
+    const Number ssa_id = ll->ssas++;
+
+    CStr typename_a = RexLang_VariableType(ll,a);
+    CStr stack_name = CStr_Format("%%%d",ssa_id);
+    RexLang_Variable_Build_SSA(ll,stack_name,typename_a,ssa_id);
+    CStr_Free(&typename_a);
+    
+    RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+        Token_By(TOKEN_IRVM_NOT,IRVM_OP_NOT),
+        Token_By(TOKEN_TYPE,type->name),
+        Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id)),
+        ssa_a,
+        Token_Null()
+    }));
+
+    return Token_Move(TOKEN_STRING,stack_name);
+}
+Token RexLang_ExecuteLnd(RexLang* ll,Token* a,Token* b){
+    if(RexLang_ErrorsInArg(ll,a))   return Token_Null();
+    if(RexLang_ErrorsInArg(ll,b))   return Token_Null();
+
+    Type* type = Scope_TypeOf(&ll->ev.sc,a);
+    if(!type) type = Scope_TypeOf(&ll->ev.sc,b);
+
+    if(!type){
+        Compiler_ErrorHandler(&ll->ev,"type of tokens invalid!");
+        return Token_Null();
+    }
+
+    const Token ssa_a = RexLang_GetIRVMTokenSSA(ll,a);
+    const Token ssa_b = RexLang_GetIRVMTokenSSA(ll,b);
+
+    const Number ssa_id = ll->ssas++;
+    CStr typename_a = RexLang_VariableType(ll,a);
+    CStr stack_name = CStr_Format("%%%d",ssa_id);
+    RexLang_Variable_Build_SSA(ll,stack_name,typename_a,ssa_id);
+    CStr_Free(&typename_a);
+    
+    RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+        Token_By(TOKEN_IRVM_AND,IRVM_OP_AND),
+        Token_By(TOKEN_TYPE,type->name),
+        Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id)),
+        ssa_a,
+        ssa_b,
+        Token_Null()
+    }));
+
+    return Token_Move(TOKEN_STRING,stack_name);
+}
+Token RexLang_ExecuteLor(RexLang* ll,Token* a,Token* b){
+    if(RexLang_ErrorsInArg(ll,a))   return Token_Null();
+    if(RexLang_ErrorsInArg(ll,b))   return Token_Null();
+
+    Type* type = Scope_TypeOf(&ll->ev.sc,a);
+    if(!type) type = Scope_TypeOf(&ll->ev.sc,b);
+
+    if(!type){
+        Compiler_ErrorHandler(&ll->ev,"type of tokens invalid!");
+        return Token_Null();
+    }
+
+    const Token ssa_a = RexLang_GetIRVMTokenSSA(ll,a);
+    const Token ssa_b = RexLang_GetIRVMTokenSSA(ll,b);
+
+    const Number ssa_id = ll->ssas++;
+    CStr typename_a = RexLang_VariableType(ll,a);
+    CStr stack_name = CStr_Format("%%%d",ssa_id);
+    RexLang_Variable_Build_SSA(ll,stack_name,typename_a,ssa_id);
+    CStr_Free(&typename_a);
+    
+    RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+        Token_By(TOKEN_IRVM_OR,IRVM_OP_OR),
+        Token_By(TOKEN_TYPE,type->name),
+        Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id)),
+        ssa_a,
+        ssa_b,
+        Token_Null()
+    }));
+
+    return Token_Move(TOKEN_STRING,stack_name);
 }
 
 #endif //!REXLANGASM_H

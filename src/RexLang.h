@@ -11,6 +11,7 @@
 
 #include "RexLangDefines.h"
 #include "RexLangASM.h"
+#include "RexLangInt.h"
 
 
 Boolean RexLang_Compress(RexLang* ll,TokenMap* tm);
@@ -530,16 +531,18 @@ Boolean RexLang_Import(RexLang* ll,TokenMap* tm){
                 CVector_Push(&ll->filesstack,(CStr[]){ CStr_Cpy(realpath) });
                 CVector_Push(&ll->filesinc,(CStr[]){ CStr_Cpy(realpath) });
                 
-                Compiler_AddScript(&ll->ev,ll->ev.iter,realpath);
+                Environment_AddScript(&ll->ev,ll->ev.iter,realpath);
             
                 CVector_PopTop(&ll->filesstack);
-                CStr_Free(&realpath);
             }else{
                 //Compiler_ErrorHandler(&ll->ev,"module \"%s\" already included!",file->str);
             }
+            
+            CStr_Free(&realpath);
         }else{
             Compiler_ErrorHandler(&ll->ev,"file type of module \"%s\" is wrong: .%s, should be .%s",file->str,type,REXLANG_TYPE);
         }
+
         free(type);
     }else if(file->tt==TOKEN_STRING){
         //CStr current = *(CStr*)CVector_Get(&ll->filesstack,ll->filesstack.size-1);
@@ -551,13 +554,14 @@ Boolean RexLang_Import(RexLang* ll,TokenMap* tm){
             CVector_Push(&ll->filesstack,(CStr[]){ CStr_Cpy(realpath) });
             CVector_Push(&ll->filesinc,(CStr[]){ CStr_Cpy(realpath) });
             
-            Compiler_AddScript(&ll->ev,ll->ev.iter,realpath);
+            Environment_AddScript(&ll->ev,ll->ev.iter,realpath);
         
             CVector_PopTop(&ll->filesstack);
-            CStr_Free(&realpath);
         }else{
             //Compiler_ErrorHandler(&ll->ev,"module \"%s\" already included!",file->str);
         }
+        
+        CStr_Free(&realpath);
     }else{
         Compiler_ErrorHandler(&ll->ev,"module \"%s\" doesn't exist!",file->str);
     }
@@ -592,27 +596,41 @@ Boolean RexLang_If(RexLang* ll,TokenMap* tm){
                 Token_Free(t);
                 Vector_Remove(tm,tm->size-1);
 
-                Token btok = Token_By(TOKEN_STRING,REXLANG_BOOL);
+                Token btok = Token_By(TOKEN_STRING,LOGIC_TYPE);
                 RexLang_Variable_Build_SSA(ll,btok.str,BOOL_TYPE,ll->ssas++);
 
                 Vector_Add(tm,(Token[]){ Token_Cpy(&btok) },0);
                 Vector_Add(tm,(Token[]){ Compiler_SetterToken(&ll->ev) },1);
 
                 Boolean ret = RexLang_ShutingYard(&ll->ev,tm);
-                
+                RexLang_LogicAddPath(ll);
+
+                CStr nextlabel = RexLang_Logic(ll,0,REXLANG_IF,ll->ev.sc.range);
+                CStr otherlabel = RexLang_Logic(ll,1,REXLANG_IF,ll->ev.sc.range);
+
+                Variable* b_var = Scope_FindVariable(&ll->ev.sc,btok.str);
+                RexLangVariable* b_sv = (RexLangVariable*)Variable_Data(b_var);
+
+                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                    Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
+                    Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
+                    Token_By(TOKEN_STRING,nextlabel),
+                    Token_By(TOKEN_STRING,otherlabel),
+                    Token_Null()
+                }));
+
+                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                    Token_By(TOKEN_IRVM_TAR,IRVM_OP_TAR),
+                    Token_By(TOKEN_STRING,nextlabel),
+                    Token_Null()
+                }));
+
                 //RexLang_IntoReg(ll,&btok,RexLang_REG_A_L8);
                 Scope_DestroyVariable(&ll->ev.sc,btok.str);
                 Token_Free(&btok);
-
-                RexLang_LogicAddPath(ll);
-
-                //CStr nextlabel = RexLang_Logic(ll,0,RexLang_IF,ll->ev.sc.range);
-                //CStr otherlabel = RexLang_Logic(ll,1,RexLang_IF,ll->ev.sc.range);
-                //RexLang_Indentation_Appendf(ll,&ll->text,"cmp %s,0",RexLang_REG_A_L8);
-                //RexLang_Indentation_Appendf(ll,&ll->text,"je %s",otherlabel);
-                //RexLang_Indentation_Appendf(ll,&ll->text,"%s:",nextlabel);
-                //CStr_Free(&otherlabel);
-                //CStr_Free(&nextlabel);
+                
+                CStr_Free(&otherlabel);
+                CStr_Free(&nextlabel);
 
                 ll->ev.sc.range++;
                 CallPosition cp = CallPosition_New(TOKEN_REXLANG_IF,ll->ev.iter);
@@ -646,26 +664,41 @@ Boolean RexLang_Elif(RexLang* ll,TokenMap* tm){
                 Token_Free(t);
                 Vector_Remove(tm,tm->size-1);
 
-                Token btok = Token_By(TOKEN_STRING,REXLANG_BOOL);
+                Token btok = Token_By(TOKEN_STRING,LOGIC_TYPE);
                 RexLang_Variable_Build_SSA(ll,btok.str,BOOL_TYPE,ll->ssas++);
 
                 Vector_Add(tm,(Token[]){ Token_Cpy(&btok) },0);
                 Vector_Add(tm,(Token[]){ Compiler_SetterToken(&ll->ev) },1);
 
                 Boolean ret = RexLang_ShutingYard(&ll->ev,tm);
-                //RexLang_IntoReg(ll,&btok,REXLANG_REG_A_L8);
-                Scope_DestroyVariable(&ll->ev.sc,btok.str);
-                Token_Free(&btok);
-
                 RexLang_LogicAddExtend(ll);
 
-                //CStr nextlabel = RexLang_Logic(ll,0,REXLANG_ELIF,ll->ev.sc.range);
-                //CStr otherlabel = RexLang_Logic(ll,1,REXLANG_ELIF,ll->ev.sc.range);
-                //RexLang_Indentation_Appendf(ll,&ll->text,"cmp %s,0",REXLANG_REG_A_L8);
-                //RexLang_Indentation_Appendf(ll,&ll->text,"je %s",otherlabel);
-                //RexLang_Indentation_Appendf(ll,&ll->text,"%s:",nextlabel);
-                //CStr_Free(&otherlabel);
-                //CStr_Free(&nextlabel);
+                CStr nextlabel = RexLang_Logic(ll,0,REXLANG_ELIF,ll->ev.sc.range);
+                CStr otherlabel = RexLang_Logic(ll,1,REXLANG_ELIF,ll->ev.sc.range);
+
+                Variable* b_var = Scope_FindVariable(&ll->ev.sc,btok.str);
+                RexLangVariable* b_sv = (RexLangVariable*)Variable_Data(b_var);
+
+                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                    Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
+                    Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
+                    Token_By(TOKEN_STRING,nextlabel),
+                    Token_By(TOKEN_STRING,otherlabel),
+                    Token_Null()
+                }));
+
+                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                    Token_By(TOKEN_IRVM_TAR,IRVM_OP_TAR),
+                    Token_By(TOKEN_STRING,nextlabel),
+                    Token_Null()
+                }));
+
+                //RexLang_IntoReg(ll,&btok,RexLang_REG_A_L8);
+                Scope_DestroyVariable(&ll->ev.sc,btok.str);
+                Token_Free(&btok);
+                
+                CStr_Free(&otherlabel);
+                CStr_Free(&nextlabel);
 
                 ll->ev.sc.range++;
                 CallPosition cp = CallPosition_New(TOKEN_REXLANG_ELIF,ll->ev.iter);
@@ -699,9 +732,15 @@ Boolean RexLang_Else(RexLang* ll,TokenMap* tm){
                 Token_Free(t);
                 Vector_Remove(tm,tm->size-1);
 
-                //CStr nextlabel = RexLang_Logic(ll,0,REXLANG_ELSE,ll->ev.sc.range);
-                //RexLang_Indentation_Appendf(ll,&ll->text,"%s:",nextlabel);
-                //CStr_Free(&nextlabel);
+                CStr nextlabel = RexLang_Logic(ll,0,REXLANG_ELSE,ll->ev.sc.range);
+
+                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                    Token_By(TOKEN_IRVM_TAR,IRVM_OP_TAR),
+                    Token_By(TOKEN_STRING,nextlabel),
+                    Token_Null()
+                }));
+                
+                CStr_Free(&nextlabel);
 
                 ll->ev.sc.range++;
                 CallPosition cp = CallPosition_New(TOKEN_REXLANG_ELSE,ll->ev.iter);
@@ -736,25 +775,46 @@ Boolean RexLang_While(RexLang* ll,TokenMap* tm){
                 Vector_Remove(tm,tm->size-1);
 
                 RexLang_LogicAddPath(ll);
-                //CStr nextlabel = RexLang_Logic(ll,0,RexLang_WHILE,ll->ev.sc.range);
-                //CStr otherlabel = RexLang_Logic(ll,1,RexLang_WHILE,ll->ev.sc.range);
-                //RexLang_Indentation_Appendf(ll,&ll->text,"%s:",nextlabel);
+                CStr nextlabel = RexLang_Logic(ll,0,REXLANG_WHILE,ll->ev.sc.range);
+                CStr otherlabel = RexLang_Logic(ll,1,REXLANG_WHILE,ll->ev.sc.range);
+                CStr nextlabelstart = RexLang_Logic(ll,2,REXLANG_WHILE,ll->ev.sc.range);
 
-                Token btok = Token_By(TOKEN_STRING,REXLANG_BOOL);
+                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                    Token_By(TOKEN_IRVM_TAR,IRVM_OP_TAR),
+                    Token_By(TOKEN_STRING,nextlabel),
+                    Token_Null()
+                }));
+
+                Token btok = Token_By(TOKEN_STRING,LOGIC_TYPE);
                 RexLang_Variable_Build_SSA(ll,btok.str,BOOL_TYPE,ll->ssas++);
 
                 Vector_Add(tm,(Token[]){ Token_Cpy(&btok) },0);
                 Vector_Add(tm,(Token[]){ Compiler_SetterToken(&ll->ev) },1);
-
                 Boolean ret = RexLang_ShutingYard(&ll->ev,tm);
-                //RexLang_IntoReg(ll,&btok,REXLANG_REG_A_L8);
+
+                Variable* b_var = Scope_FindVariable(&ll->ev.sc,btok.str);
+                RexLangVariable* b_sv = (RexLangVariable*)Variable_Data(b_var);
+
                 Scope_DestroyVariable(&ll->ev.sc,btok.str);
                 Token_Free(&btok);
 
-                //RexLang_Indentation_Appendf(ll,&ll->text,"cmp %s,0",REXLANG_REG_A_L8);
-                //RexLang_Indentation_Appendf(ll,&ll->text,"je %s",otherlabel);
-                //CStr_Free(&otherlabel);
-                //CStr_Free(&nextlabel);
+                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                    Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
+                    Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
+                    Token_By(TOKEN_STRING,nextlabelstart),
+                    Token_By(TOKEN_STRING,otherlabel),
+                    Token_Null()
+                }));
+
+                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                    Token_By(TOKEN_IRVM_TAR,IRVM_OP_TAR),
+                    Token_By(TOKEN_STRING,nextlabelstart),
+                    Token_Null()
+                }));
+                
+                CStr_Free(&nextlabelstart);
+                CStr_Free(&otherlabel);
+                CStr_Free(&nextlabel);
 
                 ll->ev.sc.range++;
                 CallPosition cp = CallPosition_New(TOKEN_REXLANG_WHILE,ll->ev.iter);
@@ -799,31 +859,43 @@ Boolean RexLang_For(RexLang* ll,TokenMap* tm){
                 TokenMap_Free(&statement_0);
 
                 RexLang_LogicAddPath(ll);
-                //CStr nextlabel = RexLang_Logic(ll,0,RexLang_FOR,ll->ev.sc.range);
-                //CStr otherlabel = RexLang_Logic(ll,1,RexLang_FOR,ll->ev.sc.range);
-                //RexLang_Indentation_Appendf(ll,&ll->text,"%s:",nextlabel);
+                CStr nextlabel = RexLang_Logic(ll,0,REXLANG_FOR,ll->ev.sc.range);
+                CStr otherlabel = RexLang_Logic(ll,1,REXLANG_FOR,ll->ev.sc.range);
+
+                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                    Token_By(TOKEN_IRVM_TAR,IRVM_OP_TAR),
+                    Token_By(TOKEN_STRING,nextlabel),
+                    Token_Null()
+                }));
 
                 Boolean ret = False;
                 if(statement_1.size>0){
-                    Token btok = Token_By(TOKEN_STRING,REXLANG_BOOL);
+                    Token btok = Token_By(TOKEN_STRING,LOGIC_TYPE);
                     RexLang_Variable_Build_SSA(ll,btok.str,BOOL_TYPE,ll->ssas++);
 
                     Vector_Add(&statement_1,(Token[]){ Token_Cpy(&btok) },0);
                     Vector_Add(&statement_1,(Token[]){ Compiler_SetterToken(&ll->ev) },1);
 
                     ret = RexLang_ShutingYard(&ll->ev,&statement_1);
-                    //RexLang_IntoReg(ll,&btok,RexLang_REG_A_L8);
+
+                    Variable* b_var = Scope_FindVariable(&ll->ev.sc,btok.str);
+                    RexLangVariable* b_sv = (RexLangVariable*)Variable_Data(b_var);
+
+                    RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                        Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
+                        Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
+                        Token_By(TOKEN_STRING,nextlabel),
+                        Token_By(TOKEN_STRING,otherlabel),
+                        Token_Null()
+                    }));
+
                     Scope_DestroyVariable(&ll->ev.sc,btok.str);
                     Token_Free(&btok); 
-
-                    //RexLang_Indentation_Appendf(ll,&ll->text,"cmp %s,0",RexLang_REG_A_L8);
-                    //RexLang_Indentation_Appendf(ll,&ll->text,"je %s",otherlabel);
                 }
                 
                 TokenMap_Free(&statement_1);
-                
-                //CStr_Free(&otherlabel);
-                //CStr_Free(&nextlabel);
+                CStr_Free(&otherlabel);
+                CStr_Free(&nextlabel);
 
                 ll->ev.sc.range++;
                 CallPosition cp = CallPosition_Make(statement_2,TOKEN_REXLANG_FOR,ll->ev.iter,NULL,ll->ev.sc.range);
@@ -1233,8 +1305,6 @@ TokenMap RexLang_Function_BuildTM(RexLang* ll,CStr name,Function* f){
             Compiler_ErrorHandler(&ll->ev,"Function: %s called with invalid arg %s!",name,arg->name);
         }
     }
-
-    Scope_Print_N(&ll->ev.sc);
     return tm;
 }
 void RexLang_Function_Handler(RexLang* ll,Token* t,Function* f){
@@ -1253,6 +1323,259 @@ void RexLang_Function_Handler(RexLang* ll,Token* t,Function* f){
     }
 }
 
+void RexLang_LoadIntType(RexLang* ll,CStr type){
+    const Number size = IRVM_Impl_Size(type);
+    
+    TypeMap_Push(&ll->ev.sc.types,(Type[]){
+        Type_Make(type,sizeof(RexLangVariable),OperatorInterationMap_Make((OperatorInterater[]){
+            OperatorInterater_Make((CStr[]){ NULL },OperatorDefineMap_Make((OperatorDefiner[]){
+                OperatorDefiner_New(TOKEN_REXLANG_NEG,(Token(*)(void*,Token*,Vector*))Int_Handler_Neg),
+                OperatorDefiner_New(TOKEN_REXLANG_INC,(Token(*)(void*,Token*,Vector*))Int_Handler_Inc),
+                OperatorDefiner_New(TOKEN_REXLANG_DEC,(Token(*)(void*,Token*,Vector*))Int_Handler_Dec),
+                OperatorDefiner_New(TOKEN_REXLANG_NOT,(Token(*)(void*,Token*,Vector*))Int_Handler_Not),
+                OperatorDefiner_New(TOKEN_REXLANG_LOT,(Token(*)(void*,Token*,Vector*))Int_Handler_Lot),
+                OperatorDefiner_New(TOKEN_REXLANG_ADR,(Token(*)(void*,Token*,Vector*))Int_Handler_Adr),
+                OperatorDefiner_New(TOKEN_CAST,(Token(*)(void*,Token*,Vector*))Int_Handler_Cast),
+                OperatorDefiner_New(TOKEN_INIT,(Token(*)(void*,Token*,Vector*))RexLang_Init),
+                OperatorDefiner_New(TOKEN_REXLANG_SIZE,
+                    (Token(*)(void*,Token*,Vector*))(
+                        size == 1 ? Int_Handler_Size1 : (
+                        size == 2 ? Int_Handler_Size2 : (
+                        size == 4 ? Int_Handler_Size4 :
+                        Int_Handler_Size8))
+                    )
+                ),
+                //OperatorDefiner_New(TOKEN_DESTROY,NULL),
+                OPERATORDEFINER_END
+            })),
+            OperatorInterater_Make((CStr[]){ I8_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
+                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
+                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
+                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
+                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
+                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
+                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
+                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
+                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
+                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
+                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
+                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
+                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
+                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
+                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
+                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
+                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
+                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
+                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
+                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
+                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
+                OPERATORDEFINER_END
+            })),
+            OperatorInterater_Make((CStr[]){ I16_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
+                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
+                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
+                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
+                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
+                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
+                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
+                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
+                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
+                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
+                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
+                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
+                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
+                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
+                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
+                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
+                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
+                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
+                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
+                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
+                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
+                OPERATORDEFINER_END
+            })),
+            OperatorInterater_Make((CStr[]){ I32_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
+                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
+                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
+                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
+                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
+                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
+                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
+                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
+                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
+                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
+                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
+                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
+                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
+                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
+                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
+                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
+                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
+                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
+                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
+                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
+                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
+                OPERATORDEFINER_END
+            })),
+            OperatorInterater_Make((CStr[]){ I64_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
+                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
+                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
+                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
+                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
+                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
+                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
+                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
+                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
+                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
+                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
+                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
+                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
+                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
+                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
+                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
+                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
+                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
+                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
+                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
+                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
+                OPERATORDEFINER_END
+            })),
+            OperatorInterater_Make((CStr[]){ U8_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
+                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
+                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
+                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
+                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
+                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
+                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
+                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
+                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
+                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
+                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
+                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
+                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
+                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
+                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
+                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
+                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
+                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
+                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
+                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
+                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
+                OPERATORDEFINER_END
+            })),
+            OperatorInterater_Make((CStr[]){ U16_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
+                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
+                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
+                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
+                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
+                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
+                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
+                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
+                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
+                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
+                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
+                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
+                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
+                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
+                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
+                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
+                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
+                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
+                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
+                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
+                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
+                OPERATORDEFINER_END
+            })),
+            OperatorInterater_Make((CStr[]){ U32_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
+                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
+                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
+                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
+                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
+                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
+                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
+                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
+                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
+                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
+                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
+                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
+                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
+                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
+                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
+                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
+                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
+                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
+                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
+                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
+                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
+                OPERATORDEFINER_END
+            })),
+            OperatorInterater_Make((CStr[]){ U64_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
+                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
+                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
+                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
+                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
+                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
+                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
+                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
+                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
+                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
+                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
+                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
+                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
+                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
+                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
+                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
+                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
+                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
+                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
+                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
+                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
+                OPERATORDEFINER_END
+            })),
+            OPERATORINTERATER_END
+        }),RexLang_Destroyer,RexLang_Cpyer)
+    });
+}
 RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
     RexLang ll;
     ll.ev = Compiler_New(
@@ -1649,17 +1972,19 @@ RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
 
     ll.logicpath = Vector_New(sizeof(LogicBlock));
 
+    RexLang_LoadIntType(&ll,BOOL_TYPE);
+
+    RexLang_LoadIntType(&ll,I8_TYPE);
+    RexLang_LoadIntType(&ll,I16_TYPE);
+    RexLang_LoadIntType(&ll,I32_TYPE);
+    RexLang_LoadIntType(&ll,I64_TYPE);
+
+    RexLang_LoadIntType(&ll,U8_TYPE);
+    RexLang_LoadIntType(&ll,U16_TYPE);
+    RexLang_LoadIntType(&ll,U32_TYPE);
+    RexLang_LoadIntType(&ll,U64_TYPE);
+
     Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,VOID_TYPE,"Ex_Packer",  (CStr[]){ VOID_TYPE,    NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,BOOL_TYPE,"Ex_Packer",  (CStr[]){ BOOL_TYPE,    NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,I8_TYPE,  "Ex_Packer",  (CStr[]){ I8_TYPE,      NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,I16_TYPE, "Ex_Packer",  (CStr[]){ I16_TYPE,     NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,I32_TYPE, "Ex_Packer",  (CStr[]){ I32_TYPE,     NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,I64_TYPE, "Ex_Packer",  (CStr[]){ I64_TYPE,     NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,U8_TYPE,  "Ex_Packer",  (CStr[]){ U8_TYPE,      NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,U16_TYPE, "Ex_Packer",  (CStr[]){ U16_TYPE,     NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,U32_TYPE, "Ex_Packer",  (CStr[]){ U32_TYPE,     NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,U64_TYPE, "Ex_Packer",  (CStr[]){ U64_TYPE,     NULL },&ll.ev.sc) });
-    
     Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,"pointer","Ex_Packer",  (CStr[]){ POINTER_TYPE, NULL },&ll.ev.sc) });
     Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,"dref",   "Ex_Packer",  (CStr[]){ DREF_TYPE,    NULL },&ll.ev.sc) });
     Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,"str",    "Ex_Packer",  (CStr[]){ STR_TYPE,     NULL },&ll.ev.sc) });
@@ -1668,6 +1993,7 @@ RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
     //Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,F32_TYPE, "Ex_Packer",  (CStr[]){ F32_TYPE,     NULL },&ll.ev.sc) });
     //Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,F64_TYPE, "Ex_Packer",  (CStr[]){ F64_TYPE,     NULL },&ll.ev.sc) });
     
+
     CVector_Push(&ll.filesstack,(CStr[]){ CStr_Cpy(src) });
     CVector_Push(&ll.filesinc,(CStr[]){ CStr_Cpy(src) });
     Compiler_Script(&ll.ev,src);
