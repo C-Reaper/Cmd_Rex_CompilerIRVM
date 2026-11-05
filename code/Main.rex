@@ -1,23 +1,37 @@
 //import Lib;
 
-struct Animal [
-    i64 a
+struct Animal[
+    pub i64 a,
+    pub i64 b,
 ];
 
-struct Human [
-    Animal a
+struct Human[
+    pub Animal a,
+    pub i64 size
 ];
 
-global i64 main(){
-    Human a;
-    a.a.a = 1;
-    Human* b = &a;
-    return b->a.a;
-    //Human b = a;
-    //Human* c = &a;
-    //Human d = *c;
+impl Human{
+    pub Human new(i64 size){
+        Human h;
+        h.a.a = 0;
+        h.a.b = 1;
+        h.size = size;
+        return h;
+    }
+    pub Human add(Human hadd){
+        Human set;
+        set.a.a = hadd.a.a;
+        set.a.b = hadd.a.b;
+        set.size = hadd.size;
+        return set;
+    }
+    pub Human sub(Human hadd){
+        return hadd;
+    }
 }
 
-/*
-
-*/
+global i64 main(){
+    Human a = Human::new(10);
+    //Human b = Human::add(a);
+    return a.a.a + a.a.b + a.size;
+}

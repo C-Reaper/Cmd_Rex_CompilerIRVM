@@ -4,6 +4,168 @@
 #include "../src/RexLang.h"
 #include "../src/RexLangASM.h"
 
+Token Struct_Struct_Ass_PtrSSA(RexLang* ll,CStr type,Token* a,Token* b){   
+    // Var ptr, SSA ref
+    Token ssa_a = RexLang_StructPtrSSA(ll,a);
+    Token ssa_b = RexLang_StructPtrSSA(ll,b);
+    Vec_CStr types = RexLang_UnfoldMemberTypes(ll,type);
+    int offset = 0;
+
+    for(int i = 0;i<types.size;i++){
+        CStr t = *(CStr*)Vector_Get(&types,i);
+        
+        const int t_size = RexLang_Size(ll,t);
+        const Number ssa_id_0 = ll->ssas++;
+        const Number ssa_id_1 = ll->ssas++;
+        const Number ssa_id_2 = ll->ssas++;
+
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_ADD,IRVM_OP_ADD),
+            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
+            Token_Cpy(&ssa_a),
+            Token_New_I64(TOKEN_NUMBER,offset),
+            Token_Null()
+        }));
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_ADD,IRVM_OP_ADD),
+            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_1)),
+            Token_Cpy(&ssa_b),
+            Token_New_I64(TOKEN_NUMBER,offset),
+            Token_Null()
+        }));
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_LOAD,IRVM_OP_LOAD),
+            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_2)),
+            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_1)),
+            Token_Null()
+        }));
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_STORE,IRVM_OP_STORE),
+            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
+            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_2)),
+            Token_Null()
+        }));
+
+        offset += t_size;
+    }
+
+    Vec_CStr_Free(&types);
+    Token_Free(&ssa_a);
+    Token_Free(&ssa_b);
+    return Token_Cpy(a);
+}
+Token Struct_Struct_Ass_LSplitSSA(RexLang* ll,CStr type,Token* a,Token* b){
+    // (SSA Split Return Value) = (Var ptr | SSA ref)
+    Variable* va = Scope_FindVariable(&ll->ev.sc,a->str);
+    RexLangVariable* va_sv = (RexLangVariable*)Variable_Data(va);
+    const TT_Type tt = RexLangVariable_Type(va_sv);
+    
+    Token ssa_b = RexLang_StructPtrSSA(ll,b);
+    Vec_CStr types = RexLang_UnfoldMemberTypes(ll,type);
+    int offset = 0;
+
+    for(int i = 0;i<types.size;i++){
+        CStr t = *(CStr*)Vector_Get(&types,i);
+        
+        const int t_size = RexLang_Size(ll,t);
+        const Number ssa_id_0 = ll->ssas++;
+
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_ADD,IRVM_OP_ADD),
+            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
+            Token_Cpy(&ssa_b),
+            Token_New_I64(TOKEN_NUMBER,offset),
+            Token_Null()
+        }));
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_LOAD,IRVM_OP_LOAD),
+            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+            Token_Move(tt,(CStr)Number_Get(va_sv->id + i)),
+            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
+            Token_Null()
+        }));
+
+        offset += t_size;
+    }
+
+    Vec_CStr_Free(&types);
+    return Token_Cpy(a);
+}
+Token Struct_Struct_Ass_RSplitSSA(RexLang* ll,CStr type,Token* a,Token* b){
+    // (Var ptr | SSA ref) = (SSA Split Return Value)
+    Variable* vb = Scope_FindVariable(&ll->ev.sc,b->str);
+    RexLangVariable* vb_sv = (RexLangVariable*)Variable_Data(vb);
+    const TT_Type tt = RexLangVariable_Type(vb_sv);
+    
+    Token ssa_a = RexLang_StructPtrSSA(ll,a);
+    Vec_CStr types = RexLang_UnfoldMemberTypes(ll,type);
+    int offset = 0;
+
+    for(int i = 0;i<types.size;i++){
+        CStr t = *(CStr*)Vector_Get(&types,i);
+        
+        const int t_size = RexLang_Size(ll,t);
+        const Number ssa_id_0 = ll->ssas++;
+
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_ADD,IRVM_OP_ADD),
+            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
+            Token_Cpy(&ssa_a),
+            Token_New_I64(TOKEN_NUMBER,offset),
+            Token_Null()
+        }));
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_STORE,IRVM_OP_STORE),
+            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
+            Token_Move(tt,(CStr)Number_Get(vb_sv->id + i)),
+            Token_Null()
+        }));
+
+        offset += t_size;
+    }
+
+    Vec_CStr_Free(&types);
+    return Token_Cpy(a);
+}
+Token Struct_Struct_Ass_LRSplitSSA(RexLang* ll,CStr type,Token* a,Token* b){
+    // (SSA Split Return Value) = (SSA Split Return Value)
+    Variable* va = Scope_FindVariable(&ll->ev.sc,a->str);
+    RexLangVariable* va_sv = (RexLangVariable*)Variable_Data(va);
+    const TT_Type tt_a = RexLangVariable_Type(va_sv);
+    
+    Variable* vb = Scope_FindVariable(&ll->ev.sc,b->str);
+    RexLangVariable* vb_sv = (RexLangVariable*)Variable_Data(vb);
+    const TT_Type tt_b = RexLangVariable_Type(vb_sv);
+    
+    Vec_CStr types = RexLang_UnfoldMemberTypes(ll,type);
+    int offset = 0;
+
+    for(int i = 0;i<types.size;i++){
+        CStr t = *(CStr*)Vector_Get(&types,i);
+        const int t_size = RexLang_Size(ll,t);
+
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            (tt_a == TOKEN_IRVM_PARAM ? Token_By(TOKEN_IRVM_ASS,IRVM_OP_ASS) : Token_By(TOKEN_IRVM_STORE,IRVM_OP_STORE)),
+            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+            Token_Move(tt_a,(CStr)Number_Get(va_sv->id + i)),
+            Token_Move(tt_b,(CStr)Number_Get(vb_sv->id + i)),
+            Token_Null()
+        }));
+
+        offset += t_size;
+    }
+
+    Vec_CStr_Free(&types);
+    return Token_Cpy(a);
+}
+
 Token Struct_Struct_Handler_Ass(RexLang* ll,Token* op,Vector* args){   
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
@@ -15,73 +177,28 @@ Token Struct_Struct_Handler_Ass(RexLang* ll,Token* op,Vector* args){
 
         Type* t_a = Scope_FindType(&ll->ev.sc,va->typename);
         Type* t_b = Scope_FindType(&ll->ev.sc,vb->typename);
+        
         if(t_a != t_b){
             Environment_ErrorHandler(&ll->ev,"Ass: Error -> %s and %s have different types!",a->str,b->str);
             return Token_Null();
         }
 
-        // Var ptr, SSA ref
-        Token ssa_a = RexLang_StructPtrSSA(ll,a);
-        Token ssa_b = RexLang_StructPtrSSA(ll,b);
-        Vec_CStr types = RexLang_UnfoldMemberTypes(ll,va->typename);
+        const char split_a = CStr_CmpLike(a->str,COMPILER_RETURN"*",'*') || va->range == 1 || a->str[0] == '.';
+        const char split_b = CStr_CmpLike(b->str,COMPILER_RETURN"*",'*') || vb->range == 1 || b->str[0] == '.';
 
-        int offset = 0;
-
-        for(int i = 0;i<types.size;i++){
-            CStr t = *(CStr*)Vector_Get(&types,i);
-            
-            const int t_size = RexLang_Size(ll,t);
-            const Number ssa_id_0 = ll->ssas++;
-            const Number ssa_id_1 = ll->ssas++;
-            const Number ssa_id_2 = ll->ssas++;
-
-            RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-                Token_By(TOKEN_IRVM_ADD,IRVM_OP_ADD),
-                Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
-                Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
-                Token_Cpy(&ssa_a),
-                Token_New_I64(TOKEN_NUMBER,offset),
-                Token_Null()
-            }));
-
-            RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-                Token_By(TOKEN_IRVM_ADD,IRVM_OP_ADD),
-                Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
-                Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_1)),
-                Token_Cpy(&ssa_b),
-                Token_New_I64(TOKEN_NUMBER,offset),
-                Token_Null()
-            }));
-
-            RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-                Token_By(TOKEN_IRVM_LOAD,IRVM_OP_LOAD),
-                Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
-                Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_2)),
-                Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_1)),
-                Token_Null()
-            }));
-
-            RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-                Token_By(TOKEN_IRVM_STORE,IRVM_OP_STORE),
-                Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
-                Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
-                Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_2)),
-                Token_Null()
-            }));
-
-            offset += t_size;
+        if(split_a && split_b){
+            return Struct_Struct_Ass_LRSplitSSA(ll,va->typename,a,b);
+        }else if(split_a){
+            return Struct_Struct_Ass_LSplitSSA(ll,va->typename,a,b);
+        }else if(split_b){
+            return Struct_Struct_Ass_RSplitSSA(ll,va->typename,a,b);
+        }else{
+            return Struct_Struct_Ass_PtrSSA(ll,va->typename,a,b);
         }
-
-        Vec_CStr_Free(&types);
-        Token dref_a = RexLang_ExecuteDrf(ll,&ssa_a);
-        Token_Free(&ssa_a);
-        Token_Free(&ssa_b);
-        return dref_a;
     }else{
         Environment_ErrorHandler(&ll->ev,"Ass: Error -> %s is no struct type!",b->str);
         return Token_Null();
     }
-    return Token_Cpy(a);
 }
 Token Struct_Handler_Adr(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);

@@ -165,6 +165,22 @@ RexLangVariable RexLangVariable_New(void* parent,RexLang_Storage storage,RexLang
     sv.global = NULL;
     return sv;
 }
+TT_Type RexLangVariable_Type(RexLangVariable* sv){
+    switch (sv->storage){
+        case REXLANG_STORAGE_STACK:                 return TOKEN_IRVM_SSA;
+        case REXLANG_STORAGE_GLOBAL:                return TOKEN_IRVM_SSA;
+        case REXLANG_STORAGE_STACK_STRUCT:          return TOKEN_IRVM_SSA;
+        case REXLANG_STORAGE_GLOBAL_STRUCT:         return TOKEN_IRVM_SSA;
+        case REXLANG_STORAGE_STACK_BLOCK:           return TOKEN_IRVM_SSA;
+        case REXLANG_STORAGE_GLOBAL_BLOCK:          return TOKEN_IRVM_SSA;
+        case REXLANG_STORAGE_STACK_STRUCT_BLOCK:    return TOKEN_IRVM_SSA;
+        case REXLANG_STORAGE_GLOBAL_STRUCT_BLOCK:   return TOKEN_IRVM_SSA;
+        case REXLANG_STORAGE_SSA:                   return TOKEN_IRVM_SSA;
+        case REXLANG_STORAGE_RETURN:                return TOKEN_IRVM_PARAM;
+        case REXLANG_STORAGE_PARAM:                 return TOKEN_IRVM_PARAM;
+    }
+    return TOKEN_NONE;
+}
 void RexLangVariable_Free(RexLangVariable* sv){
     if(
         sv->storage == REXLANG_STORAGE_GLOBAL ||

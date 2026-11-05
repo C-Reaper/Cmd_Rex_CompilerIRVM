@@ -56,6 +56,25 @@ typedef struct RexLang {
     unsigned int PADD2;
 } RexLang;
 
+int RexLang_UnfoldTypeCount(RexLang* ll,CStr name) {
+    if(!name) return 0;
+    
+    Type* const t = Scope_FindType(&ll->ev.sc,name);
+    if(!t) return 0;
+
+    if(t->related.size > 0){
+        int count = 0;
+        
+        for(int i = 0;i<t->related.size;i++){
+            Member* m = (Member*)Vector_Get(&t->related,i);
+            count += RexLang_UnfoldTypeCount(ll,m->type);
+        }
+
+        return count;
+    }else{
+        return 1;
+    }
+}
 Vec_CStr RexLang_UnfoldType(RexLang* ll,CStr name) {
     if(!name) return Vec_CStr_New();
     
@@ -117,7 +136,7 @@ Vec_CStr RexLang_UnfoldMemberTypes(RexLang* ll,CStr name) {
     for(int i = 0;i<t->related.size;i++){
         Member* m = (Member*)Vector_Get(&t->related,i);
         
-        Vec_CStr m_types = RexLang_UnfoldMembers(ll,m->type);
+        Vec_CStr m_types = RexLang_UnfoldMemberTypes(ll,m->type);
         
         if(m_types.size == 0){
             Vec_CStr_Push(&types,m->type);
@@ -570,7 +589,7 @@ void RexLang_Variable_Build_Param(RexLang* ll,CStr name,CStr type,int i){
 
     Variable* v = Scope_FindVariable(&ll->ev.sc,name);
     RexLangVariable* sv = (RexLangVariable*)Variable_Data(v);
-    sv->id = i + 1;
+    sv->id = i;
 }
 void RexLang_Variable_Build_SSA(RexLang* ll,CStr name,CStr type,int ssa){
     RexLang_Variable_BuildRange(ll,name,type,ll->ev.sc.range,REXLANG_STORAGE_SSA,REXLANG_DESTROY_FULL);
@@ -894,10 +913,20 @@ Token RexLang_Init(RexLang* ll,Token* op,Vector* args){
 
         if(CStr_CmpLike(v->name,COMPILER_RETURN"*",'*')){
             v_sv->storage = REXLANG_STORAGE_SSA;
-            v_sv->id = ll->ssas++;
+            v_sv->id = ll->ssas;
+
+            Vec_CStr types = RexLang_UnfoldMemberTypes(ll,v->typename);
+            if(types.size == 0) ll->ssas++;
+            else                ll->ssas += types.size;
+            Vec_CStr_Free(&types);
         }else if(v->name[0] == '.'){
             v_sv->storage = REXLANG_STORAGE_SSA;
-            v_sv->id = ll->ssas++;
+            v_sv->id = ll->ssas;
+
+            Vec_CStr types = RexLang_UnfoldMemberTypes(ll,v->typename);
+            if(types.size == 0) ll->ssas++;
+            else                ll->ssas += types.size;
+            Vec_CStr_Free(&types);
         }
 
         if(v_sv->destroy == REXLANG_DESTROY_DESTRUCT || v_sv->destroy == REXLANG_DESTROY_FULL){
@@ -1614,51 +1643,63 @@ Token RexLang_ExecuteAcs(RexLang* ll,Token* a,CStr member){
         return Token_Null();
     }
 
-    // Var ptr, SSA ref
-    Variable* va = Scope_FindVariable(&ll->ev.sc,a->str);
-    Vec_CStr types = RexLang_GetMemberTypes(ll,va->typename);
-    Vec_CStr membs = RexLang_GetMembers(ll,va->typename);
-
-    CStr acs_t = NULL;
-    CStr acs_m = NULL;
+    Member* mem = NULL;
+    int index = 0;
+    int unfold = 0;
     int offset = 0;
 
-    for(int i = 0;i<types.size;i++){
-        acs_t = *(CStr*)Vector_Get(&types,i);
-        acs_m = *(CStr*)Vector_Get(&membs,i);
+    for(;index<type->related.size;index++){
+        mem = (Member*)Vector_Get(&type->related,index);
 
-        if(CStr_Cmp(acs_m,member)) break;
-        offset += RexLang_Size(ll,acs_t);
+        if(CStr_Cmp(member,mem->name)){
+            if(!mem->access && !CStr_Cmp(a->str,REXLANG_SELF)){
+                Compiler_ErrorHandler(&ll->ev,"member not accesible %s!",member);
+                return Token_Null();
+            }
+            break;
+        }
+        
+        offset += RexLang_Size(ll,mem->type);
+        unfold += RexLang_UnfoldTypeCount(ll,mem->type);
 
-        if(i + 1 == types.size){
-            Vec_CStr_Free(&types);
-            Vec_CStr_Free(&membs);
-
+        if(index + 1 == type->related.size){
             Compiler_ErrorHandler(&ll->ev,"member not found %s!",member);
             return Token_Null();
         }
     }
 
-    Token ssa_a = RexLang_GetIRVMTokenTarget(ll,a);
-    const Number ssa_id = ll->ssas++;
-
-    CStr typename_a = CStr_Concat(acs_t,"&");
-    CStr stack_name = CStr_Format("%%%d",ssa_id);
-    RexLang_Variable_Build_SSA(ll,stack_name,typename_a,ssa_id);
-    CStr_Free(&typename_a);
+    Variable* va = Scope_FindVariable(&ll->ev.sc,a->str);
+    RexLangVariable* va_sv = (RexLangVariable*)Variable_Data(va);
     
-    RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-        Token_By(TOKEN_IRVM_ADD,IRVM_OP_ADD),
-        Token_By(TOKEN_TYPE,IRVM_TYPE_POINTER),
-        Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id)),
-        ssa_a,
-        Token_New_I64(TOKEN_NUMBER,offset),
-        Token_Null()
-    }));
+    if(va_sv->storage == REXLANG_STORAGE_RETURN || va_sv->storage == REXLANG_STORAGE_PARAM){
+        const Number ssa_id = ll->ssas++;
 
-    Vec_CStr_Free(&types);
-    Vec_CStr_Free(&membs);
-    return Token_Move(TOKEN_STRING,stack_name);
+        CStr typename_a = CStr_Cpy(mem->type);
+        CStr stack_name = CStr_Format("%%%d",ssa_id);
+        RexLang_Variable_Build_Param(ll,stack_name,typename_a,va_sv->id + unfold);
+        CStr_Free(&typename_a);
+        
+        return Token_Move(TOKEN_STRING,stack_name);
+    }else{
+        Token ssa_a = RexLang_GetIRVMTokenTarget(ll,a);
+        const Number ssa_id = ll->ssas++;
+
+        CStr typename_a = CStr_Concat(mem->type,"&");
+        CStr stack_name = CStr_Format("%%%d",ssa_id);
+        RexLang_Variable_Build_SSA(ll,stack_name,typename_a,ssa_id);
+        CStr_Free(&typename_a);
+        
+        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+            Token_By(TOKEN_IRVM_ADD,IRVM_OP_ADD),
+            Token_By(TOKEN_TYPE,IRVM_TYPE_POINTER),
+            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id)),
+            ssa_a,
+            Token_New_I64(TOKEN_NUMBER,offset),
+            Token_Null()
+        }));
+
+        return Token_Move(TOKEN_STRING,stack_name);
+    }
 }
 
 #endif //!REXLANGASM_H
