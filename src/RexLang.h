@@ -2017,7 +2017,6 @@ RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
     //Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,F32_TYPE, "Ex_Packer",  (CStr[]){ F32_TYPE,     NULL },&ll.ev.sc) });
     //Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,F64_TYPE, "Ex_Packer",  (CStr[]){ F64_TYPE,     NULL },&ll.ev.sc) });
     
-
     CVector_Push(&ll.filesstack,(CStr[]){ CStr_Cpy(src) });
     CVector_Push(&ll.filesinc,(CStr[]){ CStr_Cpy(src) });
     Compiler_Script(&ll.ev,src);

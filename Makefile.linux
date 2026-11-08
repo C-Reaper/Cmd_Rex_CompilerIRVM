@@ -46,12 +46,6 @@ $(BIN_DIR):
 $(BIN_DIR)/%.so: $(LIB_DIR)/%.c
 	$(CC) $(CFLAGS) -fPIC -o $@ $< -shared $(LDFLAGS)
 
-comp:
-	nasm -f elf64 -g -F dwarf ./asm/Main.asm -o ./build/Output.o
-	ld -m elf_x86_64 -no-pie ./build/Output.o -o ./build/Output
-#gdb ./build/Output
-	./build/Output; echo $$?
-
 do: clean all exe
 
 dg: clean alldebug debug

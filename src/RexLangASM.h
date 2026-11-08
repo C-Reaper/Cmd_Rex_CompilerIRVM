@@ -991,6 +991,14 @@ CStr RexLang_GetFloatStr(RexLang* ll,CStr fstr){
 Token RexLang_GetFloatToken(RexLang* ll,CStr fstr){
     return Token_Move(TOKEN_FLOAT,RexLang_GetFloatStr(ll,fstr));
 }
+Token RexLang_GetConstStr(RexLang* ll,Token* conststr){
+    Vector values = Vector_New(sizeof(uint64_t));
+    IRVM_Static_Str(&values,conststr->str);
+
+    CStr name = CStr_Format("cstr.%d",(Number)ll->vm.info_statics.size);
+    Vector_Push(&ll->vm.info_statics,(IRVM_DataInfo[]){ IRVM_DataInfo_New_Data(name,IRVM_TYPE_I8,values) });
+    return Token_Move(TOKEN_IRVM_STATIC,name);
+}
 
 CStr RexLang_FInstOf(RexLang* ll,Token* a,CStr inst){
     if(a->tt==TOKEN_STRING){
@@ -1155,7 +1163,7 @@ Token RexLang_GetIRVMToken(RexLang* ll,Token* a){
             return Token_New_I64(TOKEN_NUMBER,a->str[0]);
         }
         case TOKEN_CONSTSTRING_DOUBLE:{
-            return Token_Null();
+            return RexLang_GetConstStr(ll,a);
         }
         case TOKEN_IRVM_FUNCTION:  return Token_Cpy(a);
         case TOKEN_IRVM_PARAM:     return Token_Cpy(a);
@@ -1295,7 +1303,7 @@ Token RexLang_GetIRVMTokenSSA(RexLang* ll,Token* a){
             return Token_New_I64(TOKEN_NUMBER,a->str[0]);
         }
         case TOKEN_CONSTSTRING_DOUBLE:{
-            return Token_Null();
+            return RexLang_GetConstStr(ll,a);
         }
         case TOKEN_IRVM_FUNCTION:  return Token_Cpy(a);
         case TOKEN_IRVM_PARAM:     return Token_Cpy(a);
@@ -1408,10 +1416,8 @@ Token RexLang_ExecuteCast(RexLang* ll,CStr tname,Token* a){
     const Token ssa_a = RexLang_GetIRVMTokenTargetSSA(ll,a);
     const Number ssa_id = ll->ssas++;
     
-    CStr typename_a = RexLang_VariableType(ll,a);
     CStr stack_name = CStr_Format("%%%d",ssa_id);
-    RexLang_Variable_Build_SSA(ll,stack_name,typename_a,ssa_id);
-    CStr_Free(&typename_a);
+    RexLang_Variable_Build_SSA(ll,stack_name,tname,ssa_id);
     
     RexLang_AppendTM(ll,TokenMap_Make((Token[]){
         Token_By(TOKEN_IRVM_ASS,IRVM_OP_ASS),
