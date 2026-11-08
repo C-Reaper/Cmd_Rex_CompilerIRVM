@@ -1018,9 +1018,8 @@ Boolean RexLang_Function(RexLang* ll,TokenMap* tm){
         Type* t = Scope_FindType(&ll->ev.sc,f->rettype);
         if(t){
             int returns = 0;
-            Vec_CStr types = RexLang_UnfoldMemberTypes(ll,f->rettype);
-            if(types.size == 0) returns++;
-            else                returns += types.size;
+            Vec_CStr types = RexLang_UnfoldType(ll,f->rettype);
+            returns += types.size;
             Vec_CStr_Free(&types);
 
             RexLang_Variable_Build_Return(ll,COMPILER_RETURN"0",f->rettype);
@@ -1313,14 +1312,10 @@ TokenMap RexLang_Function_BuildTM(RexLang* ll,CStr name,Function* f){
         RexLangVariable* sv_arg = (RexLangVariable*)Variable_Data(arg);
 
         if(sv_arg->storage == REXLANG_STORAGE_SSA){
-            Vec_CStr types = RexLang_UnfoldMemberTypes(ll,arg->typename);
+            Vec_CStr types = RexLang_UnfoldType(ll,arg->typename);
             
-            if(types.size == 0){
-                TokenMap_Push(&tm,(Token[]){ Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(sv_arg->id)) });
-            }else{
-                for(int j = 0;j<types.size;j++){
-                    TokenMap_Push(&tm,(Token[]){ Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(sv_arg->id + j)) });
-                }
+            for(int j = 0;j<types.size;j++){
+                TokenMap_Push(&tm,(Token[]){ Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(sv_arg->id + j)) });
             }
 
             Vec_CStr_Free(&types);

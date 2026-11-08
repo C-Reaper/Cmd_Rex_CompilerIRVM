@@ -17,10 +17,10 @@ impl Human{
 }
 
 global i64 main(){
-    Human a = Human::new(10);
+    Human a = Human::new(20);
+    a.delete(10);
     a.delete(5);
-    a.delete(5);
-    return a.size;
+    return 1 + a.size;
     //Human b = a;
     //Human* c = &a;
     //Human d = *c;

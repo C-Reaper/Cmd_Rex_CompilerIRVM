@@ -57,6 +57,51 @@ typedef struct RexLang {
     unsigned int PADD2;
 } RexLang;
 
+Boolean RexLang_StructType(RexLang* ll,CStr type){
+    const int size = CStr_Size(type);
+    
+    if(type[size - 1] == '*')           return False;
+    if(type[size - 1] == '&'){
+        CStr dtype = CStr_Sub(type,0,size - 1);
+        Boolean ret = RexLang_StructType(ll,dtype);
+        CStr_Free(&dtype);
+        return ret;
+    }else if(CStr_Cmp(type,BOOL_TYPE))  return False;
+    else if(CStr_Cmp(type,I8_TYPE))     return False;
+    else if(CStr_Cmp(type,I16_TYPE))    return False;
+    else if(CStr_Cmp(type,I32_TYPE))    return False;
+    else if(CStr_Cmp(type,I64_TYPE))    return False;
+    else if(CStr_Cmp(type,U8_TYPE))     return False;
+    else if(CStr_Cmp(type,U16_TYPE))    return False;
+    else if(CStr_Cmp(type,U32_TYPE))    return False;
+    else if(CStr_Cmp(type,U64_TYPE))    return False;
+    else                                return True;
+}
+CStr RexLang_Type(RexLang* ll,CStr type){
+    const int size = CStr_Size(type);
+    
+    if(type[size - 1] == '*')           return IRVM_TYPE_POINTER;
+    if(type[size - 1] == '&'){
+        CStr dtype = CStr_Sub(type,0,size - 1);
+        CStr ret = RexLang_Type(ll,dtype);
+        CStr_Free(&dtype);
+        return ret;
+    }else if(CStr_Cmp(type,BOOL_TYPE))  return IRVM_TYPE_BOOL;
+    else if(CStr_Cmp(type,I8_TYPE))     return IRVM_TYPE_I8;
+    else if(CStr_Cmp(type,I16_TYPE))    return IRVM_TYPE_I16;
+    else if(CStr_Cmp(type,I32_TYPE))    return IRVM_TYPE_I32;
+    else if(CStr_Cmp(type,I64_TYPE))    return IRVM_TYPE_I64;
+    else if(CStr_Cmp(type,U8_TYPE))     return IRVM_TYPE_U8;
+    else if(CStr_Cmp(type,U16_TYPE))    return IRVM_TYPE_U16;
+    else if(CStr_Cmp(type,U32_TYPE))    return IRVM_TYPE_U32;
+    else if(CStr_Cmp(type,U64_TYPE))    return IRVM_TYPE_U64;
+    else if(CStr_Cmp(type,VOID_TYPE))   return IRVM_TYPE_VOID;
+    else{
+        Compiler_ErrorHandler(&ll->ev,"type %s invalid!",type);
+        return NULL;
+    }
+}
+
 int RexLang_UnfoldTypeCount(RexLang* ll,CStr name) {
     if(!name) return 0;
     
@@ -72,6 +117,8 @@ int RexLang_UnfoldTypeCount(RexLang* ll,CStr name) {
         }
 
         return count;
+    }else if(CStr_Cmp(name,VOID_TYPE)){
+        return 0;
     }else{
         return 1;
     }
@@ -94,8 +141,10 @@ Vec_CStr RexLang_UnfoldType(RexLang* ll,CStr name) {
         }
 
         return types;
+    }else if(CStr_Cmp(name,VOID_TYPE)){
+        return Vec_CStr_New();
     }else{
-        return Vec_CStr_Make((CStr[]){ CStr_Cpy(name) },1);
+        return Vec_CStr_Make((CStr[]){ CStr_Cpy(RexLang_Type(ll,name)) },1);
     }
 }
 Vec_CStr RexLang_UnfoldMembers(RexLang* ll,CStr name) {
@@ -278,49 +327,6 @@ char RexLang_CompressStackType(TokenMap* tm,int start){
     return 0;
 }
 
-Boolean RexLang_StructType(RexLang* ll,CStr type){
-    const int size = CStr_Size(type);
-    
-    if(type[size - 1] == '*')           return False;
-    if(type[size - 1] == '&'){
-        CStr dtype = CStr_Sub(type,0,size - 1);
-        Boolean ret = RexLang_StructType(ll,dtype);
-        CStr_Free(&dtype);
-        return ret;
-    }else if(CStr_Cmp(type,BOOL_TYPE))  return False;
-    else if(CStr_Cmp(type,I8_TYPE))     return False;
-    else if(CStr_Cmp(type,I16_TYPE))    return False;
-    else if(CStr_Cmp(type,I32_TYPE))    return False;
-    else if(CStr_Cmp(type,I64_TYPE))    return False;
-    else if(CStr_Cmp(type,U8_TYPE))     return False;
-    else if(CStr_Cmp(type,U16_TYPE))    return False;
-    else if(CStr_Cmp(type,U32_TYPE))    return False;
-    else if(CStr_Cmp(type,U64_TYPE))    return False;
-    else                                return True;
-}
-CStr RexLang_Type(RexLang* ll,CStr type){
-    const int size = CStr_Size(type);
-    
-    if(type[size - 1] == '*')           return IRVM_TYPE_POINTER;
-    if(type[size - 1] == '&'){
-        CStr dtype = CStr_Sub(type,0,size - 1);
-        CStr ret = RexLang_Type(ll,dtype);
-        CStr_Free(&dtype);
-        return ret;
-    }else if(CStr_Cmp(type,BOOL_TYPE))  return IRVM_TYPE_BOOL;
-    else if(CStr_Cmp(type,I8_TYPE))     return IRVM_TYPE_I8;
-    else if(CStr_Cmp(type,I16_TYPE))    return IRVM_TYPE_I16;
-    else if(CStr_Cmp(type,I32_TYPE))    return IRVM_TYPE_I32;
-    else if(CStr_Cmp(type,I64_TYPE))    return IRVM_TYPE_I64;
-    else if(CStr_Cmp(type,U8_TYPE))     return IRVM_TYPE_U8;
-    else if(CStr_Cmp(type,U16_TYPE))    return IRVM_TYPE_U16;
-    else if(CStr_Cmp(type,U32_TYPE))    return IRVM_TYPE_U32;
-    else if(CStr_Cmp(type,U64_TYPE))    return IRVM_TYPE_U64;
-    else{
-        Compiler_ErrorHandler(&ll->ev,"type %s invalid!",type);
-        return NULL;
-    }
-}
 CStr RexLang_VariableType(RexLang* ll,Token* a){
     if(a->tt==TOKEN_STRING){
         Variable* v_a = Scope_FindVariable(&ll->ev.sc,a->str);

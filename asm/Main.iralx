@@ -1,78 +1,52 @@
-define i64 i64 i64 @f.Human.new i64
-    allocs 24 %h 
-    add ptr %0 %h 0 
+define @f.Human.init ptr i64
+    ass ptr %0 &0 
     add ptr %1 %0 0 
-    store i64 %1 0 
-    add ptr %2 %h 0 
-    add ptr %3 %2 8 
-    store i64 %3 1 
-    add ptr %4 %h 16 
-    store i64 %4 &3 
-    ass ptr %5 %h 
-    add i64 %6 %5 0 
-    load i64 %7 %6 
-    add i64 %8 %5 8 
-    load i64 %9 %8 
-    add i64 %10 %5 16 
-    load i64 %11 %10 
-    destroy %h 
-    ret %7 %9 %11 
-    destroy %h 
+    store i64 %1 &1 
     ret 
 
-define i64 i64 i64 @f.Human.add i64 i64 i64
-    allocs 24 %set 
-    add ptr %0 %set 0 
+define @f.Human.delete ptr i64
+    ass ptr %0 &0 
     add ptr %1 %0 0 
-    store i64 %1 &3 
-    add ptr %4 %set 0 
-    add ptr %5 %4 8 
-    store i64 %5 &4 
-    add ptr %8 %set 16 
-    store i64 %8 &5 
-    ass ptr %10 %set 
-    add i64 %11 %10 0 
-    load i64 %12 %11 
-    add i64 %13 %10 8 
-    load i64 %14 %13 
-    add i64 %15 %10 16 
-    load i64 %16 %15 
-    destroy %set 
-    ret %12 %14 %16 
-    destroy %set 
+    load i64 %2 %1 
+    sub i64 %3 %2 &1 
+    store i64 %1 %3 
     ret 
 
-define i64 i64 i64 @f.Human.sub i64 i64 i64
-    ass i64 %0 &3 
-    ass i64 %1 &4 
-    ass i64 %2 &5 
-    ret %0 %1 %2 
+define i64 @f.Human.new i64
+    allocs 8 %h 
+    ass ptr %2 %h 
+    ass ptr %1 %2 
+    ass i64 %3 &1 
+    call @f.Human.init %1 %3 
+    ass ptr %4 %h 
+    add i64 %5 %4 0 
+    load i64 %6 %5 
+    destroy %h 
+    ret %6 
+    destroy %h 
     ret 
 
 global i64 @f.main
-    allocs 24 %a 
-    ass i64 %3 10 
-    call @f.Human.new %0 %1 %2 %3 
-    ass ptr %4 %a 
-    add i64 %5 %4 0 
-    store i64 %5 %0 
-    add i64 %6 %4 8 
-    store i64 %6 %1 
-    add i64 %7 %4 16 
-    store i64 %7 %2 
-    add ptr %8 %a 0 
-    add ptr %9 %8 0 
-    add ptr %10 %a 0 
-    add ptr %11 %10 8 
-    load i64 %12 %9 
-    load i64 %13 %11 
-    add i64 %14 %12 %13 
-    add ptr %15 %a 16 
-    load i64 %16 %15 
-    add i64 %17 %14 %16 
-    ass i64 %18 %17 
+    allocs 8 %a 
+    ass i64 %1 20 
+    call @f.Human.new %0 %1 
+    ass ptr %2 %a 
+    add i64 %3 %2 0 
+    store i64 %3 %0 
+    ass ptr %6 %a 
+    ass ptr %5 %6 
+    ass i64 %7 10 
+    call @f.Human.delete %5 %7 
+    ass ptr %10 %a 
+    ass ptr %9 %10 
+    ass i64 %11 5 
+    call @f.Human.delete %9 %11 
+    add ptr %12 %a 0 
+    load i64 %13 %12 
+    add i64 %14 1 %13 
+    ass i64 %15 %14 
     destroy %a 
-    ret %18 
+    ret %15 
     destroy %a 
     ret 
 
