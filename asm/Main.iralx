@@ -1,231 +1,369 @@
-data i8 &cstr.0 '-' '-' ' ' 'S' 't' 'a' 'r' 't' ' ' '-' '-' 10 0
-data i8 &cstr.1 'P' 'l' 'e' 'a' 's' 'e' ' ' 't' 'y' 'p' 'e' ' ' 's' 't' 'h' ':' ' ' 0
-data i8 &cstr.2 ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 0
-data i8 &cstr.3 'O' 'u' 't' 'p' 'u' 't' ':' ' ' 0
-data i8 &cstr.4 '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' 10 0
 
-extern @f.syscall i64 i64 i64 i64 i64 i64
-
-define @f.read i64 ptr i64
-    ass i64 %1 0 
-    ass i64 %2 &0 
-    ass i64 %4 &1 
-    ass i64 %3 %4 
-    ass i64 %5 &2 
-    ass i64 %6 0 
-    ass i64 %7 0 
-    call @f.syscall %1 %2 %3 %5 %6 %7 
+define i64 @f.add10 i64 i64 i64 i64 i32 i32 i16 i16 i16 i16
+    add i64 %0 &1 &2 
+    add i64 %1 %0 &3 
+    add i64 %2 %1 &4 
+    add i64 %3 %2 &5 
+    add i64 %4 %3 &6 
+    add i64 %5 %4 &7 
+    add i64 %6 %5 &8 
+    add i64 %7 %6 &9 
+    add i64 %8 %7 &10 
+    ass i64 %9 %8 
+    ret %9 
     ret 
 
-define @f.write i64 ptr i64
-    ass i64 %1 1 
-    ass i64 %2 &0 
-    ass i64 %4 &1 
-    ass i64 %3 %4 
-    ass i64 %5 &2 
-    ass i64 %6 0 
-    ass i64 %7 0 
-    call @f.syscall %1 %2 %3 %5 %6 %7 
+define i64 i64 i64 i64 i32 i32 i16 i16 i16 i16 @f.newh i64 i64 i64 i64 i32 i32 i16 i16 i16 i16
+    allocs 48 %hm 
+    add ptr %0 %hm 0 
+    store i64 %0 &10 
+    add ptr %1 %hm 8 
+    store i64 %1 &11 
+    add ptr %2 %hm 16 
+    store i64 %2 &12 
+    add ptr %3 %hm 24 
+    store i64 %3 &13 
+    add ptr %4 %hm 32 
+    store i32 %4 &14 
+    add ptr %5 %hm 36 
+    store i32 %5 &15 
+    add ptr %6 %hm 40 
+    store i16 %6 &16 
+    add ptr %7 %hm 42 
+    store i16 %7 &17 
+    add ptr %8 %hm 44 
+    store i16 %8 &18 
+    add ptr %9 %hm 46 
+    store i16 %9 &19 
+    ass ptr %10 %hm 
+    add i64 %11 %10 0 
+    load i64 %12 %11 
+    add i64 %13 %10 8 
+    load i64 %14 %13 
+    add i64 %15 %10 16 
+    load i64 %16 %15 
+    add i64 %17 %10 24 
+    load i64 %18 %17 
+    add i32 %19 %10 32 
+    load i32 %20 %19 
+    add i32 %21 %10 36 
+    load i32 %22 %21 
+    add i16 %23 %10 40 
+    load i16 %24 %23 
+    add i16 %25 %10 42 
+    load i16 %26 %25 
+    add i16 %27 %10 44 
+    load i16 %28 %27 
+    add i16 %29 %10 46 
+    load i16 %30 %29 
+    destroy %hm 
+    ret %12 %14 %16 %18 %20 %22 %24 %26 %28 %30 
+    destroy %hm 
     ret 
 
-define @f.open i64 i64 i64
-    ass i64 %1 2 
-    ass i64 %2 &0 
-    ass i64 %3 &1 
-    ass i64 %4 &2 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
+define i64 i64 i64 i64 i32 i32 i16 i16 i16 i16 @f.addh i64 i64 i64 i64 i32 i32 i16 i16 i16 i16 i64 i64 i64 i64 i32 i32 i16 i16 i16 i16
+    allocs 48 %h 
+    add ptr %0 %h 0 
+    add i64 %3 &10 &20 
+    store i64 %0 %3 
+    add ptr %4 %h 8 
+    add i64 %7 &11 &21 
+    store i64 %4 %7 
+    add ptr %8 %h 16 
+    add i64 %11 &12 &22 
+    store i64 %8 %11 
+    add ptr %12 %h 24 
+    add i64 %15 &13 &23 
+    store i64 %12 %15 
+    add ptr %16 %h 32 
+    add i32 %19 &14 &24 
+    store i32 %16 %19 
+    add ptr %20 %h 36 
+    add i32 %23 &15 &25 
+    store i32 %20 %23 
+    add ptr %24 %h 40 
+    add i16 %27 &16 &26 
+    store i16 %24 %27 
+    add ptr %28 %h 42 
+    add i16 %31 &17 &27 
+    store i16 %28 %31 
+    add ptr %32 %h 44 
+    add i16 %35 &18 &28 
+    store i16 %32 %35 
+    add ptr %36 %h 46 
+    add i16 %39 &19 &29 
+    store i16 %36 %39 
+    ass ptr %40 %h 
+    add i64 %41 %40 0 
+    load i64 %42 %41 
+    add i64 %43 %40 8 
+    load i64 %44 %43 
+    add i64 %45 %40 16 
+    load i64 %46 %45 
+    add i64 %47 %40 24 
+    load i64 %48 %47 
+    add i32 %49 %40 32 
+    load i32 %50 %49 
+    add i32 %51 %40 36 
+    load i32 %52 %51 
+    add i16 %53 %40 40 
+    load i16 %54 %53 
+    add i16 %55 %40 42 
+    load i16 %56 %55 
+    add i16 %57 %40 44 
+    load i16 %58 %57 
+    add i16 %59 %40 46 
+    load i16 %60 %59 
+    destroy %h 
+    ret %42 %44 %46 %48 %50 %52 %54 %56 %58 %60 
+    destroy %h 
     ret 
 
-define @f.close i64
-    ass i64 %1 3 
-    ass i64 %2 &0 
-    ass i64 %3 0 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.mprotect u64 u64 u64
-    ass i64 %1 11 
-    ass i64 %2 &0 
-    ass i64 %3 &1 
-    ass i64 %4 &2 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.munmap u64 u64
-    ass i64 %1 11 
-    ass i64 %2 &0 
-    ass i64 %3 &1 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.brk u64
-    ass i64 %1 12 
-    ass i64 %2 &0 
-    ass i64 %3 0 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.ioctrl u64 u64 u64
-    ass i64 %1 16 
-    ass i64 %2 &0 
-    ass i64 %3 &1 
-    ass i64 %4 &2 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.pipe ptr
-    ass i64 %1 22 
-    ass i64 %3 &0 
-    ass i64 %2 %3 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    ass i64 %7 0 
-    call @f.syscall %1 %2 %4 %5 %6 %7 
-    ret 
-
-define @f.pause
-    ass i64 %1 34 
-    ass i64 %2 0 
-    ass i64 %3 0 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.nanosleep ptr ptr
-    ass i64 %1 35 
-    ass i64 %3 &0 
-    ass i64 %2 %3 
-    ass i64 %5 &1 
-    ass i64 %4 %5 
-    ass i64 %6 0 
-    ass i64 %7 0 
-    ass i64 %8 0 
-    call @f.syscall %1 %2 %4 %6 %7 %8 
-    ret 
-
-define @f.alarm u64
-    ass i64 %1 37 
-    ass i64 %2 &0 
-    ass i64 %3 0 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.getpid
-    ass i64 %1 39 
-    ass i64 %2 0 
-    ass i64 %3 0 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.fork
-    ass i64 %1 57 
-    ass i64 %2 0 
-    ass i64 %3 0 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.vfork
-    ass i64 %1 58 
-    ass i64 %2 0 
-    ass i64 %3 0 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.execve ptr ptr ptr
-    ass i64 %1 59 
-    ass i64 %3 &0 
-    ass i64 %2 %3 
-    ass i64 %5 &1 
-    ass i64 %4 %5 
-    ass i64 %7 &2 
-    ass i64 %6 %7 
-    ass i64 %8 0 
-    ass i64 %9 0 
-    call @f.syscall %1 %2 %4 %6 %8 %9 
-    ret 
-
-define @f.exit i64
-    ass i64 %1 60 
-    ass i64 %2 &0 
-    ass i64 %3 0 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.fcntl u64 u64 u64
-    ass i64 %1 72 
-    ass i64 %2 &0 
-    ass i64 %3 &1 
-    ass i64 %4 &2 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %1 %2 %3 %4 %5 %6 
+define i64 @f.foldh i64 i64 i64 i64 i32 i32 i16 i16 i16 i16
+    add i64 %2 &1 &2 
+    add i64 %4 %2 &3 
+    add i64 %6 %4 &4 
+    add i64 %8 %6 &5 
+    add i64 %10 %8 &6 
+    add i64 %12 %10 &7 
+    add i64 %14 %12 &8 
+    add i64 %16 %14 &9 
+    add i64 %18 %16 &10 
+    ass i64 %19 %18 
+    ret %19 
     ret 
 
 global i64 @f.main
-    ass i64 %1 1 
-    ass ptr %2 &cstr.0 
-    ass i64 %3 12 
-    call @f.write %1 %2 %3 
-    ass i64 %5 1 
-    ass ptr %6 &cstr.1 
-    ass i64 %7 17 
-    call @f.write %5 %6 %7 
-    alloca ptr %buf 
-    store ptr %buf &cstr.2 
-    ass i64 %9 0 
-    load ptr %11 %buf 
-    ass ptr %10 %11 
-    ass i64 %12 12 
-    call @f.read %9 %10 %12 
-    ass i64 %14 1 
-    ass ptr %15 &cstr.3 
-    ass i64 %16 8 
-    call @f.write %14 %15 %16 
-    ass i64 %18 1 
-    load ptr %20 %buf 
-    ass ptr %19 %20 
-    ass i64 %21 12 
-    call @f.write %18 %19 %21 
-    ass i64 %23 1 
-    ass ptr %24 &cstr.4 
-    ass i64 %25 12 
-    call @f.write %23 %24 %25 
-    ass i64 %26 0 
-    destroy %buf 
-    ret %26 
-    destroy %buf 
+    allocs 48 %a 
+    ass i64 %10 1 
+    ass i64 %11 2 
+    ass i64 %12 3 
+    ass i64 %13 4 
+    ass i32 %14 5 
+    ass i32 %15 6 
+    ass i16 %16 7 
+    ass i16 %17 8 
+    ass i16 %18 9 
+    ass i16 %19 10 
+    call @f.newh %0 %1 %2 %3 %4 %5 %6 %7 %8 %9 %10 %11 %12 %13 %14 %15 %16 %17 %18 %19 
+    ass ptr %20 %a 
+    add i64 %21 %20 0 
+    store i64 %21 %0 
+    add i64 %22 %20 8 
+    store i64 %22 %1 
+    add i64 %23 %20 16 
+    store i64 %23 %2 
+    add i64 %24 %20 24 
+    store i64 %24 %3 
+    add i32 %25 %20 32 
+    store i32 %25 %4 
+    add i32 %26 %20 36 
+    store i32 %26 %5 
+    add i16 %27 %20 40 
+    store i16 %27 %6 
+    add i16 %28 %20 42 
+    store i16 %28 %7 
+    add i16 %29 %20 44 
+    store i16 %29 %8 
+    add i16 %30 %20 46 
+    store i16 %30 %9 
+    allocs 48 %b 
+    ass i64 %41 1 
+    ass i64 %42 2 
+    ass i64 %43 3 
+    ass i64 %44 4 
+    ass i32 %45 5 
+    ass i32 %46 6 
+    ass i16 %47 7 
+    ass i16 %48 8 
+    ass i16 %49 9 
+    ass i16 %50 10 
+    call @f.newh %31 %32 %33 %34 %35 %36 %37 %38 %39 %40 %41 %42 %43 %44 %45 %46 %47 %48 %49 %50 
+    ass ptr %51 %b 
+    add i64 %52 %51 0 
+    store i64 %52 %31 
+    add i64 %53 %51 8 
+    store i64 %53 %32 
+    add i64 %54 %51 16 
+    store i64 %54 %33 
+    add i64 %55 %51 24 
+    store i64 %55 %34 
+    add i32 %56 %51 32 
+    store i32 %56 %35 
+    add i32 %57 %51 36 
+    store i32 %57 %36 
+    add i16 %58 %51 40 
+    store i16 %58 %37 
+    add i16 %59 %51 42 
+    store i16 %59 %38 
+    add i16 %60 %51 44 
+    store i16 %60 %39 
+    add i16 %61 %51 46 
+    store i16 %61 %40 
+    allocs 48 %h 
+    ass ptr %82 %a 
+    add i64 %83 %82 0 
+    load i64 %72 %83 
+    add i64 %84 %82 8 
+    load i64 %73 %84 
+    add i64 %85 %82 16 
+    load i64 %74 %85 
+    add i64 %86 %82 24 
+    load i64 %75 %86 
+    add i32 %87 %82 32 
+    load i32 %76 %87 
+    add i32 %88 %82 36 
+    load i32 %77 %88 
+    add i16 %89 %82 40 
+    load i16 %78 %89 
+    add i16 %90 %82 42 
+    load i16 %79 %90 
+    add i16 %91 %82 44 
+    load i16 %80 %91 
+    add i16 %92 %82 46 
+    load i16 %81 %92 
+    ass ptr %103 %b 
+    add i64 %104 %103 0 
+    load i64 %93 %104 
+    add i64 %105 %103 8 
+    load i64 %94 %105 
+    add i64 %106 %103 16 
+    load i64 %95 %106 
+    add i64 %107 %103 24 
+    load i64 %96 %107 
+    add i32 %108 %103 32 
+    load i32 %97 %108 
+    add i32 %109 %103 36 
+    load i32 %98 %109 
+    add i16 %110 %103 40 
+    load i16 %99 %110 
+    add i16 %111 %103 42 
+    load i16 %100 %111 
+    add i16 %112 %103 44 
+    load i16 %101 %112 
+    add i16 %113 %103 46 
+    load i16 %102 %113 
+    call @f.addh %62 %63 %64 %65 %66 %67 %68 %69 %70 %71 %72 %73 %74 %75 %76 %77 %78 %79 %80 %81 %93 %94 %95 %96 %97 %98 %99 %100 %101 %102 
+    ass ptr %114 %h 
+    add i64 %115 %114 0 
+    store i64 %115 %62 
+    add i64 %116 %114 8 
+    store i64 %116 %63 
+    add i64 %117 %114 16 
+    store i64 %117 %64 
+    add i64 %118 %114 24 
+    store i64 %118 %65 
+    add i32 %119 %114 32 
+    store i32 %119 %66 
+    add i32 %120 %114 36 
+    store i32 %120 %67 
+    add i16 %121 %114 40 
+    store i16 %121 %68 
+    add i16 %122 %114 42 
+    store i16 %122 %69 
+    add i16 %123 %114 44 
+    store i16 %123 %70 
+    add i16 %124 %114 46 
+    store i16 %124 %71 
+    ass ptr %136 %a 
+    add i64 %137 %136 0 
+    load i64 %126 %137 
+    add i64 %138 %136 8 
+    load i64 %127 %138 
+    add i64 %139 %136 16 
+    load i64 %128 %139 
+    add i64 %140 %136 24 
+    load i64 %129 %140 
+    add i32 %141 %136 32 
+    load i32 %130 %141 
+    add i32 %142 %136 36 
+    load i32 %131 %142 
+    add i16 %143 %136 40 
+    load i16 %132 %143 
+    add i16 %144 %136 42 
+    load i16 %133 %144 
+    add i16 %145 %136 44 
+    load i16 %134 %145 
+    add i16 %146 %136 46 
+    load i16 %135 %146 
+    call @f.foldh %125 %126 %127 %128 %129 %130 %131 %132 %133 %134 %135 
+    ass ptr %158 %b 
+    add i64 %159 %158 0 
+    load i64 %148 %159 
+    add i64 %160 %158 8 
+    load i64 %149 %160 
+    add i64 %161 %158 16 
+    load i64 %150 %161 
+    add i64 %162 %158 24 
+    load i64 %151 %162 
+    add i32 %163 %158 32 
+    load i32 %152 %163 
+    add i32 %164 %158 36 
+    load i32 %153 %164 
+    add i16 %165 %158 40 
+    load i16 %154 %165 
+    add i16 %166 %158 42 
+    load i16 %155 %166 
+    add i16 %167 %158 44 
+    load i16 %156 %167 
+    add i16 %168 %158 46 
+    load i16 %157 %168 
+    call @f.foldh %147 %148 %149 %150 %151 %152 %153 %154 %155 %156 %157 
+    ass ptr %180 %h 
+    add i64 %181 %180 0 
+    load i64 %170 %181 
+    add i64 %182 %180 8 
+    load i64 %171 %182 
+    add i64 %183 %180 16 
+    load i64 %172 %183 
+    add i64 %184 %180 24 
+    load i64 %173 %184 
+    add i32 %185 %180 32 
+    load i32 %174 %185 
+    add i32 %186 %180 36 
+    load i32 %175 %186 
+    add i16 %187 %180 40 
+    load i16 %176 %187 
+    add i16 %188 %180 42 
+    load i16 %177 %188 
+    add i16 %189 %180 44 
+    load i16 %178 %189 
+    add i16 %190 %180 46 
+    load i16 %179 %190 
+    call @f.foldh %169 %170 %171 %172 %173 %174 %175 %176 %177 %178 %179 
+    ass i64 %192 1 
+    ass i64 %193 2 
+    ass i64 %194 3 
+    ass i64 %195 4 
+    ass i32 %196 5 
+    ass i32 %197 6 
+    ass i16 %198 7 
+    ass i16 %199 8 
+    ass i16 %200 9 
+    ass i16 %201 10 
+    call @f.add10 %191 %192 %193 %194 %195 %196 %197 %198 %199 %200 %201 
+    ass i64 %203 1 
+    ass i64 %204 2 
+    ass i64 %205 3 
+    ass i64 %206 4 
+    ass i32 %207 5 
+    ass i32 %208 6 
+    ass i16 %209 7 
+    ass i16 %210 8 
+    ass i16 %211 9 
+    ass i16 %212 10 
+    call @f.add10 %202 %203 %204 %205 %206 %207 %208 %209 %210 %211 %212 
+    add i64 %213 %125 %147 
+    add i64 %214 %213 %169 
+    add i64 %215 %214 %191 
+    add i64 %216 %215 %202 
+    ass i64 %217 %216 
+    destroy %h 
+    destroy %b 
+    destroy %a 
+    ret %217 
+    destroy %h 
+    destroy %b 
+    destroy %a 
     ret 
 

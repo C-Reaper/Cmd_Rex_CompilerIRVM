@@ -1017,16 +1017,14 @@ Boolean RexLang_Function(RexLang* ll,TokenMap* tm){
 
         Type* t = Scope_FindType(&ll->ev.sc,f->rettype);
         if(t){
-            int returns = 0;
-            Vec_CStr types = RexLang_UnfoldType(ll,f->rettype);
-            returns += types.size;
-            Vec_CStr_Free(&types);
-
+            const int returns = RexLang_UnfoldTypeCount(ll,f->rettype);
             RexLang_Variable_Build_Return(ll,COMPILER_RETURN"0",f->rettype);
 
+            int32_t unfolded_offset = 0;
             for(int i = 0;i<f->params.size;i++){
                 Member* m = (Member*)Vector_Get(&f->params,i);
-                RexLang_Variable_Build_Param(ll,m->name,m->type,i + returns);
+                RexLang_Variable_Build_Param(ll,m->name,m->type,unfolded_offset + returns);
+                unfolded_offset += RexLang_UnfoldTypeCount(ll,m->type);
             }
 
             ll->ev.sc.range++;
@@ -1306,6 +1304,10 @@ TokenMap RexLang_Function_BuildTM(RexLang* ll,CStr name,Function* f){
 
     const int count = f->params.size + 1;
     const int offset = ll->ev.sc.vars.size - count;
+    if(ll->ev.sc.vars.size < count){
+        Compiler_ErrorHandler(&ll->ev,"Function: %s var count not enough: param: %d, vars: %d!",name,(Number)count,(Number)ll->ev.sc.vars.size);
+        return tm;
+    }
 
     for(int i = 0;i<count;i++){
         Variable* arg = (Variable*)PVector_Get(&ll->ev.sc.vars,offset + i);

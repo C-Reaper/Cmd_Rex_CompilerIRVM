@@ -49,9 +49,9 @@ void close(i64 fd){
 
 // PROT_READ, PROT_WRITE
 // MAP_PRIVATE, MAP_ANONYMOUS
-//void mmap(void* addr,i64 len,i64 prot,i64 flags,i64 fd,i64 offset){
-//    syscall(9,(i64)addr,len,prot,flags,fd);
-//}
+void mmap(void* addr,i64 len,i64 prot,i64 flags,i64 fd,i64 offset){
+    syscall(9,(i64)addr,len,prot,flags,fd);
+}
 void mprotect(u64 start,u64 len,u64 prot){
     syscall(11,start,len,prot,0,0);
 }
@@ -68,9 +68,9 @@ void ioctrl(u64 fd,u64 cmd,u64 arg){
 void pipe(i32* fildes){
     syscall(22,(i64)fildes,0,0,0,0);
 }
-//void select(i32 n,u32* inp,u32* outp,u32* exp,Timeval* tvp){
-//    syscall(23,n,(i64)inp,(i64)outp,(i64)exp,(i64)tvp);
-//}
+void select(i32 n,u32* inp,u32* outp,u32* exp,Timeval* tvp){
+    syscall(23,n,(i64)inp,(i64)outp,(i64)exp,(i64)tvp);
+}
 void pause(){
     syscall(34,0,0,0,0,0);
 }
@@ -84,9 +84,9 @@ void getpid(){
     syscall(39,0,0,0,0,0);
 }
 
-//void clone(u64 a0,u64 a1,i32* a2,i32* a3,u64 a4){
-//    syscall(56,a0,a1,(i64)a2,(i64)a3,a4);
-//}
+void clone(u64 a0,u64 a1,i32* a2,i32* a3,u64 a4){
+    syscall(56,a0,a1,(i64)a2,(i64)a3,a4);
+}
 void fork(){
     syscall(57,0,0,0,0,0);
 }
@@ -99,9 +99,9 @@ void execve(i8* filename,i8** argv,i8** envp){
 void exit(i64 code){
     syscall(60,code,0,0,0,0);
 }
-//void wait4(u64 pid,i32* stat_addr,i32 options,RUsage* ru){
-//    syscall(61,pid,(i64)stat_addr,options,(i64)ru,0);
-//}
+void wait4(u64 pid,i32* stat_addr,i32 options,RUsage* ru){
+    syscall(61,pid,(i64)stat_addr,options,(i64)ru,0);
+}
 
 void fcntl(u64 fd,u64 cmd,u64 arg){
     syscall(72,fd,cmd,arg,0,0);
