@@ -76,7 +76,7 @@ Token Struct_Struct_Ass_LSplitSSA(RexLang* ll,CStr type,Token* a,Token* b){
 
         RexLang_AppendTM(ll,TokenMap_Make((Token[]){
             Token_By(TOKEN_IRVM_ADD,IRVM_OP_ADD),
-            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+            Token_By(TOKEN_TYPE,IRVM_TYPE_POINTER),
             Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
             Token_Cpy(&ssa_b),
             Token_New_I64(TOKEN_NUMBER,offset),
@@ -128,7 +128,7 @@ Token Struct_Struct_Ass_RSplitSSA(RexLang* ll,CStr type,Token* a,Token* b){
 
         RexLang_AppendTM(ll,TokenMap_Make((Token[]){
             Token_By(TOKEN_IRVM_ADD,IRVM_OP_ADD),
-            Token_By(TOKEN_TYPE,RexLang_Type(ll,t)),
+            Token_By(TOKEN_TYPE,IRVM_TYPE_POINTER),
             Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id_0)),
             Token_Cpy(&ssa_a),
             Token_New_I64(TOKEN_NUMBER,offset),
