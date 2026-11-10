@@ -11,7 +11,10 @@ extern f.syscall
 global f.main
 
 section .data
-cstr.0: db 'H','e','l','l','o',' ','W','o','r','l','d','!',10,0
+cstr.0: db '-','-',' ','S','t','a','r','t',' ','-','-',10,0
+cstr.1: db 'P','l','s',' ','s','a','y',' ','u','r',' ','n','a','m','e',':',' ',0
+cstr.2: db 'H','i',' ',0
+cstr.3: db '-','-','-','-','-','-','-','-','-','-','-',10,0
 
 section .bss
 
@@ -56,6 +59,7 @@ f.sys.read:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -98,6 +102,7 @@ f.sys.write:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -139,6 +144,7 @@ f.sys.open:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -176,6 +182,7 @@ f.sys.close:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -220,6 +227,7 @@ f.sys.mmap:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -261,6 +269,7 @@ f.sys.mprotect:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -300,6 +309,7 @@ f.sys.munmap:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -337,6 +347,7 @@ f.sys.brk:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -378,6 +389,7 @@ f.sys.ioctrl:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -416,6 +428,7 @@ f.sys.pipe:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -463,6 +476,7 @@ f.sys.select:
     mov esi , DWORD[rbp - 12] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -498,6 +512,7 @@ f.sys.pause:
     mov r10 , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -539,6 +554,7 @@ f.sys.nanosleep:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -576,6 +592,7 @@ f.sys.alarm:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -611,6 +628,7 @@ f.sys.getpid:
     mov r10 , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -656,6 +674,7 @@ f.sys.clone:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -691,6 +710,7 @@ f.sys.fork:
     mov r10 , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -726,6 +746,7 @@ f.sys.vfork:
     mov r10 , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -770,6 +791,7 @@ f.sys.execve:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -807,6 +829,7 @@ f.sys.exit:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -852,6 +875,7 @@ f.sys.wait4:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
@@ -893,36 +917,327 @@ f.sys.fcntl:
     mov rsi , QWORD[rbp - 16] 
     sub rsp , 0 
     add rsp , 0 
+    mov rsp , rbp 
+    pop rbp 
+    ret 
+
+f.cstr.len:
+    push rbp 
+    mov rbp , rsp 
+    mov QWORD[rbp - 16] , 0 
+    mov r15 , rsi 
+    add r15 , 0 
+    mov r14 , r15 
+    mov r15b , BYTE[r14] 
+    mov BYTE[rbp - 17] , r15b 
+    jmp l.0_WHILE2_0 
+    l.0_WHILE2_0 : 
+    mov r15b , BYTE[rbp - 17] 
+    cmp r15b , 0 
+    setne r14b 
+    mov r15b , r14b 
+    cmp r15b , 0 
+    jne l.2_WHILE2_0 
+    jmp l.1_WHILE2_0 
+    l.2_WHILE2_0 : 
+    mov r15 , QWORD[rbp - 16] 
+    mov r14 , r15 
+    add r14 , 1 
+    mov QWORD[rbp - 16] , r14 
+    mov r15 , QWORD[rbp - 16] 
+    mov r14 , rsi 
+    add r14 , r15 
+    mov r15 , r14 
+    mov r14b , BYTE[r15] 
+    mov BYTE[rbp - 17] , r14b 
+    jmp l.0_WHILE2_0 
+    l.1_WHILE2_0 : 
+    mov r15 , QWORD[rbp - 16] 
+    mov r14 , r15 
+    sub rsp , 25 
+    mov QWORD[rsp + 0] , r14 
+    mov rbx , QWORD[rsp + 0] 
+    add rsp , 25 
+    mov rsp , rbp 
+    pop rbp 
+    ret 
+    sub rsp , 17 
+    add rsp , 17 
+    mov rsp , rbp 
+    pop rbp 
+    ret 
+
+f.cstr.set:
+    push rbp 
+    mov rbp , rsp 
+    mov QWORD[rbp - 16] , 0 
+    jmp l.0_WHILE2_1 
+    l.0_WHILE2_1 : 
+    mov r15 , QWORD[rbp - 16] 
+    cmp r15 , r8 
+    setl r14b 
+    mov r15b , r14b 
+    cmp r15b , 0 
+    jne l.2_WHILE2_1 
+    jmp l.1_WHILE2_1 
+    l.2_WHILE2_1 : 
+    mov r15 , QWORD[rbp - 16] 
+    mov r14 , rsi 
+    add r14 , r15 
+    mov r15 , r14 
+    mov BYTE[r15] , dil 
+    mov r15 , QWORD[rbp - 16] 
+    mov r14 , r15 
+    add r14 , 1 
+    mov QWORD[rbp - 16] , r14 
+    jmp l.0_WHILE2_1 
+    l.1_WHILE2_1 : 
+    sub rsp , 16 
+    add rsp , 16 
+    mov rsp , rbp 
+    pop rbp 
+    ret 
+
+f.cstr.cpy:
+    push rbp 
+    mov rbp , rsp 
+    mov QWORD[rbp - 16] , 0 
+    jmp l.0_WHILE2_2 
+    l.0_WHILE2_2 : 
+    mov r15 , QWORD[rbp - 16] 
+    cmp r15 , r8 
+    setl r14b 
+    mov r15b , r14b 
+    cmp r15b , 0 
+    jne l.2_WHILE2_2 
+    jmp l.1_WHILE2_2 
+    l.2_WHILE2_2 : 
+    mov r15 , QWORD[rbp - 16] 
+    mov r14 , rsi 
+    add r14 , r15 
+    mov r15 , r14 
+    mov r14 , QWORD[rbp - 16] 
+    mov r13 , rdi 
+    add r13 , r14 
+    mov r14 , r13 
+    mov r13b , BYTE[r14] 
+    mov BYTE[r15] , r13b 
+    mov r15 , QWORD[rbp - 16] 
+    mov r14 , r15 
+    add r14 , 1 
+    mov QWORD[rbp - 16] , r14 
+    jmp l.0_WHILE2_2 
+    l.1_WHILE2_2 : 
+    sub rsp , 16 
+    add rsp , 16 
+    mov rsp , rbp 
+    pop rbp 
+    ret 
+
+f.io.input:
+    push rbp 
+    mov rbp , rsp 
+    mov r15 , 0 
+    mov r14 , rsi 
+    mov r13 , rdi 
+    mov QWORD[rbp - 16] , rsi 
+    mov QWORD[rbp - 24] , rdi 
+    mov QWORD[rbp - 32] , r13 
+    mov QWORD[rbp - 40] , r14 
+    mov QWORD[rbp - 48] , r15 
+    mov rsi , QWORD[rbp - 48] 
+    mov rdi , QWORD[rbp - 40] 
+    mov r8 , QWORD[rbp - 32] 
+    sub rsp , 48 
+    call f.sys.read 
+    add rsp , 48 
+    mov r15 , QWORD[rbp - 48] 
+    mov r14 , QWORD[rbp - 40] 
+    mov r13 , QWORD[rbp - 32] 
+    mov rdi , QWORD[rbp - 24] 
+    mov rsi , QWORD[rbp - 16] 
+    sub rsp , 0 
+    add rsp , 0 
+    mov rsp , rbp 
+    pop rbp 
+    ret 
+
+f.io.print:
+    push rbp 
+    mov rbp , rsp 
+    mov r15 , rsi 
+    mov QWORD[rbp - 24] , rsi 
+    mov QWORD[rbp - 32] , r15 
+    mov rsi , QWORD[rbp - 32] 
+    sub rsp , 32 
+    call f.cstr.len 
+    add rsp , 32 
+    mov r15 , QWORD[rbp - 32] 
+    mov rsi , QWORD[rbp - 24] 
+    mov r14 , rbx 
+    mov QWORD[rbp - 16] , r14 
+    mov r15 , 1 
+    mov r14 , rsi 
+    mov r13 , QWORD[rbp - 16] 
+    mov r12 , r13 
+    mov QWORD[rbp - 24] , rsi 
+    mov QWORD[rbp - 32] , r12 
+    mov QWORD[rbp - 40] , r13 
+    mov QWORD[rbp - 48] , r14 
+    mov QWORD[rbp - 56] , r15 
+    mov rsi , QWORD[rbp - 56] 
+    mov rdi , QWORD[rbp - 48] 
+    mov r8 , QWORD[rbp - 32] 
+    sub rsp , 56 
+    call f.sys.write 
+    add rsp , 56 
+    mov r15 , QWORD[rbp - 56] 
+    mov r14 , QWORD[rbp - 48] 
+    mov r13 , QWORD[rbp - 40] 
+    mov r12 , QWORD[rbp - 32] 
+    mov rsi , QWORD[rbp - 24] 
+    sub rsp , 16 
+    add rsp , 16 
+    mov rsp , rbp 
+    pop rbp 
+    ret 
+
+f.io.error:
+    push rbp 
+    mov rbp , rsp 
+    mov r15 , rsi 
+    mov QWORD[rbp - 24] , rsi 
+    mov QWORD[rbp - 32] , r15 
+    mov rsi , QWORD[rbp - 32] 
+    sub rsp , 32 
+    call f.cstr.len 
+    add rsp , 32 
+    mov r15 , QWORD[rbp - 32] 
+    mov rsi , QWORD[rbp - 24] 
+    mov r14 , rbx 
+    mov QWORD[rbp - 16] , r14 
+    mov r15 , 2 
+    mov r14 , rsi 
+    mov r13 , QWORD[rbp - 16] 
+    mov r12 , r13 
+    mov QWORD[rbp - 24] , rsi 
+    mov QWORD[rbp - 32] , r12 
+    mov QWORD[rbp - 40] , r13 
+    mov QWORD[rbp - 48] , r14 
+    mov QWORD[rbp - 56] , r15 
+    mov rsi , QWORD[rbp - 56] 
+    mov rdi , QWORD[rbp - 48] 
+    mov r8 , QWORD[rbp - 32] 
+    sub rsp , 56 
+    call f.sys.write 
+    add rsp , 56 
+    mov r15 , QWORD[rbp - 56] 
+    mov r14 , QWORD[rbp - 48] 
+    mov r13 , QWORD[rbp - 40] 
+    mov r12 , QWORD[rbp - 32] 
+    mov rsi , QWORD[rbp - 24] 
+    sub rsp , 16 
+    add rsp , 16 
+    mov rsp , rbp 
+    pop rbp 
+    ret 
+
+f.io.print_char:
+    push rbp 
+    mov rbp , rsp 
+    mov BYTE[rbp - 9] , sil 
+    mov r15 , 1 
+    lea r14 , BYTE[rbp - 9] 
+    mov r13 , r14 
+    mov r14 , 1 
+    mov BYTE[rbp - 10] , sil 
+    mov QWORD[rbp - 18] , r13 
+    mov QWORD[rbp - 26] , r14 
+    mov QWORD[rbp - 34] , r15 
+    mov rsi , QWORD[rbp - 34] 
+    mov rdi , QWORD[rbp - 18] 
+    mov r8 , QWORD[rbp - 26] 
+    sub rsp , 34 
+    call f.sys.write 
+    add rsp , 34 
+    mov r15 , QWORD[rbp - 34] 
+    mov r14 , QWORD[rbp - 26] 
+    mov r13 , QWORD[rbp - 18] 
+    mov sil , BYTE[rbp - 10] 
+    sub rsp , 9 
+    add rsp , 9 
+    mov rsp , rbp 
     pop rbp 
     ret 
 
 f.main:
     push rbp 
     mov rbp , rsp 
-    mov r15 , 1 
-    mov r14 , cstr.0 
-    mov r13 , 13 
-    mov QWORD[rbp - 16] , r13 
-    mov QWORD[rbp - 24] , r14 
-    mov QWORD[rbp - 32] , r15 
-    mov rsi , QWORD[rbp - 32] 
-    mov rdi , QWORD[rbp - 24] 
-    mov r8 , QWORD[rbp - 16] 
-    sub rsp , 32 
-    call f.sys.write 
-    add rsp , 32 
-    mov r15 , QWORD[rbp - 32] 
-    mov r14 , QWORD[rbp - 24] 
-    mov r13 , QWORD[rbp - 16] 
+    mov r15 , cstr.0 
+    mov QWORD[rbp - 48] , r15 
+    mov rsi , QWORD[rbp - 48] 
+    sub rsp , 48 
+    call f.io.print 
+    add rsp , 48 
+    mov r15 , QWORD[rbp - 48] 
+    mov r15 , cstr.1 
+    mov QWORD[rbp - 48] , r15 
+    mov rsi , QWORD[rbp - 48] 
+    sub rsp , 48 
+    call f.io.print 
+    add rsp , 48 
+    mov r15 , QWORD[rbp - 48] 
+    lea r15 , BYTE[rbp - 40] 
+    mov r14 , r15 
+    mov r15 , 32 
+    mov QWORD[rbp - 48] , r14 
+    mov QWORD[rbp - 56] , r15 
+    mov rsi , QWORD[rbp - 48] 
+    mov rdi , QWORD[rbp - 56] 
+    sub rsp , 56 
+    call f.io.input 
+    add rsp , 56 
+    mov r15 , QWORD[rbp - 56] 
+    mov r14 , QWORD[rbp - 48] 
+    mov r15 , cstr.2 
+    mov QWORD[rbp - 48] , r14 
+    mov QWORD[rbp - 56] , r15 
+    mov rsi , QWORD[rbp - 56] 
+    sub rsp , 56 
+    call f.io.print 
+    add rsp , 56 
+    mov r15 , QWORD[rbp - 56] 
+    mov r14 , QWORD[rbp - 48] 
+    lea r15 , BYTE[rbp - 40] 
+    mov r14 , r15 
+    mov QWORD[rbp - 48] , r14 
+    mov QWORD[rbp - 56] , r15 
+    mov rsi , QWORD[rbp - 48] 
+    sub rsp , 56 
+    call f.io.print 
+    add rsp , 56 
+    mov r15 , QWORD[rbp - 56] 
+    mov r14 , QWORD[rbp - 48] 
+    mov r15 , cstr.3 
+    mov QWORD[rbp - 48] , r14 
+    mov QWORD[rbp - 56] , r15 
+    mov rsi , QWORD[rbp - 56] 
+    sub rsp , 56 
+    call f.io.print 
+    add rsp , 56 
+    mov r15 , QWORD[rbp - 56] 
+    mov r14 , QWORD[rbp - 48] 
     mov r15 , 0 
-    sub rsp , 8 
+    sub rsp , 48 
     mov QWORD[rsp + 0] , r15 
     mov rbx , QWORD[rsp + 0] 
-    add rsp , 8 
+    add rsp , 48 
+    mov rsp , rbp 
     pop rbp 
     ret 
-    sub rsp , 0 
-    add rsp , 0 
+    sub rsp , 40 
+    add rsp , 40 
+    mov rsp , rbp 
     pop rbp 
     ret 
 

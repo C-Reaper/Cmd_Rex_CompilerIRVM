@@ -15,6 +15,7 @@ namespace io {
     }
 
     void print_char(i8 ch){
-        sys::write(1,&ch,1);
+        i8 ch_s = ch;
+        sys::write(1,&ch_s,1);
     }
 }
