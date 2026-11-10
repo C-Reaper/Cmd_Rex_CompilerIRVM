@@ -1012,7 +1012,6 @@ Boolean RexLang_Function(RexLang* ll,TokenMap* tm){
         if(f->f_extern)         IRVM_Function_SetAccess(irvm_f,IRVM_ACCESS_EXTERN);
         else if(f->f_global)    IRVM_Function_SetAccess(irvm_f,IRVM_ACCESS_GLOBAL);
 
-        ll->ssas = 0;
         ll->ev.sc.range++;
 
         Type* t = Scope_FindType(&ll->ev.sc,f->rettype);
@@ -1030,6 +1029,7 @@ Boolean RexLang_Function(RexLang* ll,TokenMap* tm){
             ll->ev.sc.range++;
         }
 
+        ll->ssas = 0;
         CallPosition cp = CallPosition_New_N(TOKEN_FUNCTIONDECL,ll->ev.iter,tfunc->str);
         CallStack_Push(&ll->ev.cs,&cp);
     }else{
@@ -1082,37 +1082,23 @@ Boolean RexLang_Decl(RexLang* ll,TokenMap* tm){
         if(name->tt==TOKEN_STRING){
             if(!CStr_Cmp(name->str,REXLANG_SELF)){
                 if(pottype->args && pottype->args->size > 0){
-                    /*
                     TokenMap* stm = (TokenMap*)Vector_Get(pottype->args,0);
                     Token* stok = (Token*)Vector_Get(stm,0);
                     
-                    Number size = 0;
-                    if(stok->tt == TOKEN_NUMBER){
-                        size = stok->v_i64;
-
-                        if(size == NUMBER_PARSE_ERROR){
-                            Compiler_ErrorHandler(&ll->ev,"decl: number: \'%s\' is not valid!",stok->str);
-                            return False;
-                        }
-                    }else{
+                    if(stok->tt != TOKEN_NUMBER){
                         Compiler_ErrorHandler(&ll->ev,"decl: size of stack var is not a number: \'%s\'!",stok->str);
                         return False;
                     }
 
-                    RexLang_Variable_Build_Stack(ll,name->str,pottype->str,size);
-                    */
-                   Compiler_ErrorHandler(&ll->ev,"decl: size of stack var is invalid!");
+                    RexLang_Variable_BuildRange_Block(ll,name->str,pottype->str,stok->v_i64,ll->ev.sc.range,ll->ev.sc.range > 0 ? REXLANG_STORAGE_STACK_BLOCK : REXLANG_STORAGE_GLOBAL_BLOCK,REXLANG_DESTROY_FULL);
                 }else{
-                    RexLang_Variable_BuildRange(ll,name->str,pottype->str,ll->ev.sc.range,REXLANG_STORAGE_STACK,REXLANG_DESTROY_FULL);
+                    RexLang_Variable_BuildRange(ll,name->str,pottype->str,ll->ev.sc.range,ll->ev.sc.range > 0 ? REXLANG_STORAGE_STACK : REXLANG_STORAGE_GLOBAL,REXLANG_DESTROY_FULL);
                 }
                 
-                if(tm->size>2){
-                    if(ll->ev.sc.range>0){
-                        Token* t = (Token*)Vector_Get(tm,0);
-                        Token_Free(t);
-                        Vector_Remove(tm,0);
-                        Boolean ret = RexLang_ShutingYard(&ll->ev,tm);
-                        return ret;
+                if(tm->size > 2){
+                    if(ll->ev.sc.range > 1){
+                        TokenMap_RemoveI(tm,0);
+                        return RexLang_ShutingYard(&ll->ev,tm);
                     }else{
                         Compiler_ErrorHandler(&ll->ev,"decl: global variable can't be set like this!");
                         return False;
@@ -2029,14 +2015,24 @@ void RexLang_PrintVariable(RexLang* ll,Variable* v) {
     Scope_PrintVariableDirect(&ll->ev.sc,v);
 }
 void RexLang_Build(RexLang* ll) {
+    printf(ANSI_FG_WHITE "[RexLang]: Build -> " ANSI_FG_GREEN "Starting Compilation of:\n" ANSI_FG_GRAY);
+    for(int i = 0;i<ll->filesinc.size;i++){
+        CStr name = *(CStr*)CVector_Get(&ll->filesinc,i);
+        CStr fname = Files_CompressPath(name); //Files_NameFull(name);
+        printf("  - %s\n",fname);
+        CStr_Free(&fname);
+    }
+    printf(ANSI_FG_WHITE "[RexLang]: Build -> " ANSI_FG_GREEN "Starting Compilation...\n" ANSI_FG_WHITE);
+    
     Compiler_Begin(&ll->ev);
     
     if(!ll->ev.error){
-        IRVM_PrintFn(&ll->vm);
+        printf(ANSI_FG_WHITE "[RexLang]: Build -> " ANSI_FG_GREEN "Compilation successful! Writing to " ANSI_FG_GRAY "'%s' ..." ANSI_FG_WHITE "\n",ll->output);
         IRVM_Save(&ll->vm,ll->output);
+        printf(ANSI_FG_WHITE "[RexLang]: Build -> " ANSI_FG_GREEN "Writing successful!" ANSI_FG_WHITE "\n");
     }else{
         Compiler_FlushLogs(&ll->ev);
-        printf("%s-> %sbuild aborted because of Errors!%s\n",ANSI_FG_GRAY,ANSI_FG_RED,ANSI_FG_WHITE);
+        printf(ANSI_FG_WHITE "[RexLang]: Build -> " ANSI_FG_RED "aborted because of Errors!" ANSI_FG_WHITE "\n");
     }
 }
 void RexLang_Free(RexLang* ll) {

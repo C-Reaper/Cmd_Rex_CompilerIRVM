@@ -1,8 +1,10 @@
 #include "../src/RexLang.h"
-#include "/home/codeleaded/System/Static/Library/IRVM_Exe.h"
+//#include "/home/codeleaded/System/Static/Library/IRVM_Exe.h"
+#include "/home/codeleaded/System/Static/Library/IRVM_Comp.h"
 
-#define PATH_SRC "./code/Main.rex"
-#define PATH_ASM "./asm/Main.iralx"
+#define PATH_SRC    "./code/Main.rex"
+#define PATH_IRVM   "./asm/Main.iralx"
+#define PATH_ASM    "./asm/Main.asm"
 
 int main(int argc,char** argv){
     //if(argc<=1){
@@ -14,38 +16,17 @@ int main(int argc,char** argv){
     //    return 1;
     //}
 
-    RexLang ll = RexLang_New("./bin",PATH_SRC,PATH_ASM,64);
+    RexLang ll = RexLang_New("./bin",PATH_SRC,PATH_IRVM,64);
     RexLang_Build(&ll);
 
-    /*
-    IRVM_Print(&ll.vm);
-    IRVM_Build(&ll.vm);
-    IRVM_Optimiser_Exe(&ll.vm,0U);
-    IRVM_Print(&ll.vm);
+    IRVM vm = IRVM_New();
+    IRVM_AddScript(&vm,PATH_IRVM);
+    IRVM_Build(&vm);
     
-    IRVM_Exe exe = IRVM_Exe_New(ll.vm);
-    IRVM_Exe_Variable a = IRVM_Exe_Variable_New("a",IRVM_TYPE_I16,(Number[]){ 0UL }, IRVM_Impl_Size(IRVM_TYPE_I16),0,0);
-    IRVM_Exe_Variable b = IRVM_Exe_Variable_New("b",IRVM_TYPE_I16,(Number[]){ 10UL },IRVM_Impl_Size(IRVM_TYPE_I16),0,0);
-    IRVM_Exe_Variable c = IRVM_Exe_Variable_New("c",IRVM_TYPE_I16,(Number[]){ 20UL },IRVM_Impl_Size(IRVM_TYPE_I16),0,0);
-    
-    IRVM_Exe_CallFunction(&exe,"main",(IRVM_Exe_Variable[]){
-        a,
-        b,
-        c,
-        IRVM_Exe_Variable_Null()
-    });
-    
-    IRVM_Exe_Variable_Print(&a);
-    IRVM_Exe_Variable_Print(&b);
-    IRVM_Exe_Variable_Print(&c);
-
-    IRVM_Exe_Variable_Free(&c);
-    IRVM_Exe_Variable_Free(&b);
-    IRVM_Exe_Variable_Free(&a);
-
-    IRVM_Exe_Free(&exe);
-    ll.vm = IRVM_New();
-    */
+    IRVM_Comp exe = IRVM_Comp_New(vm,PATH_ASM);
+    IRVM_Comp_Build(&exe);
+    IRVM_Comp_CreateOutput(&exe);
+    IRVM_Comp_Free(&exe);
 
     RexLang_Free(&ll);
     return 0;

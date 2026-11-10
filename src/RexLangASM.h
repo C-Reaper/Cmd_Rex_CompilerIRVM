@@ -554,55 +554,18 @@ CStr RexLang_Variablename_Next(RexLang* ll,CStr name,int offset){
     CStr stack_name = CStr_Format("%s%d",name,stack_name_count);
     return stack_name;
 }
-CStr RexLang_ConstStr(RexLang* ll,CStr name){
-    int size = CStr_Size(name);
-    String value = String_New();
-    String buffer = String_New();
-    
-    for(int i = 0;i<size;i++){
-        if(name[i]>=32 && name[i]<127){
-            String_AppendChar(&buffer,name[i]);
-        }else{
-            if(buffer.size>0){
-                String_AppendChar(&value,'\"');
-                String_AppendString(&value,&buffer);
-                String_AppendChar(&value,'\"');
-                String_AppendChar(&value,',');
-                String_Clear(&buffer);
-            }
-            String_AppendNumber(&value,name[i]);
-            String_AppendChar(&value,',');
-        }
-
-        if(i == size - 1){
-            if(buffer.size>0){
-                String_AppendChar(&value,'\"');
-                String_AppendString(&value,&buffer);
-                String_AppendChar(&value,'\"');
-                String_AppendChar(&value,',');
-            }
-        }
-    }
-    String_AppendNumber(&value,0);
-    
-    CStr cstr_value = String_CStr(&value);
-    String_Free(&value);
-    String_Free(&buffer);
-    return cstr_value;
-}
-CStr RexLang_BuildConstStr(RexLang* ll,CStr cstr){
-    return NULL;
-}
-CStr RexLang_BuildGlobal(RexLang* ll,CStr name,int size){
-    return NULL;
+CStr RexLang_BuildGlobal(RexLang* ll,CStr name,CStr type,int size){
+    //CStr g_name = CStr_Format("g.%s",name);
+    Vector_Push(&ll->vm.info_statics,(IRVM_DataInfo[]){ IRVM_DataInfo_New_Resv(name,type,size) });
+    return CStr_Cpy(name);
 }
 
 RexLang_Storage RexLang_RealStorage(RexLang* ll,Range r,CStr type,RexLang_Storage storage){
-    if(storage == REXLANG_STORAGE_AUTO && r == 0) storage = REXLANG_STORAGE_GLOBAL;
-    if(storage == REXLANG_STORAGE_STACK && RexLang_StructType(ll,type))     storage = REXLANG_STORAGE_STACK_STRUCT;
-    if(storage == REXLANG_STORAGE_GLOBAL && RexLang_StructType(ll,type))    storage = REXLANG_STORAGE_GLOBAL_STRUCT;
-    if(storage == REXLANG_STORAGE_STACK_BLOCK && RexLang_StructType(ll,type))     storage = REXLANG_STORAGE_STACK_STRUCT_BLOCK;
-    if(storage == REXLANG_STORAGE_GLOBAL_BLOCK && RexLang_StructType(ll,type))    storage = REXLANG_STORAGE_GLOBAL_STRUCT_BLOCK;
+    if(storage == REXLANG_STORAGE_AUTO && r == 0)                               storage = REXLANG_STORAGE_GLOBAL;
+    if(storage == REXLANG_STORAGE_STACK && RexLang_StructType(ll,type))         storage = REXLANG_STORAGE_STACK_STRUCT;
+    if(storage == REXLANG_STORAGE_GLOBAL && RexLang_StructType(ll,type))        storage = REXLANG_STORAGE_GLOBAL_STRUCT;
+    if(storage == REXLANG_STORAGE_STACK_BLOCK && RexLang_StructType(ll,type))   storage = REXLANG_STORAGE_STACK_STRUCT_BLOCK;
+    if(storage == REXLANG_STORAGE_GLOBAL_BLOCK && RexLang_StructType(ll,type))  storage = REXLANG_STORAGE_GLOBAL_STRUCT_BLOCK;
     return storage;
 }
 void RexLang_Variable_Decl(RexLang* ll,CStr name,CStr type,RexLang_Storage storage,uint64_t size){
@@ -615,21 +578,21 @@ void RexLang_Variable_Decl(RexLang* ll,CStr name,CStr type,RexLang_Storage stora
         }));
     }else if(storage == REXLANG_STORAGE_STACK_BLOCK){
         RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-            Token_By(TOKEN_IRVM_ALLOCA,IRVM_OP_ALLOCS),
+            Token_By(TOKEN_IRVM_ALLOCS,IRVM_OP_ALLOCS),
             Token_New_I64(TOKEN_NUMBER,RexLang_Size(ll,type) * size),
             Token_By(TOKEN_IRVM_VAR,name),
             Token_Null()
         }));
     }else if(storage == REXLANG_STORAGE_STACK_STRUCT){
         RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-            Token_By(TOKEN_IRVM_ALLOCA,IRVM_OP_ALLOCS),
+            Token_By(TOKEN_IRVM_ALLOCS,IRVM_OP_ALLOCS),
             Token_New_I64(TOKEN_NUMBER,RexLang_Size(ll,type)),
             Token_By(TOKEN_IRVM_VAR,name),
             Token_Null()
         }));
     }else if(storage == REXLANG_STORAGE_STACK_STRUCT_BLOCK){
         RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-            Token_By(TOKEN_IRVM_ALLOCA,IRVM_OP_ALLOCS),
+            Token_By(TOKEN_IRVM_ALLOCS,IRVM_OP_ALLOCS),
             Token_New_I64(TOKEN_NUMBER,RexLang_Size(ll,type) * size),
             Token_By(TOKEN_IRVM_VAR,name),
             Token_Null()
@@ -646,10 +609,10 @@ void RexLang_Variable_Decl(RexLang* ll,CStr name,CStr type,RexLang_Storage stora
 }
 void RexLang_Variable_BuildRange(RexLang* ll,CStr name,CStr type,Range r,RexLang_Storage storage,RexLang_Destroy destroy){
     if(r == 0){
-        CStr g_value = RexLang_BuildGlobal(ll,name,RexLang_Size(ll,type));
-        Variable* v = Scope_FindVariable(&ll->ev.sc,name);
+        const RexLang_Storage real_storage = RexLang_RealStorage(ll,r,type,storage);
+        CStr g_value = RexLang_BuildGlobal(ll,name,type,1);
         
-        RexLangVariable sv = RexLangVariable_New(ll,RexLang_RealStorage(ll,r,type,storage),destroy);
+        RexLangVariable sv = RexLangVariable_New(ll,real_storage,destroy);
         sv.global = g_value;
 
         Scope_BuildInitVariableRange(&ll->ev.sc,name,type,r,&sv);
@@ -665,6 +628,29 @@ void RexLang_Variable_BuildRange(RexLang* ll,CStr name,CStr type,Range r,RexLang
             )
         });
     }
+}
+void RexLang_Variable_BuildRange_Block(RexLang* ll,CStr name,CStr type,uint32_t size,Range r,RexLang_Storage storage,RexLang_Destroy destroy){
+    CStr btype = RexLang_GetDrefType(ll,type);
+    
+    if(r == 0){
+        const RexLang_Storage real_storage = RexLang_RealStorage(ll,r,btype,storage);
+        CStr g_value = RexLang_BuildGlobal(ll,name,btype,size);
+        
+        RexLangVariable sv = RexLangVariable_New(ll,real_storage,destroy);
+        sv.global = g_value;
+
+        Scope_BuildInitVariableRange(&ll->ev.sc,name,type,r,&sv);
+    }else{
+        const RexLang_Storage real_storage = RexLang_RealStorage(ll,r,btype,storage);
+        RexLang_Variable_Decl(ll,name,btype,real_storage,size);
+
+        RexLangVariable sv = RexLangVariable_New(ll,real_storage,destroy);
+        sv.size = size;
+        
+        Scope_BuildInitVariableRange(&ll->ev.sc,name,type,r,&sv);
+    }
+
+    CStr_Free(&btype);
 }
 void RexLang_Variable_Build(RexLang* ll,CStr name,CStr type,RexLang_Destroy destroy){
     RexLang_Variable_BuildRange(ll,name,type,ll->ev.sc.range,REXLANG_STORAGE_AUTO,destroy);
@@ -1246,7 +1232,7 @@ Token RexLang_GetIRVMTokenSSA(RexLang* ll,Token* a){
                 Token t_out = Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ll->ssas++));
                 
                 RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-                    Token_By(TOKEN_IRVM_LOAD,IRVM_OP_LOAD),
+                    Token_By(TOKEN_IRVM_ASS,IRVM_OP_ASS),
                     Token_By(TOKEN_TYPE,RexLang_Type(ll,type)),
                     Token_Cpy(&t_out),
                     Token_By(TOKEN_IRVM_VAR,a->str),
@@ -1258,8 +1244,17 @@ Token RexLang_GetIRVMTokenSSA(RexLang* ll,Token* a){
                 Compiler_ErrorHandler(&ll->ev,"struct %s can not be moved in to single ssa!",a->str);
                 return Token_Null();
             }else if(v_sv->storage == REXLANG_STORAGE_STACK_STRUCT_BLOCK){
-                Compiler_ErrorHandler(&ll->ev,"struct block %s can not be moved in to single ssa!",a->str);
-                return Token_Null();
+                Token t_out = Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ll->ssas++));
+                
+                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                    Token_By(TOKEN_IRVM_ASS,IRVM_OP_ASS),
+                    Token_By(TOKEN_TYPE,RexLang_Type(ll,type)),
+                    Token_Cpy(&t_out),
+                    Token_By(TOKEN_IRVM_VAR,a->str),
+                    Token_Null()
+                }));
+
+                return t_out;
             }else if(v_sv->storage == REXLANG_STORAGE_GLOBAL){
                 Token t_out = Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ll->ssas++));
                 
@@ -1276,7 +1271,22 @@ Token RexLang_GetIRVMTokenSSA(RexLang* ll,Token* a){
                 Token t_out = Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ll->ssas++));
                 
                 RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-                    Token_By(TOKEN_IRVM_LOAD,IRVM_OP_LOAD),
+                    Token_By(TOKEN_IRVM_ASS,IRVM_OP_ASS),
+                    Token_By(TOKEN_TYPE,RexLang_Type(ll,type)),
+                    Token_Cpy(&t_out),
+                    Token_By(TOKEN_IRVM_STATIC,a->str),
+                    Token_Null()
+                }));
+
+                return t_out;
+            }else if(v_sv->storage == REXLANG_STORAGE_GLOBAL_STRUCT){
+                Compiler_ErrorHandler(&ll->ev,"global struct %s can not be moved in to single ssa!",a->str);
+                return Token_Null();
+            }else if(v_sv->storage == REXLANG_STORAGE_GLOBAL_STRUCT_BLOCK){
+                Token t_out = Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ll->ssas++));
+                
+                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                    Token_By(TOKEN_IRVM_ASS,IRVM_OP_ASS),
                     Token_By(TOKEN_TYPE,RexLang_Type(ll,type)),
                     Token_Cpy(&t_out),
                     Token_By(TOKEN_IRVM_STATIC,a->str),
