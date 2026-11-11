@@ -2,10 +2,8 @@
 namespace cstr {
     i64 len(i8* str){
         i64 size = 0;
-        i8 ch = str[0];
-        while ch != 0 {
+        while str[size] != 0 {
             size = size + 1;
-            ch = str[size];
         }
         return size;
     }

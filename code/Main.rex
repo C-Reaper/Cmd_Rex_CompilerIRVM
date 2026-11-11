@@ -5,18 +5,28 @@ import Char;
 import Pointer;
 import IO;
 import Time;
+import Memory;
 
 global i64 main(){
-    io::print("-- Start --\n");
+    //i8[10000] buffer;
+    //mem::Allocator alloc = mem::Allocator::by(buffer,10000);
+    mem::Allocator alloc = mem::Allocator::make(10000);
+
+    alloc.print();
     
-    for i64 i = 0,i<5,++i {
-        u64 tp = time::nget();
-        io::print_uint(tp / 1000000000);
-        io::print("\n");
-        time::nsleep(1000000000);
-    }
+    void* ptr0 = alloc.alloc(10);
+    void* ptr1 = alloc.alloc(20);
+    void* ptr2 = alloc.alloc(30);
+
+    alloc.print();
+
+    alloc.free(ptr1);
+
+    alloc.print();
     
-    io::print("-----------\n");
-    time::nsleep(1000000000);
+    alloc.free(ptr2);
+
+    alloc.print();
+    alloc.delete();
     return 0;
 }

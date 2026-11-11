@@ -1,63 +1,64 @@
-extern void syscall(i64 rax,i64 rdi,i64 rsi,i64 rdx,i64 r10,i64 r8);
+extern u64 syscall(u64 rax,u64 rdi,u64 rsi,u64 rdx,u64 r10,u64 r8);
 
 namespace sys {
     struct Timeval [
-        pub i64 tv_sec,   // seconds
-        pub i64 tv_usec   // micro-seconds (0–999999)
+        pub u64 tv_sec,   // seconds
+        pub u64 tv_usec   // micro-seconds (0–999999)
     ];
 
     struct Timespec [
-        pub i64 tv_sec,   // seconds
-        pub i64 tv_nsec   // nano-seconds (0–999999999)
+        pub u64 tv_sec,   // seconds
+        pub u64 tv_nsec   // nano-seconds (0–999999999)
     ];
 
     struct RUsage [
         pub Timeval ru_utime,  // User CPU time
         pub Timeval ru_stime,  // System CPU time
 
-        pub i64 ru_maxrss,     // Maximum resident set size (KiB)
-        pub i64 ru_ixrss,      // Integral shared memory size
-        pub i64 ru_idrss,      // Integral unshared data size
-        pub i64 ru_isrss,      // Integral unshared stack size
+        pub u64 ru_maxrss,     // Maximum resident set size (KiB)
+        pub u64 ru_ixrss,      // Integral shared memory size
+        pub u64 ru_idrss,      // Integral unshared data size
+        pub u64 ru_isrss,      // Integral unshared stack size
 
-        pub i64 ru_minflt,     // Minor page faults
-        pub i64 ru_majflt,     // Major page faults
-        pub i64 ru_nswap,      // Swaps
+        pub u64 ru_minflt,     // Minor page faults
+        pub u64 ru_majflt,     // Major page faults
+        pub u64 ru_nswap,      // Swaps
 
-        pub i64 ru_inblock,    // Block input operations
-        pub i64 ru_oublock,    // Block output operations
+        pub u64 ru_inblock,    // Block input operations
+        pub u64 ru_oublock,    // Block output operations
 
-        pub i64 ru_msgsnd,     // Messages sent
-        pub i64 ru_msgrcv,     // Messages received
+        pub u64 ru_msgsnd,     // Messages sent
+        pub u64 ru_msgrcv,     // Messages received
 
-        pub i64 ru_nsignals,   // Signals received
-        pub i64 ru_nvcsw,      // Voluntary context switches
-        pub i64 ru_nivcsw      // Involuntary context switches
+        pub u64 ru_nsignals,   // Signals received
+        pub u64 ru_nvcsw,      // Voluntary context switches
+        pub u64 ru_nivcsw      // Involuntary context switches
     ];
 
-    void read(i64 fd,i8* buf,i64 count){
-        syscall(0,fd,(i64)buf,count,0,0);
+    void read(u64 fd,i8* buf,u64 count){
+        syscall(0,fd,(u64)buf,count,0,0);
     }
-    void write(i64 fd,i8* buf,i64 count){
-        syscall(1,fd,(i64)buf,count,0,0);
+    void write(u64 fd,i8* buf,u64 count){
+        syscall(1,fd,(u64)buf,count,0,0);
     }
-    void open(i64 fd,i64 flags,i64 mode){
+    void open(u64 fd,u64 flags,u64 mode){
         syscall(2,fd,flags,mode,0,0);
     }
-    void close(i64 fd){
+    void close(u64 fd){
         syscall(3,fd,0,0,0,0);
     }
 
     // PROT_READ, PROT_WRITE
     // MAP_PRIVATE, MAP_ANONYMOUS
-    void mmap(void* addr,i64 len,i64 prot,i64 flags,i64 fd,i64 offset){
-        syscall(9,(i64)addr,len,prot,flags,fd);
+    // 0,...,3,0x22,0,0
+    void* mmap(void* addr,u64 len,u64 prot,u64 flags,u64 fd,u64 offset){
+        return (void*)syscall(9,(u64)addr,len,prot,flags,fd);
     }
-    void mprotect(u64 start,u64 len,u64 prot){
-        syscall(11,start,len,prot,0,0);
+    void mprotect(void* addr,u64 len,u64 prot){
+        syscall(10,(u64)addr,len,prot,0,0);
     }
-    void munmap(u64 start,u64 len){
-        syscall(11,start,len,0,0,0);
+    void munmap(void* addr,u64 len){
+        syscall(11,(u64)addr,len,0,0,0);
     }
     void brk(u64 start){
         syscall(12,start,0,0,0,0);
@@ -67,16 +68,16 @@ namespace sys {
         syscall(16,fd,cmd,arg,0,0);
     }
     void pipe(i32* fildes){
-        syscall(22,(i64)fildes,0,0,0,0);
+        syscall(22,(u64)fildes,0,0,0,0);
     }
-    void select(i32 n,u32* inp,u32* outp,u32* exp,Timeval* tvp){
-        syscall(23,n,(i64)inp,(i64)outp,(i64)exp,(i64)tvp);
+    void select(u64 n,u32* inp,u32* outp,u32* exp,Timeval* tvp){
+        syscall(23,n,(u64)inp,(u64)outp,(u64)exp,(u64)tvp);
     }
     void pause(){
         syscall(34,0,0,0,0,0);
     }
     void nanosleep(Timespec* rqtp,Timespec* rmtp){
-        syscall(35,(i64)rqtp,(i64)rmtp,0,0,0);
+        syscall(35,(u64)rqtp,(u64)rmtp,0,0,0);
     }
     void alarm(u64 sec){
         syscall(37,sec,0,0,0,0);
@@ -86,7 +87,7 @@ namespace sys {
     }
 
     void clone(u64 a0,u64 a1,i32* a2,i32* a3,u64 a4){
-        syscall(56,a0,a1,(i64)a2,(i64)a3,a4);
+        syscall(56,a0,a1,(u64)a2,(u64)a3,a4);
     }
     void fork(){
         syscall(57,0,0,0,0,0);
@@ -95,13 +96,13 @@ namespace sys {
         syscall(58,0,0,0,0,0);
     }
     void execve(i8* filename,i8** argv,i8** envp){
-        syscall(59,(i64)filename,(i64)argv,(i64)envp,0,0);
+        syscall(59,(u64)filename,(u64)argv,(u64)envp,0,0);
     }
-    void exit(i64 code){
+    void exit(u64 code){
         syscall(60,code,0,0,0,0);
     }
     void wait4(u64 pid,i32* stat_addr,i32 options,RUsage* ru){
-        syscall(61,pid,(i64)stat_addr,options,(i64)ru,0);
+        syscall(61,pid,(u64)stat_addr,options,(u64)ru,0);
     }
 
     void fcntl(u64 fd,u64 cmd,u64 arg){
@@ -109,6 +110,6 @@ namespace sys {
     }
 
     void clock_gettime(u64 clockid,Timespec* rmtp){
-        syscall(228,clockid,(i64)rmtp,0,0,0);
+        syscall(228,clockid,(u64)rmtp,0,0,0);
     }
 }

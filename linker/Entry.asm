@@ -18,8 +18,9 @@ f.syscall:
 	mov rdx,r9
 	;mov	r10,r10
 	mov r8,r11
-	;mov r9,stack
+	xor r9,r9
 	syscall
+	mov rbx,rax
 	ret
 
 _start:

@@ -1,7 +1,7 @@
-import "../lib/System.rex";
-import "../lib/IO.rex";
-import "../lib/Pointer.rex";
-import "../lib/Parser.rex";
+import System;
+import IO;
+import Pointer;
+import Parser;
 
 namespace mem {
     struct Header[
@@ -11,12 +11,20 @@ namespace mem {
 
     struct Allocator[
         void* memory,
-        u64 length
+        u32 length,
+        u32 flags
     ];
 
     impl Allocator{
-        pub void init(Allocator* self,u64 size){
-            self->memory = sys::mmap(size);
+        pub void init(Allocator* self,void* block,u64 size){
+            if block == null {
+                self->memory = sys::mmap(null,size,3,0x22,0,0);
+                self->flags = 0;
+            }else{
+                self->memory = block;
+                self->flags = 1;
+            }
+
             self->length = size;
             ptr::set(self->memory,0,size);
 
@@ -25,26 +33,32 @@ namespace mem {
             first->flags = 0;
         }
         pub void delete(Allocator* self){
-            if self->memory != 0 {
+            if self->memory != null && self->flags == 0 {
                 sys::munmap(self->memory,self->length);
             }
-            self->memory = 0;
+            self->memory = null;
             self->length = 0;
+            self->flags = 0;
         }
         
         pub Allocator new(){
             Allocator alloc;
-            alloc.init(10000);
+            alloc.init(null,10000);
             return alloc;
         }
         pub Allocator make(u64 size){
             Allocator alloc;
-            alloc.init(size);
+            alloc.init(null,size);
+            return alloc;
+        }
+        pub Allocator by(void* block,u64 size){
+            Allocator alloc;
+            alloc.init(block,size);
             return alloc;
         }
 
         pub void* alloc(Allocator* self,u64 size){
-            void* ptr = null;
+            void* addr = null;
             Header* first = self->memory;
             
             while true {
@@ -52,32 +66,34 @@ namespace mem {
                     return null;
                 }elif first->flags==0 && first->length>=size {
                     u64 rem = first->length - size;
+                    u64 rsize = size;
+                    
                     if rem<=8 {
-                        size = first->length;
+                        rsize = first->length;
                     }
                     
                     first->flags = 1;
-                    first->length = size;
-                    ptr = first + 8;
+                    first->length = rsize;
+                    addr = first + 8;
 
-                    Header* next = ptr + size;
+                    Header* next = addr + rsize;
                     if rem>8 && next+rem<=self->memory+self->length {
                         next->length = rem - 8;
                         next->flags = 0;
                     }
 
-                    return ptr;
+                    return addr;
                 }else{
                     first = first + 8 + (u64)first->length;
                 }
             }
-            return ptr;
+            return addr;
         }
-        pub void free(Allocator* self,void* ptr){
-            if self == null || ptr == null {
+        pub void free(Allocator* self,void* addr){
+            if self == null || addr == null {
                 return;
             }
-            if ptr<self->memory || ptr>self->memory+self->length {
+            if addr<self->memory || addr>self->memory+self->length {
                 return;
             }
             
@@ -87,7 +103,7 @@ namespace mem {
             while true {
                 if first + 8 + (u64)first->length > self->memory+self->length {
                     return;
-                }elif ptr >= first && ptr < first + 8 + (u64)first->length {
+                }elif addr >= first && addr < first + 8 + (u64)first->length {
                     first->flags = 0;
                     
                     Header* next = first + 8 + (u64)first->length;
@@ -110,8 +126,8 @@ namespace mem {
             }
         }
         
-        pub void* realloc(Allocator* self,void* ptr,u64 size){
-            if ptr<self->memory || ptr>self->memory+self->length {
+        pub void* realloc(Allocator* self,void* addr,u64 size){
+            if addr<self->memory || addr>self->memory+self->length {
                 return null;
             }
             
@@ -120,7 +136,7 @@ namespace mem {
             while true {
                 if first + 8 + (u64)first->length > self->memory+self->length {
                     return null;
-                }elif ptr >= first && ptr < first+8+first->length {
+                }elif addr >= first && addr < first+8+first->length {
                     Header* next = first + 8 + (u64)first->length;
                     
                     if first->length>size {
@@ -131,7 +147,7 @@ namespace mem {
                             renext->flags = 0;
                             renext->length = diff;
                         }
-                        return ptr;
+                        return addr;
                     }elif next->flags==0 {
                         if first->length + 8 + next->length>size {
                             u64 diff = (u64)first->length + (u64)next->length - size;// + 8 & - 8 => 0
@@ -143,24 +159,24 @@ namespace mem {
                             }else{
                                 first->length += 8 + next->length;
                             }
-                            return ptr;
+                            return addr;
                         }
                     }
 
                     void* newptr = self->alloc(size);
-                    ptr::cpy(newptr,ptr,first->length);
-                    self->free(ptr);
+                    ptr::cpy(newptr,addr,first->length);
+                    self->free(addr);
                     return newptr;
                 }else{
                     first = first + 8 + (u64)first->length;
                 }
             }
-            return ptr;
+            return addr;
         }
         pub void* calloc(Allocator* self,u64 count,u64 elementsize){
-            void* ptr = self->alloc(count * elementsize);
-            ptr::set(ptr,0,count * elementsize);
-            return ptr;
+            void* addr = self->alloc(count * elementsize);
+            ptr::set(addr,0,count * elementsize);
+            return addr;
         }
 
         pub void print(Allocator* self){
@@ -170,7 +186,7 @@ namespace mem {
             
             ptr::set(cstr,32,128);
             ptr::cpy(cstr,"| Memory:",9);
-            parse::hex::get(cstr+10,self->memory);
+            parse::hex::get(cstr + 10,(u64)self->memory);
             
             cstr[53] = '|';
             ptr::cpy(cstr+125,"\n",2);
@@ -185,17 +201,17 @@ namespace mem {
             io::print(cstr);
 
             Header* first = self->memory;
+            
             while first >= self->memory && first < self->memory + self->length {
                 ptr::set(cstr,32,128);
                 ptr::cpy(cstr,"| Block:",8);
                 
-                parse::hex::get(cstr+9,first);
+                parse::hex::get(cstr+9,(u64)first);
                 parse::uint::get(cstr+28,(u64)first->length);
                 parse::hex::get(cstr+45,(u64)first->flags);
                 
                 cstr[53] = '|';
                 ptr::cpy(cstr+125,"\n",2);
-
                 io::print(cstr);
             
                 first = first + 8 + (u64)first->length;

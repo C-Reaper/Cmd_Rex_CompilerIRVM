@@ -336,7 +336,9 @@ FunctionRT RexLang_ShutingYard(Compiler* ev,TokenMap* tm) {
     
     if(tm->size>1){
         TokenMap cpy = TokenMap_Cpy(tm);
-        TokenMap ttm = ShutingYard_Transform(&ev->sy,&cpy);
+        TokenMap borrowed = ShutingYard_Transform_D(&ev->sy,&cpy);
+        TokenMap ttm = TokenMap_Cpy(&borrowed);
+        Vector_Free(&borrowed);
         Boolean ret = ShutingYard_Execute_D(&ev->sy,&ttm,&ev->sc);
         TokenMap_Free(&ttm);
         TokenMap_Free(&cpy);
@@ -1217,11 +1219,11 @@ Boolean RexLang_Assembly(RexLang* ll,TokenMap* tm){
 }
 
 Boolean RexLang_FunctionCall_Acs(RexLang* ll,TokenMap* tm,int i,int args,Token* tok){
-    if(tm->size > 1){
-        Token* accssed = (Token*)Vector_Get(tm,0);
-        Token* func = (Token*)Vector_Get(tm,1);
+    if(args >= 2 && i >= args && i - args + 1 < tm->size){
+        Token* accssed = (Token*)Vector_Get(tm,i-args);
+        Token* func = (Token*)Vector_Get(tm,i-args+1);
 
-        if(func->tt==TOKEN_FUNCTION){
+        if(accssed->tt==TOKEN_STRING && func->tt==TOKEN_FUNCTION){
             Variable* v = Scope_FindVariable(&ll->ev.sc,accssed->str);
 
             if(v){
@@ -1251,7 +1253,7 @@ Boolean RexLang_FunctionCall_Acs(RexLang* ll,TokenMap* tm,int i,int args,Token* 
                 if(it_f>=0){
                     Function* f = (Function*)Vector_Get(&ll->ev.fs,it_f);
 
-                    if(f->access || CStr_Cmp(accssed->str,REXLANG_SELF)){
+                    if(f->access || CStr_Cmp(accssed->str,REXLANG_SELF) || accssed->ac == TOKEN_ACCESS_FULL){
                         Boolean ret = Compiler_FunctionCall(&ll->ev,func);
                         if(!ret){
                             CStr retstr = Compiler_Variablename_This(&ll->ev,COMPILER_RETURN,7);
@@ -1262,18 +1264,24 @@ Boolean RexLang_FunctionCall_Acs(RexLang* ll,TokenMap* tm,int i,int args,Token* 
                         Compiler_ErrorHandler(&ll->ev,"Function: %s isn't pub or non self %s tries to access!",func->str,accssed->str);
                         return FUNCTIONRT_NONE;
                     }
+                }else{
+                    Compiler_ErrorHandler(&ll->ev,"Function: %s->%s, function %s doesn't exist!",accssed->str,func->str,func->str);
+                    return FUNCTIONRT_NONE;
                 }
+            }else{
+                Compiler_ErrorHandler(&ll->ev,"Function: %s->%s, %s is not a var!",accssed->str,func->str,accssed->str);
+                return FUNCTIONRT_NONE;
             }
         } 
     }
     return FUNCTIONRT_NONE;
 }
 Boolean RexLang_FunctionCall_Arw(RexLang* ll,TokenMap* tm,int i,int args,Token* tok){
-    if(tm->size > 1){
-        Token* accssed = (Token*)Vector_Get(tm,0);
-        Token* func = (Token*)Vector_Get(tm,1);
+    if(args >= 2 && i >= args && i - args + 1 < tm->size){
+        Token* accssed = (Token*)Vector_Get(tm,i-args);
+        Token* func = (Token*)Vector_Get(tm,i-args+1);
 
-        if(func->tt==TOKEN_FUNCTION){
+        if(accssed->tt==TOKEN_STRING && func->tt==TOKEN_FUNCTION){
             Variable* v = Scope_FindVariable(&ll->ev.sc,accssed->str);
 
             if(v){
@@ -1298,7 +1306,7 @@ Boolean RexLang_FunctionCall_Arw(RexLang* ll,TokenMap* tm,int i,int args,Token* 
                 it_f = FunctionMap_Find(&ll->ev.fs,func->str);
                 if(it_f>=0){
                     Function* f = (Function*)Vector_Get(&ll->ev.fs,it_f);
-                    if(f->access || CStr_Cmp(accssed->str,REXLANG_SELF)){
+                    if(f->access || CStr_Cmp(accssed->str,REXLANG_SELF) || accssed->ac == TOKEN_ACCESS_FULL){
                         Boolean ret = Compiler_FunctionCall(&ll->ev,func);
                         if(!ret){
                             CStr retstr = Compiler_Variablename_This(&ll->ev,COMPILER_RETURN,7);
@@ -1309,7 +1317,13 @@ Boolean RexLang_FunctionCall_Arw(RexLang* ll,TokenMap* tm,int i,int args,Token* 
                         Compiler_ErrorHandler(&ll->ev,"Function: %s isn't pub or non self %s tries to access!",func->str,accssed->str);
                         return FUNCTIONRT_NONE;
                     }
+                }else{
+                    Compiler_ErrorHandler(&ll->ev,"Function: %s->%s, function %s doesn't exist!",accssed->str,func->str,func->str);
+                    return FUNCTIONRT_NONE;
                 }
+            }else{
+                Compiler_ErrorHandler(&ll->ev,"Function: %s->%s, %s is not a var!",accssed->str,func->str,accssed->str);
+                return FUNCTIONRT_NONE;
             }
         }
     }

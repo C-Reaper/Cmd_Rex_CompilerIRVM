@@ -1486,7 +1486,9 @@ Token RexLang_ExecuteDrf(RexLang* ll,Token* a){
         Token_Null()
     }));
 
-    return Token_Move(TOKEN_STRING,stack_name);
+    Token ret = Token_Move(TOKEN_STRING,stack_name);
+    if(CStr_Cmp(var->name,REXLANG_SELF)) ret.ac = TOKEN_ACCESS_FULL;
+    return ret;
 }
 Token RexLang_Execute4(RexLang* ll,CStr inst,Token* a){
     if(RexLang_ErrorsInArg(ll,a))   return Token_Null();
@@ -1724,7 +1726,7 @@ Token RexLang_ExecuteAcs(RexLang* ll,Token* a,CStr member){
         mem = (Member*)Vector_Get(&type->related,index);
 
         if(CStr_Cmp(member,mem->name)){
-            if(!mem->access && !CStr_Cmp(a->str,REXLANG_SELF)){
+            if(!mem->access && !CStr_Cmp(a->str,REXLANG_SELF) && a->ac != TOKEN_ACCESS_FULL){
                 Compiler_ErrorHandler(&ll->ev,"member not accesible %s!",member);
                 return Token_Null();
             }
