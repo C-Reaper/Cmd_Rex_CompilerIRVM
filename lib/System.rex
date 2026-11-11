@@ -2,37 +2,37 @@ extern void syscall(i64 rax,i64 rdi,i64 rsi,i64 rdx,i64 r10,i64 r8);
 
 namespace sys {
     struct Timeval [
-        i64 tv_sec,   // seconds
-        i64 tv_usec   // micro-seconds (0–999999)
+        pub i64 tv_sec,   // seconds
+        pub i64 tv_usec   // micro-seconds (0–999999)
     ];
 
     struct Timespec [
-        i64 tv_sec,   // seconds
-        i64 tv_nsec   // nano-seconds (0–999999999)
+        pub i64 tv_sec,   // seconds
+        pub i64 tv_nsec   // nano-seconds (0–999999999)
     ];
 
     struct RUsage [
-        Timeval ru_utime,  // User CPU time
-        Timeval ru_stime,  // System CPU time
+        pub Timeval ru_utime,  // User CPU time
+        pub Timeval ru_stime,  // System CPU time
 
-        i64 ru_maxrss,     // Maximum resident set size (KiB)
-        i64 ru_ixrss,      // Integral shared memory size
-        i64 ru_idrss,      // Integral unshared data size
-        i64 ru_isrss,      // Integral unshared stack size
+        pub i64 ru_maxrss,     // Maximum resident set size (KiB)
+        pub i64 ru_ixrss,      // Integral shared memory size
+        pub i64 ru_idrss,      // Integral unshared data size
+        pub i64 ru_isrss,      // Integral unshared stack size
 
-        i64 ru_minflt,     // Minor page faults
-        i64 ru_majflt,     // Major page faults
-        i64 ru_nswap,      // Swaps
+        pub i64 ru_minflt,     // Minor page faults
+        pub i64 ru_majflt,     // Major page faults
+        pub i64 ru_nswap,      // Swaps
 
-        i64 ru_inblock,    // Block input operations
-        i64 ru_oublock,    // Block output operations
+        pub i64 ru_inblock,    // Block input operations
+        pub i64 ru_oublock,    // Block output operations
 
-        i64 ru_msgsnd,     // Messages sent
-        i64 ru_msgrcv,     // Messages received
+        pub i64 ru_msgsnd,     // Messages sent
+        pub i64 ru_msgrcv,     // Messages received
 
-        i64 ru_nsignals,   // Signals received
-        i64 ru_nvcsw,      // Voluntary context switches
-        i64 ru_nivcsw      // Involuntary context switches
+        pub i64 ru_nsignals,   // Signals received
+        pub i64 ru_nvcsw,      // Voluntary context switches
+        pub i64 ru_nivcsw      // Involuntary context switches
     ];
 
     void read(i64 fd,i8* buf,i64 count){
@@ -106,5 +106,9 @@ namespace sys {
 
     void fcntl(u64 fd,u64 cmd,u64 arg){
         syscall(72,fd,cmd,arg,0,0);
+    }
+
+    void clock_gettime(u64 clockid,Timespec* rmtp){
+        syscall(228,clockid,(i64)rmtp,0,0,0);
     }
 }

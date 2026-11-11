@@ -42,32 +42,32 @@ Token Pointer_Handler_Dec(RexLang* ll,Token* op,Vector* args){
 Token Pointer_Pointer_Handler_Equ(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
-    return RexLang_Execute5(ll,IRVM_OP_EQ,a,b);
+    return RexLang_ExecuteType5(ll,IRVM_TYPE_BOOL,IRVM_OP_EQ,a,b);
 }
 Token Pointer_Pointer_Handler_Neq(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
-    return RexLang_Execute5(ll,IRVM_OP_NQ,a,b);
+    return RexLang_ExecuteType5(ll,IRVM_TYPE_BOOL,IRVM_OP_NQ,a,b);
 }
 Token Pointer_Pointer_Handler_Les(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
-    return RexLang_Execute5(ll,IRVM_OP_LT,a,b);
+    return RexLang_ExecuteType5(ll,IRVM_TYPE_BOOL,IRVM_OP_LT,a,b);
 }
 Token Pointer_Pointer_Handler_Grt(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
-    return RexLang_Execute5(ll,IRVM_OP_GT,a,b);
+    return RexLang_ExecuteType5(ll,IRVM_TYPE_BOOL,IRVM_OP_GT,a,b);
 }
 Token Pointer_Pointer_Handler_Leq(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
-    return RexLang_Execute5(ll,IRVM_OP_LQ,a,b);
+    return RexLang_ExecuteType5(ll,IRVM_TYPE_BOOL,IRVM_OP_LQ,a,b);
 }
 Token Pointer_Pointer_Handler_Grq(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
-    return RexLang_Execute5(ll,IRVM_OP_GQ,a,b);
+    return RexLang_ExecuteType5(ll,IRVM_TYPE_BOOL,IRVM_OP_GQ,a,b);
 }
 Token Pointer_Handler_Adr(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);

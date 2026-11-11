@@ -116,32 +116,32 @@ Token Int_Handler_Lot(RexLang* ll,Token* op,Vector* args){
 Token Int_Int_Handler_Equ(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
-    return RexLang_Execute5(ll,IRVM_OP_EQ,a,b);
+    return RexLang_ExecuteType5(ll,IRVM_TYPE_BOOL,IRVM_OP_EQ,a,b);
 }
 Token Int_Int_Handler_Neq(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
-    return RexLang_Execute5(ll,IRVM_OP_NQ,a,b);
+    return RexLang_ExecuteType5(ll,IRVM_TYPE_BOOL,IRVM_OP_NQ,a,b);
 }
 Token Int_Int_Handler_Les(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
-    return RexLang_Execute5(ll,IRVM_OP_LT,a,b);
+    return RexLang_ExecuteType5(ll,IRVM_TYPE_BOOL,IRVM_OP_LT,a,b);
 }
 Token Int_Int_Handler_Grt(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
-    return RexLang_Execute5(ll,IRVM_OP_GT,a,b);
+    return RexLang_ExecuteType5(ll,IRVM_TYPE_BOOL,IRVM_OP_GT,a,b);
 }
 Token Int_Int_Handler_Leq(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
-    return RexLang_Execute5(ll,IRVM_OP_LQ,a,b);
+    return RexLang_ExecuteType5(ll,IRVM_TYPE_BOOL,IRVM_OP_LQ,a,b);
 }
 Token Int_Int_Handler_Grq(RexLang* ll,Token* op,Vector* args){
     Token* a = (Token*)Vector_Get(args,0);
     Token* b = (Token*)Vector_Get(args,1);
-    return RexLang_Execute5(ll,IRVM_OP_GQ,a,b);
+    return RexLang_ExecuteType5(ll,IRVM_TYPE_BOOL,IRVM_OP_GQ,a,b);
 }
 
 Token Int_Handler_Adr(RexLang* ll,Token* op,Vector* args){
@@ -155,6 +155,10 @@ Token Int_Null_Handler_Cast(RexLang* ll,Token* op,Vector* args){
 
     if(a->tt==TOKEN_NUMBER){
         String_AppendNumber(&ret,a->v_i64);
+    }else if(a->tt==TOKEN_BOOL){
+        String_AppendBoolean(&ret,a->v_b1);
+    }else if(a->tt==TOKEN_FLOAT){
+        String_AppendDouble(&ret,a->v_f64);
     }else{
         Variable* v = Scope_FindVariable(&ll->ev.sc,a->str);
         if(v){

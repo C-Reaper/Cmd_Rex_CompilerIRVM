@@ -336,9 +336,9 @@ FunctionRT RexLang_ShutingYard(Compiler* ev,TokenMap* tm) {
     
     if(tm->size>1){
         TokenMap cpy = TokenMap_Cpy(tm);
-        TokenMap ttm = ShutingYard_Transform_D(&ev->sy,&cpy);
+        TokenMap ttm = ShutingYard_Transform(&ev->sy,&cpy);
         Boolean ret = ShutingYard_Execute_D(&ev->sy,&ttm,&ev->sc);
-        Vector_Free(&ttm);
+        TokenMap_Free(&ttm);
         TokenMap_Free(&cpy);
 
         Scope_Pop(&ev->sc);
@@ -517,11 +517,26 @@ Boolean RexLang_PP_Curly_R(RexLang* ll,TokenMap* tm){
 }
 
 Boolean RexLang_Import(RexLang* ll,TokenMap* tm){
+    if(!tm || tm->size<2){
+        Compiler_ErrorHandler(&ll->ev,"Import: module path is missing!");
+        return True;
+    }
+
     Token* file = (Token*)Vector_Get(tm,1);
+    if(!file || !file->str){
+        Compiler_ErrorHandler(&ll->ev,"Import: module path is invalid!");
+        return True;
+    }
 
     if(file->tt==TOKEN_CONSTSTRING_DOUBLE){
         char* type = Files_Type(file->str);
         if(CStr_Cmp(type,REXLANG_TYPE)){
+            if(ll->filesstack.size<=0){
+                Compiler_ErrorHandler(&ll->ev,"Import: current file path is unavailable!");
+                free(type);
+                return True;
+            }
+
             CStr current = *(CStr*)CVector_Get(&ll->filesstack,ll->filesstack.size-1);
             CStr dir = Files_Path(current);
             CStr realpath = Files_FromPath(dir,file->str);
@@ -588,15 +603,10 @@ Boolean RexLang_If(RexLang* ll,TokenMap* tm){
     if(tm->size>2){
         if(cbl_tok->tt==TOKEN_CURLY_BRACES_L){
             if(ll->ev.sc.range>0){
-                Token* t = (Token*)Vector_Get(tm,0);
-                Token_Free(t);
-                Vector_Remove(tm,0);
+                TokenMap_RemoveI(tm,0);
+                TokenMap_RemoveI(tm,tm->size - 1);
 
-                t = (Token*)Vector_Get(tm,tm->size-1);
-                Token_Free(t);
-                Vector_Remove(tm,tm->size-1);
-
-                Token btok = Token_By(TOKEN_STRING,LOGIC_TYPE);
+                Token btok = Token_By(TOKEN_STRING,REXLANG_BOOL);
                 RexLang_Variable_Build_SSA(ll,btok.str,BOOL_TYPE,ll->ssas++);
 
                 Vector_Add(tm,(Token[]){ Token_Cpy(&btok) },0);
@@ -609,15 +619,19 @@ Boolean RexLang_If(RexLang* ll,TokenMap* tm){
                 CStr otherlabel = RexLang_Logic(ll,1,REXLANG_IF,ll->ev.sc.range);
 
                 Variable* b_var = Scope_FindVariable(&ll->ev.sc,btok.str);
-                RexLangVariable* b_sv = (RexLangVariable*)Variable_Data(b_var);
+                if(b_var){
+                    RexLangVariable* b_sv = (RexLangVariable*)Variable_Data(b_var);
 
-                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-                    Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
-                    Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
-                    Token_By(TOKEN_STRING,nextlabel),
-                    Token_By(TOKEN_STRING,otherlabel),
-                    Token_Null()
-                }));
+                    RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                        Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
+                        Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
+                        Token_By(TOKEN_STRING,nextlabel),
+                        Token_By(TOKEN_STRING,otherlabel),
+                        Token_Null()
+                    }));
+                }else{
+                    Compiler_ErrorHandler(&ll->ev,"if: var %s doesn't exist!",btok.str);
+                }
 
                 RexLang_AppendTM(ll,TokenMap_Make((Token[]){
                     Token_By(TOKEN_IRVM_TAR,IRVM_OP_TAR),
@@ -664,7 +678,7 @@ Boolean RexLang_Elif(RexLang* ll,TokenMap* tm){
                 Token_Free(t);
                 Vector_Remove(tm,tm->size-1);
 
-                Token btok = Token_By(TOKEN_STRING,LOGIC_TYPE);
+                Token btok = Token_By(TOKEN_STRING,REXLANG_BOOL);
                 RexLang_Variable_Build_SSA(ll,btok.str,BOOL_TYPE,ll->ssas++);
 
                 Vector_Add(tm,(Token[]){ Token_Cpy(&btok) },0);
@@ -677,15 +691,19 @@ Boolean RexLang_Elif(RexLang* ll,TokenMap* tm){
                 CStr otherlabel = RexLang_Logic(ll,1,REXLANG_ELIF,ll->ev.sc.range);
 
                 Variable* b_var = Scope_FindVariable(&ll->ev.sc,btok.str);
-                RexLangVariable* b_sv = (RexLangVariable*)Variable_Data(b_var);
+                if(b_var){
+                    RexLangVariable* b_sv = (RexLangVariable*)Variable_Data(b_var);
 
-                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-                    Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
-                    Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
-                    Token_By(TOKEN_STRING,nextlabel),
-                    Token_By(TOKEN_STRING,otherlabel),
-                    Token_Null()
-                }));
+                    RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                        Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
+                        Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
+                        Token_By(TOKEN_STRING,nextlabel),
+                        Token_By(TOKEN_STRING,otherlabel),
+                        Token_Null()
+                    }));
+                }else{
+                    Compiler_ErrorHandler(&ll->ev,"elif: var %s doesn't exist!",btok.str);
+                }
 
                 RexLang_AppendTM(ll,TokenMap_Make((Token[]){
                     Token_By(TOKEN_IRVM_TAR,IRVM_OP_TAR),
@@ -785,7 +803,7 @@ Boolean RexLang_While(RexLang* ll,TokenMap* tm){
                     Token_Null()
                 }));
 
-                Token btok = Token_By(TOKEN_STRING,LOGIC_TYPE);
+                Token btok = Token_By(TOKEN_STRING,REXLANG_BOOL);
                 RexLang_Variable_Build_SSA(ll,btok.str,BOOL_TYPE,ll->ssas++);
 
                 Vector_Add(tm,(Token[]){ Token_Cpy(&btok) },0);
@@ -793,24 +811,28 @@ Boolean RexLang_While(RexLang* ll,TokenMap* tm){
                 Boolean ret = RexLang_ShutingYard(&ll->ev,tm);
 
                 Variable* b_var = Scope_FindVariable(&ll->ev.sc,btok.str);
-                RexLangVariable* b_sv = (RexLangVariable*)Variable_Data(b_var);
+                if(b_var){
+                    RexLangVariable* b_sv = (RexLangVariable*)Variable_Data(b_var);
 
-                Scope_DestroyVariable(&ll->ev.sc,btok.str);
-                Token_Free(&btok);
-
-                RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-                    Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
-                    Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
-                    Token_By(TOKEN_STRING,nextlabelstart),
-                    Token_By(TOKEN_STRING,otherlabel),
-                    Token_Null()
-                }));
+                    RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                        Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
+                        Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
+                        Token_By(TOKEN_STRING,nextlabelstart),
+                        Token_By(TOKEN_STRING,otherlabel),
+                        Token_Null()
+                    }));
+                }else{
+                    Compiler_ErrorHandler(&ll->ev,"while: var %s doesn't exist!",btok.str);
+                }
 
                 RexLang_AppendTM(ll,TokenMap_Make((Token[]){
                     Token_By(TOKEN_IRVM_TAR,IRVM_OP_TAR),
                     Token_By(TOKEN_STRING,nextlabelstart),
                     Token_Null()
                 }));
+
+                Scope_DestroyVariable(&ll->ev.sc,btok.str);
+                Token_Free(&btok);
                 
                 CStr_Free(&nextlabelstart);
                 CStr_Free(&otherlabel);
@@ -861,6 +883,7 @@ Boolean RexLang_For(RexLang* ll,TokenMap* tm){
                 RexLang_LogicAddPath(ll);
                 CStr nextlabel = RexLang_Logic(ll,0,REXLANG_FOR,ll->ev.sc.range);
                 CStr otherlabel = RexLang_Logic(ll,1,REXLANG_FOR,ll->ev.sc.range);
+                CStr truelabel = RexLang_Logic(ll,2,REXLANG_FOR,ll->ev.sc.range);
 
                 RexLang_AppendTM(ll,TokenMap_Make((Token[]){
                     Token_By(TOKEN_IRVM_TAR,IRVM_OP_TAR),
@@ -870,7 +893,7 @@ Boolean RexLang_For(RexLang* ll,TokenMap* tm){
 
                 Boolean ret = False;
                 if(statement_1.size>0){
-                    Token btok = Token_By(TOKEN_STRING,LOGIC_TYPE);
+                    Token btok = Token_By(TOKEN_STRING,REXLANG_BOOL);
                     RexLang_Variable_Build_SSA(ll,btok.str,BOOL_TYPE,ll->ssas++);
 
                     Vector_Add(&statement_1,(Token[]){ Token_Cpy(&btok) },0);
@@ -879,13 +902,23 @@ Boolean RexLang_For(RexLang* ll,TokenMap* tm){
                     ret = RexLang_ShutingYard(&ll->ev,&statement_1);
 
                     Variable* b_var = Scope_FindVariable(&ll->ev.sc,btok.str);
-                    RexLangVariable* b_sv = (RexLangVariable*)Variable_Data(b_var);
+                    if(b_var){
+                        RexLangVariable* b_sv = (RexLangVariable*)Variable_Data(b_var);
+
+                        RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+                            Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
+                            Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
+                            Token_By(TOKEN_STRING,truelabel),
+                            Token_By(TOKEN_STRING,otherlabel),
+                            Token_Null()
+                        }));
+                    }else{
+                        Compiler_ErrorHandler(&ll->ev,"for: var %s doesn't exist!",btok.str);
+                    }
 
                     RexLang_AppendTM(ll,TokenMap_Make((Token[]){
-                        Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
-                        Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
-                        Token_By(TOKEN_STRING,nextlabel),
-                        Token_By(TOKEN_STRING,otherlabel),
+                        Token_By(TOKEN_IRVM_TAR,IRVM_OP_TAR),
+                        Token_By(TOKEN_STRING,truelabel),
                         Token_Null()
                     }));
 
@@ -894,6 +927,7 @@ Boolean RexLang_For(RexLang* ll,TokenMap* tm){
                 }
                 
                 TokenMap_Free(&statement_1);
+                CStr_Free(&truelabel);
                 CStr_Free(&otherlabel);
                 CStr_Free(&nextlabel);
 
@@ -1172,6 +1206,7 @@ Boolean RexLang_Assembly(RexLang* ll,TokenMap* tm){
 
         if(t->tt==TOKEN_CONSTSTRING_DOUBLE){
         }else if(t->tt==TOKEN_NUMBER){
+        }else if(t->tt==TOKEN_BOOL){
         }else if(t->tt==TOKEN_FLOAT){
         }else if(t->tt==TOKEN_STRING){
         }else{
@@ -1354,6 +1389,34 @@ void RexLang_LoadIntType(RexLang* ll,CStr type){
                     )
                 ),
                 //OperatorDefiner_New(TOKEN_DESTROY,NULL),
+                OPERATORDEFINER_END
+            })),
+            OperatorInterater_Make((CStr[]){ BOOL_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
+                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
+                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
+                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
+                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
+                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
+                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
+                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
+                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
+                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
+                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
+                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
+                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
+                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
+                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
+                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
+                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
+                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
+                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
+                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
+                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
+                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
+                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
                 OPERATORDEFINER_END
             })),
             OperatorInterater_Make((CStr[]){ I8_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
@@ -1607,8 +1670,6 @@ RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
             KeywordRP_New("pub",TOKEN_REXLANG_PUB),
             KeywordRP_New("global",TOKEN_REXLANG_GLOBAL),
             KeywordRP_New("extern",TOKEN_REXLANG_EXTERN),
-            KeywordRP_New("false",TOKEN_REXLANG_BOOLEAN),
-            KeywordRP_New("true",TOKEN_REXLANG_BOOLEAN),
             KeywordRP_New("null",TOKEN_REXLANG_NULL),
             KEYWORD_END
         }),
@@ -1748,8 +1809,6 @@ RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
             { TOKEN_CONSTSTRING_DOUBLE,RESETER_ADD1 },
 
             { TOKEN_REXLANG_NULL,RESETER_ADD1 },
-            { TOKEN_REXLANG_BOOLEAN,RESETER_ADD1 },
-
             { TOKEN_REXLANG_RETURN,RESETER_RST },
             { TOKEN_END,RESETER_RST }
         }),
@@ -1870,7 +1929,7 @@ RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
             (StdConstType[]){
                 StdConstType_New(TOKEN_NUMBER,I64_TYPE),
                 StdConstType_New(TOKEN_FLOAT,F64_TYPE),
-                StdConstType_New(TOKEN_REXLANG_BOOLEAN,BOOL_TYPE),
+                StdConstType_New(TOKEN_BOOL,BOOL_TYPE),
                 StdConstType_New(TOKEN_CONSTSTRING_DOUBLE,STR_TYPE),
                 StdConstType_New(TOKEN_CONSTSTRING_SINGLE,CHAR_TYPE),
                 StdConstType_New(TOKEN_FUNCTIONPOINTER,NULL_TYPE),

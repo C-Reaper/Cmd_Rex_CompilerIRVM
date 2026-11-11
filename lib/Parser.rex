@@ -1,7 +1,7 @@
-import "../lib/CStr.rex";
-import "../lib/Char.rex";
-import "../lib/Math.rex";
-import "../lib/IO.rex";
+import CStr;
+import Char;
+import Math;
+import IO;
 
 namespace parse {
     namespace boolean {
@@ -41,14 +41,16 @@ namespace parse {
 
     namespace uint {
         void get(i8* out,u64 num){
-            if num==0 {
+            if num == 0 {
                 *out = 48;
             }else{
                 u64 size = math::uint::log10(num);
-                for i64 i = size,i>=0,i-=1 {
-                    u64 dig = num % 10;
+                u64 value = num;
+
+                for i64 i = size,i >= 0,i -= 1 {
+                    u64 dig = value % 10;
                     out[i] = (dig + 48);
-                    num /= 10;
+                    value /= 10;
                 }
             }
         }
@@ -85,11 +87,11 @@ namespace parse {
         
             i64 i = size-1;
             while i>=0 {
-                i8 c = *(cstr+i);
+                i8 c = *(cstr + i);
                 if c>=48 && c<=57 {
                     out += (c-48) * math::uint::pow(10,digits);
-                    digits+=1;
-                    i-=1;
+                    digits += 1;
+                    i -= 1;
                 }else{
                     return false;
                 }
@@ -105,17 +107,19 @@ namespace parse {
                 *out = 48;
             }else{
                 i64 minus = 0;
+                i64 value = num;
+                
                 if num<0 {
                     minus = 1;
                     out[0] = '-';
-                    num = -num;
+                    value = -value;
                 }
-                u64 size = math::uint::log10(num);
+                u64 size = math::uint::log10(value);
             
                 for i64 i = minus+size,i>=minus,i-=1 {
-                    u64 dig = num % 10;
+                    u64 dig = value % 10;
                     *(out+i) = (dig + 48);
-                    num /= 10;
+                    value /= 10;
                 }
             }
         }
@@ -181,7 +185,7 @@ namespace parse {
             return true;
         }
     }
-
+    /*
     namespace float {
         void get(i8* out,f64 n,u64 postdigits){ // f32 -> 7-9  |  f64 -> 15-17
             if n<0.0 && (i64)n==0 {
@@ -260,7 +264,7 @@ namespace parse {
             return true;
         }
     }
-    
+    */
     namespace hex {
         void get(i8* out,u64 num){
             *(out) = '0';
@@ -269,10 +273,12 @@ namespace parse {
                 out[2] = 48;
             }else{
                 u64 size = math::uint::logb(16,num);
-                for i64 i = size,i>=0,i-=1 {
-                    u64 dig = num % 16;
+                u64 value = num;
+                
+                for i64 i = size,i >= 0,i -= 1 {
+                    u64 dig = value % 16;
                     *(out+i+2) = char::to::hex(dig);
-                    num /= 16;
+                    value /= 16;
                 }
             }
         }
@@ -340,10 +346,12 @@ namespace parse {
                 out[2] = 48;
             }else{
                 u64 size = math::uint::logb(8,num);
+                u64 value = num;
+
                 for i64 i = size,i>=0,i-=1 {
-                    u64 dig = num % 8;
+                    u64 dig = value % 8;
                     *(out+i+2) = char::to::oct(dig);
-                    num /= 8;
+                    value /= 8;
                 }
             }
         }
@@ -411,10 +419,12 @@ namespace parse {
                 out[2] = 48;
             }else{
                 u64 size = math::uint::logb(2,num);
+                u64 value = num;
+
                 for i64 i = size,i>=0,i-=1 {
-                    u64 dig = num % 2;
+                    u64 dig = value % 2;
                     *(out+i+2) = char::to::bin(dig);
-                    num /= 2;
+                    value /= 2;
                 }
             }
         }

@@ -1,14 +1,22 @@
+import Parser;
+import System;
+import CStr;
+import Char;
+import Pointer;
 import IO;
-//import System;
-//import CStr;
+import Time;
 
 global i64 main(){
-    i8[32] buffer;
     io::print("-- Start --\n");
-    io::print("Pls say ur name: ");
-    io::input(buffer,32);
-    io::print("Hi ");
-    io::print(buffer);
+    
+    for i64 i = 0,i<5,++i {
+        u64 tp = time::nget();
+        io::print_uint(tp / 1000000000);
+        io::print("\n");
+        time::nsleep(1000000000);
+    }
+    
     io::print("-----------\n");
+    time::nsleep(1000000000);
     return 0;
 }

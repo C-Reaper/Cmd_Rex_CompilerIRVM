@@ -1,7 +1,719 @@
-data i8 &cstr.0 '-' '-' ' ' 'S' 't' 'a' 'r' 't' ' ' '-' '-' 10 0
-data i8 &cstr.1 'P' 'l' 's' ' ' 's' 'a' 'y' ' ' 'u' 'r' ' ' 'n' 'a' 'm' 'e' ':' ' ' 0
-data i8 &cstr.2 'H' 'i' ' ' 0
-data i8 &cstr.3 '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' 10 0
+data i8 &cstr.0 'f' 'a' 'l' 's' 'e' 0
+data i8 &cstr.1 't' 'r' 'u' 'e' 0
+data i8 &cstr.2 'n' 'o' 'n' 'e' 0
+data i8 &cstr.3 'f' 'a' 'l' 's' 'e' 0
+data i8 &cstr.4 '0' 0
+data i8 &cstr.5 't' 'r' 'u' 'e' 0
+data i8 &cstr.6 '1' 0
+data i8 &cstr.7 'f' 'a' 'l' 's' 'e' 0
+data i8 &cstr.8 '0' 0
+data i8 &cstr.9 't' 'r' 'u' 'e' 0
+data i8 &cstr.10 '1' 0
+data i8 &cstr.11 '-' '-' ' ' 'S' 't' 'a' 'r' 't' ' ' '-' '-' 10 0
+data i8 &cstr.12 ' ' ' ' 10 0
+data i8 &cstr.13 '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' 10 0
+
+define i64 @f.cstr.len ptr
+    alloca i64 %size 
+    store i64 %size 0 
+    alloca i8 %ch 
+    add ptr %0 &1 0 
+    ass ptr %1 %0 
+    load i8 %2 %1 
+    store i8 %ch %2 
+    tar l.0_WHILE2_0 
+    load i8 %4 %ch 
+    nq i8 %5 %4 0 
+    ass u8 %3 %5 
+    brc %3 l.2_WHILE2_0 l.1_WHILE2_0 
+    tar l.2_WHILE2_0 
+    load i64 %6 %size 
+    add i64 %7 %6 1 
+    store i64 %size %7 
+    load i64 %8 %size 
+    add ptr %9 &1 %8 
+    ass ptr %10 %9 
+    load i8 %11 %10 
+    store i8 %ch %11 
+    jmp l.0_WHILE2_0 
+    tar l.1_WHILE2_0 
+    load i64 %13 %size 
+    ass i64 %12 %13 
+    destroy %ch 
+    destroy %size 
+    ret %12 
+    destroy %ch 
+    destroy %size 
+    ret 
+
+define @f.cstr.set ptr i8 i64
+    alloca i64 %i 
+    store i64 %i 0 
+    tar l.0_WHILE2_1 
+    load i64 %1 %i 
+    lt i64 %2 %1 &2 
+    ass u8 %0 %2 
+    brc %0 l.2_WHILE2_1 l.1_WHILE2_1 
+    tar l.2_WHILE2_1 
+    load i64 %3 %i 
+    add ptr %4 &0 %3 
+    ass ptr %5 %4 
+    store i8 %5 &1 
+    load i64 %6 %i 
+    add i64 %7 %6 1 
+    store i64 %i %7 
+    jmp l.0_WHILE2_1 
+    tar l.1_WHILE2_1 
+    destroy %i 
+    ret 
+
+define @f.cstr.cpy ptr ptr i64
+    alloca i64 %i 
+    store i64 %i 0 
+    tar l.0_WHILE2_2 
+    load i64 %1 %i 
+    lt i64 %2 %1 &2 
+    ass u8 %0 %2 
+    brc %0 l.2_WHILE2_2 l.1_WHILE2_2 
+    tar l.2_WHILE2_2 
+    load i64 %3 %i 
+    add ptr %4 &0 %3 
+    ass ptr %5 %4 
+    load i64 %6 %i 
+    add ptr %7 &1 %6 
+    ass ptr %8 %7 
+    load i8 %9 %8 
+    store i8 %5 %9 
+    load i64 %10 %i 
+    add i64 %11 %10 1 
+    store i64 %i %11 
+    jmp l.0_WHILE2_2 
+    tar l.1_WHILE2_2 
+    destroy %i 
+    ret 
+
+define @f.cstr.mov ptr ptr i64
+    alloca i64 %i 
+    store i64 %i 0 
+    tar l.0_FOR3_0 
+    load i64 %1 %i 
+    lt i64 %2 %1 &2 
+    ass u8 %0 %2 
+    brc %0 l.2_FOR3_0 l.1_FOR3_0 
+    tar l.2_FOR3_0 
+    load i64 %3 %i 
+    add ptr %4 &0 %3 
+    ass ptr %5 %4 
+    load i64 %6 %i 
+    add ptr %7 &1 %6 
+    ass ptr %8 %7 
+    load i8 %9 %8 
+    store i8 %5 %9 
+    load i64 %10 %i 
+    add ptr %11 &1 %10 
+    ass ptr %12 %11 
+    store i8 %12 0 
+    load i64 %13 %i 
+    add i64 %14 %13 1 
+    store i64 %i %14 
+    jmp l.0_FOR3_0 
+    tar l.1_FOR3_0 
+    destroy %i 
+    ret 
+
+define i8 @f.cstr.cmp ptr ptr
+    alloca i64 %size1 
+    ass ptr %1 &1 
+    call @f.cstr.len %0 %1 
+    store i64 %size1 %0 
+    alloca i64 %size2 
+    ass ptr %3 &2 
+    call @f.cstr.len %2 %3 
+    store i64 %size2 %2 
+    load i64 %5 %size1 
+    load i64 %6 %size2 
+    nq i64 %7 %5 %6 
+    ass u8 %4 %7 
+    brc %4 l.0_IF2_3 l.1_IF2_3 
+    tar l.0_IF2_3 
+    ass i8 %8 false 
+    destroy %size2 
+    destroy %size1 
+    ret %8 
+    tar l.1_LOG2_3 
+    tar l.1_IF2_3 
+    alloca i64 %i 
+    store i64 %i 0 
+    tar l.0_FOR3_1 
+    load i64 %10 %i 
+    load i64 %11 %size1 
+    lt i64 %12 %10 %11 
+    ass u8 %9 %12 
+    brc %9 l.2_FOR3_1 l.1_FOR3_1 
+    tar l.2_FOR3_1 
+    load i64 %14 %i 
+    add ptr %15 &1 %14 
+    ass ptr %16 %15 
+    load i64 %17 %i 
+    add ptr %18 &2 %17 
+    ass ptr %19 %18 
+    load i8 %20 %16 
+    load i8 %21 %19 
+    nq i8 %22 %20 %21 
+    ass u8 %13 %22 
+    brc %13 l.0_IF4_0 l.1_IF4_0 
+    tar l.0_IF4_0 
+    ass i8 %23 false 
+    destroy %i 
+    destroy %size2 
+    destroy %size1 
+    ret %23 
+    tar l.1_LOG4_0 
+    tar l.1_IF4_0 
+    load i64 %24 %i 
+    add i64 %25 %24 1 
+    store i64 %i %25 
+    jmp l.0_FOR3_1 
+    tar l.1_FOR3_1 
+    destroy %i 
+    ass i8 %26 true 
+    destroy %size2 
+    destroy %size1 
+    ret %26 
+    destroy %size2 
+    destroy %size1 
+    ret 
+
+define i64 @f.cstr.find ptr i8
+    alloca i64 %size1 
+    ass ptr %1 &1 
+    call @f.cstr.len %0 %1 
+    store i64 %size1 %0 
+    alloca i64 %i 
+    store i64 %i 0 
+    tar l.0_FOR3_2 
+    load i64 %3 %i 
+    load i64 %4 %size1 
+    lt i64 %5 %3 %4 
+    ass u8 %2 %5 
+    brc %2 l.2_FOR3_2 l.1_FOR3_2 
+    tar l.2_FOR3_2 
+    load i64 %7 %i 
+    add ptr %8 &1 %7 
+    ass ptr %9 %8 
+    load i8 %10 %9 
+    eq i8 %11 %10 &2 
+    ass u8 %6 %11 
+    brc %6 l.0_IF4_1 l.1_IF4_1 
+    tar l.0_IF4_1 
+    load i64 %13 %i 
+    ass i64 %12 %13 
+    destroy %i 
+    destroy %size1 
+    ret %12 
+    tar l.1_LOG4_1 
+    tar l.1_IF4_1 
+    load i64 %14 %i 
+    add i64 %15 %14 1 
+    store i64 %i %15 
+    jmp l.0_FOR3_2 
+    tar l.1_FOR3_2 
+    destroy %i 
+    load i64 %17 %size1 
+    ass i64 %16 %17 
+    destroy %size1 
+    ret %16 
+    destroy %size1 
+    ret 
+
+define i64 @f.cstr.findc ptr ptr
+    alloca i64 %psize 
+    ass ptr %1 &2 
+    call @f.cstr.len %0 %1 
+    store i64 %psize %0 
+    alloca i64 %ssize 
+    ass ptr %3 &1 
+    call @f.cstr.len %2 %3 
+    store i64 %ssize %2 
+    alloca i64 %i 
+    store i64 %i 0 
+    tar l.0_FOR3_3 
+    load i64 %5 %i 
+    load i64 %6 %ssize 
+    lt i64 %7 %5 %6 
+    ass u8 %4 %7 
+    brc %4 l.2_FOR3_3 l.1_FOR3_3 
+    tar l.2_FOR3_3 
+    alloca i8 %ch 
+    load i64 %8 %i 
+    add ptr %9 &1 %8 
+    ass ptr %10 %9 
+    load i8 %11 %10 
+    store i8 %ch %11 
+    alloca i64 %j 
+    store i64 %j 0 
+    tar l.0_FOR5_0 
+    load i64 %13 %j 
+    load i64 %14 %psize 
+    lt i64 %15 %13 %14 
+    ass u8 %12 %15 
+    brc %12 l.2_FOR5_0 l.1_FOR5_0 
+    tar l.2_FOR5_0 
+    load i64 %17 %j 
+    add ptr %18 &2 %17 
+    ass ptr %19 %18 
+    load i8 %20 %ch 
+    load i8 %21 %19 
+    eq i8 %22 %20 %21 
+    ass u8 %16 %22 
+    brc %16 l.0_IF6_0 l.1_IF6_0 
+    tar l.0_IF6_0 
+    load i64 %24 %i 
+    ass i64 %23 %24 
+    destroy %j 
+    destroy %ch 
+    destroy %i 
+    destroy %ssize 
+    destroy %psize 
+    ret %23 
+    tar l.1_LOG6_0 
+    tar l.1_IF6_0 
+    load i64 %25 %j 
+    add i64 %26 %25 1 
+    store i64 %j %26 
+    jmp l.0_FOR5_0 
+    tar l.1_FOR5_0 
+    destroy %j 
+    load i64 %27 %i 
+    add i64 %28 %27 1 
+    store i64 %i %28 
+    destroy %ch 
+    jmp l.0_FOR3_3 
+    tar l.1_FOR3_3 
+    destroy %i 
+    load i64 %30 %ssize 
+    ass i64 %29 %30 
+    destroy %ssize 
+    destroy %psize 
+    ret %29 
+    destroy %ssize 
+    destroy %psize 
+    ret 
+
+define i64 @f.cstr.findnot ptr ptr
+    alloca u64 %psize 
+    ass ptr %1 &2 
+    call @f.cstr.len %0 %1 
+    store u64 %psize %0 
+    alloca u64 %ssize 
+    ass ptr %3 &1 
+    call @f.cstr.len %2 %3 
+    store u64 %ssize %2 
+    alloca u64 %i 
+    store u64 %i 0 
+    tar l.0_FOR3_4 
+    load u64 %5 %i 
+    load u64 %6 %ssize 
+    lt u64 %7 %5 %6 
+    ass u8 %4 %7 
+    brc %4 l.2_FOR3_4 l.1_FOR3_4 
+    tar l.2_FOR3_4 
+    alloca i8 %ch 
+    load u64 %8 %i 
+    add ptr %9 &1 %8 
+    ass ptr %10 %9 
+    load i8 %11 %10 
+    store i8 %ch %11 
+    alloca u64 %j 
+    store u64 %j 0 
+    tar l.0_FOR5_1 
+    load u64 %13 %j 
+    load u64 %14 %psize 
+    lt u64 %15 %13 %14 
+    ass u8 %12 %15 
+    brc %12 l.2_FOR5_1 l.1_FOR5_1 
+    tar l.2_FOR5_1 
+    load u64 %17 %j 
+    add ptr %18 &2 %17 
+    ass ptr %19 %18 
+    load i8 %20 %ch 
+    load i8 %21 %19 
+    eq i8 %22 %20 %21 
+    ass u8 %16 %22 
+    brc %16 l.0_IF6_1 l.1_IF6_1 
+    tar l.0_IF6_1 
+    load u64 %23 %psize 
+    store u64 %j %23 
+    tar l.1_LOG6_1 
+    tar l.1_IF6_1 
+    load u64 %25 %psize 
+    sub u64 %26 %25 1 
+    load u64 %27 %j 
+    eq u64 %28 %27 %26 
+    ass u8 %24 %28 
+    brc %24 l.0_IF6_2 l.1_IF6_2 
+    tar l.0_IF6_2 
+    load u64 %30 %i 
+    ass i64 %29 %30 
+    destroy %j 
+    destroy %ch 
+    destroy %i 
+    destroy %ssize 
+    destroy %psize 
+    ret %29 
+    tar l.1_LOG6_2 
+    tar l.1_IF6_2 
+    load u64 %31 %j 
+    add u64 %32 %31 1 
+    store u64 %j %32 
+    jmp l.0_FOR5_1 
+    tar l.1_FOR5_1 
+    destroy %j 
+    load u64 %33 %i 
+    add u64 %34 %33 1 
+    store u64 %i %34 
+    destroy %ch 
+    jmp l.0_FOR3_4 
+    tar l.1_FOR3_4 
+    destroy %i 
+    load u64 %36 %ssize 
+    ass i64 %35 %36 
+    destroy %ssize 
+    destroy %psize 
+    ret %35 
+    destroy %ssize 
+    destroy %psize 
+    ret 
+
+define u8 @f.char.alpha i8
+    gq i8 %0 &1 65 
+    lt i8 %1 &1 91 
+    and u8 %2 %0 %1 
+    gq i8 %3 &1 97 
+    lt i8 %4 &1 123 
+    and u8 %5 %3 %4 
+    or u8 %6 %2 %5 
+    ass u8 %7 %6 
+    ret %7 
+    ret 
+
+define u8 @f.char.num i8
+    gq i8 %0 &1 48 
+    lt i8 %1 &1 58 
+    and u8 %2 %0 %1 
+    ass u8 %3 %2 
+    ret %3 
+    ret 
+
+define u8 @f.char.alphanum i8
+    ass i8 %1 &1 
+    call @f.char.alpha %0 %1 
+    ass i8 %3 &1 
+    call @f.char.num %2 %3 
+    or u8 %4 %0 %2 
+    ass u8 %5 %4 
+    ret %5 
+    ret 
+
+define i8 @f.char.to.dec i64
+    gq i64 %1 &1 0 
+    lt i64 %2 &1 10 
+    and u8 %3 %1 %2 
+    ass u8 %0 %3 
+    brc %0 l.0_IF2_4 l.1_IF2_4 
+    tar l.0_IF2_4 
+    add i64 %4 &1 48 
+    ass i8 %5 %4 
+    ret %5 
+    tar l.1_LOG2_4 
+    tar l.1_IF2_4 
+    ass i8 %6 0 
+    ret %6 
+    ret 
+
+define i8 @f.char.to.hex i64
+    gq i64 %1 &1 0 
+    lt i64 %2 &1 10 
+    and u8 %3 %1 %2 
+    ass u8 %0 %3 
+    brc %0 l.0_IF2_5 l.1_IF2_5 
+    tar l.0_IF2_5 
+    add i64 %4 &1 48 
+    ass i8 %5 %4 
+    ret %5 
+    tar l.1_LOG2_5 
+    tar l.1_IF2_5 
+    gq i64 %7 &1 10 
+    lt i64 %8 &1 16 
+    and u8 %9 %7 %8 
+    ass u8 %6 %9 
+    brc %6 l.0_IF2_6 l.1_IF2_6 
+    tar l.0_IF2_6 
+    add i64 %10 &1 55 
+    ass i8 %11 %10 
+    ret %11 
+    tar l.1_LOG2_6 
+    tar l.1_IF2_6 
+    ass i8 %12 0 
+    ret %12 
+    ret 
+
+define i8 @f.char.to.oct i64
+    gq i64 %1 &1 0 
+    lt i64 %2 &1 8 
+    and u8 %3 %1 %2 
+    ass u8 %0 %3 
+    brc %0 l.0_IF2_7 l.1_IF2_7 
+    tar l.0_IF2_7 
+    add i64 %4 &1 48 
+    ass i8 %5 %4 
+    ret %5 
+    tar l.1_LOG2_7 
+    tar l.1_IF2_7 
+    ass i8 %6 0 
+    ret %6 
+    ret 
+
+define i8 @f.char.to.bin i64
+    gq i64 %1 &1 0 
+    lt i64 %2 &1 2 
+    and u8 %3 %1 %2 
+    ass u8 %0 %3 
+    brc %0 l.0_IF2_8 l.1_IF2_8 
+    tar l.0_IF2_8 
+    add i64 %4 &1 48 
+    ass i8 %5 %4 
+    ret %5 
+    tar l.1_LOG2_8 
+    tar l.1_IF2_8 
+    ass i8 %6 0 
+    ret %6 
+    ret 
+
+define i64 @f.char.by.dec i8
+    gq i8 %1 &1 48 
+    lt i8 %2 &1 58 
+    and u8 %3 %1 %2 
+    ass u8 %0 %3 
+    brc %0 l.0_IF2_9 l.1_IF2_9 
+    tar l.0_IF2_9 
+    sub i8 %4 &1 48 
+    ass i64 %5 %4 
+    ret %5 
+    tar l.1_LOG2_9 
+    tar l.1_IF2_9 
+    ass i64 %6 0 
+    ret %6 
+    ret 
+
+define i64 @f.char.by.hex i8
+    gq i8 %1 &1 48 
+    lt i8 %2 &1 58 
+    and u8 %3 %1 %2 
+    ass u8 %0 %3 
+    brc %0 l.0_IF2_10 l.1_IF2_10 
+    tar l.0_IF2_10 
+    sub i8 %4 &1 48 
+    ass i64 %5 %4 
+    ret %5 
+    tar l.1_LOG2_10 
+    tar l.1_IF2_10 
+    gq i8 %7 &1 65 
+    lt i8 %8 &1 71 
+    and u8 %9 %7 %8 
+    ass u8 %6 %9 
+    brc %6 l.0_IF2_11 l.1_IF2_11 
+    tar l.0_IF2_11 
+    sub i8 %10 &1 55 
+    ass i64 %11 %10 
+    ret %11 
+    tar l.1_LOG2_11 
+    tar l.1_IF2_11 
+    gq i8 %13 &1 97 
+    lt i8 %14 &1 103 
+    and u8 %15 %13 %14 
+    ass u8 %12 %15 
+    brc %12 l.0_IF2_12 l.1_IF2_12 
+    tar l.0_IF2_12 
+    sub i8 %16 &1 87 
+    ass i64 %17 %16 
+    ret %17 
+    tar l.1_LOG2_12 
+    tar l.1_IF2_12 
+    ass i64 %18 0 
+    ret %18 
+    ret 
+
+define i64 @f.char.by.oct i8
+    gq i8 %1 &1 48 
+    lt i8 %2 &1 56 
+    and u8 %3 %1 %2 
+    ass u8 %0 %3 
+    brc %0 l.0_IF2_13 l.1_IF2_13 
+    tar l.0_IF2_13 
+    sub i8 %4 &1 48 
+    ass i64 %5 %4 
+    ret %5 
+    tar l.1_LOG2_13 
+    tar l.1_IF2_13 
+    ass i64 %6 0 
+    ret %6 
+    ret 
+
+define i64 @f.char.by.bin i8
+    gq i8 %1 &1 48 
+    lt i8 %2 &1 50 
+    and u8 %3 %1 %2 
+    ass u8 %0 %3 
+    brc %0 l.0_IF2_14 l.1_IF2_14 
+    tar l.0_IF2_14 
+    sub i8 %4 &1 48 
+    ass i64 %5 %4 
+    ret %5 
+    tar l.1_LOG2_14 
+    tar l.1_IF2_14 
+    ass i64 %6 0 
+    ret %6 
+    ret 
+
+define u64 @f.math.uint.pow u64 u64
+    alloca u64 %exp 
+    store u64 %exp &2 
+    alloca u64 %out 
+    store u64 %out 1 
+    tar l.0_WHILE2_15 
+    load u64 %1 %exp 
+    gt u64 %2 %1 0 
+    ass u8 %0 %2 
+    brc %0 l.2_WHILE2_15 l.1_WHILE2_15 
+    tar l.2_WHILE2_15 
+    load u64 %3 %out 
+    mul u64 %4 %3 &1 
+    store u64 %out %4 
+    load u64 %5 %exp 
+    sub u64 %6 %5 1 
+    store u64 %exp %6 
+    jmp l.0_WHILE2_15 
+    tar l.1_WHILE2_15 
+    load u64 %8 %out 
+    ass u64 %7 %8 
+    destroy %out 
+    destroy %exp 
+    ret %7 
+    destroy %out 
+    destroy %exp 
+    ret 
+
+define u64 @f.math.uint.logb u64 u64
+    alloca u64 %val 
+    store u64 %val &2 
+    alloca u64 %out 
+    neg i64 %0 1 
+    store u64 %out %0 
+    tar l.0_WHILE2_16 
+    load u64 %2 %val 
+    gt u64 %3 %2 0 
+    ass u8 %1 %3 
+    brc %1 l.2_WHILE2_16 l.1_WHILE2_16 
+    tar l.2_WHILE2_16 
+    load u64 %4 %val 
+    div u64 %5 %4 &1 
+    store u64 %val %5 
+    load u64 %6 %out 
+    add u64 %7 %6 1 
+    store u64 %out %7 
+    jmp l.0_WHILE2_16 
+    tar l.1_WHILE2_16 
+    load u64 %9 %out 
+    ass u64 %8 %9 
+    destroy %out 
+    destroy %val 
+    ret %8 
+    destroy %out 
+    destroy %val 
+    ret 
+
+define u64 @f.math.uint.log10 u64
+    ass u64 %1 10 
+    ass u64 %2 &1 
+    call @f.math.uint.logb %0 %1 %2 
+    ass u64 %3 %0 
+    ret %3 
+    ret 
+
+define u64 @f.math.uint.min u64 u64
+    lt u64 %1 &1 &2 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_17 l.1_IF2_17 
+    tar l.0_IF2_17 
+    ass u64 %2 &1 
+    ret %2 
+    tar l.1_LOG2_17 
+    tar l.1_IF2_17 
+    ass u64 %3 &2 
+    ret %3 
+    ret 
+
+define u64 @f.math.uint.max u64 u64
+    gt u64 %1 &1 &2 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_18 l.1_IF2_18 
+    tar l.0_IF2_18 
+    ass u64 %2 &1 
+    ret %2 
+    tar l.1_LOG2_18 
+    tar l.1_IF2_18 
+    ass u64 %3 &2 
+    ret %3 
+    ret 
+
+define i64 @f.math.int.sign i64
+    gt i64 %1 &1 0 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_19 l.1_IF2_19 
+    tar l.0_IF2_19 
+    ass i64 %2 1 
+    ret %2 
+    jmp l.1_LOG2_19 
+    tar l.1_IF2_19 
+    lt i64 %4 &1 0 
+    ass u8 %3 %4 
+    brc %3 l.0_ELIF2_19_1 l.1_ELIF2_19_1 
+    tar l.0_ELIF2_19_1 
+    neg i64 %5 1 
+    ass i64 %6 %5 
+    ret %6 
+    tar l.1_LOG2_19 
+    tar l.1_ELIF2_19_1 
+    ass i64 %7 0 
+    ret %7 
+    ret 
+
+define i64 @f.math.int.min i64 i64
+    lt i64 %1 &1 &2 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_20 l.1_IF2_20 
+    tar l.0_IF2_20 
+    ass i64 %2 &1 
+    ret %2 
+    tar l.1_LOG2_20 
+    tar l.1_IF2_20 
+    ass i64 %3 &2 
+    ret %3 
+    ret 
+
+define i64 @f.math.int.max i64 i64
+    gt i64 %1 &1 &2 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_21 l.1_IF2_21 
+    tar l.0_IF2_21 
+    ass i64 %2 &1 
+    ret %2 
+    tar l.1_LOG2_21 
+    tar l.1_IF2_21 
+    ass i64 %3 &2 
+    ret %3 
+    ret 
 
 extern @f.syscall i64 i64 i64 i64 i64 i64
 
@@ -242,83 +954,301 @@ define @f.sys.fcntl u64 u64 u64
     call @f.syscall %1 %2 %3 %4 %5 %6 
     ret 
 
-define i64 @f.cstr.len ptr
-    alloca i64 %size 
-    store i64 %size 0 
-    alloca i8 %ch 
-    add ptr %0 &1 0 
-    ass ptr %1 %0 
-    load i8 %2 %1 
-    store i8 %ch %2 
-    tar l.0_WHILE2_0 
-    load i8 %4 %ch 
-    nq i8 %5 %4 0 
-    ass u8 %3 %5 
-    brc %3 l.2_WHILE2_0 l.1_WHILE2_0 
-    tar l.2_WHILE2_0 
-    load i64 %6 %size 
-    add i64 %7 %6 1 
-    store i64 %size %7 
-    load i64 %8 %size 
-    add ptr %9 &1 %8 
+define @f.sys.clock_gettime u64 ptr
+    ass i64 %1 228 
+    ass i64 %2 &0 
+    ass i64 %4 &1 
+    ass i64 %3 %4 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %1 %2 %3 %5 %6 %7 
+    ret 
+
+define @f.ptr.set ptr i8 i64
+    alloca ptr %cdst 
+    store ptr %cdst &0 
+    alloca i64 %i 
+    store i64 %i 0 
+    tar l.0_FOR3_5 
+    load i64 %1 %i 
+    lt i64 %2 %1 &2 
+    ass u8 %0 %2 
+    brc %0 l.2_FOR3_5 l.1_FOR3_5 
+    tar l.2_FOR3_5 
+    load ptr %3 %cdst 
+    load i64 %4 %i 
+    add ptr %5 %3 %4 
+    ass ptr %6 %5 
+    store i8 %6 &1 
+    load i64 %7 %i 
+    add i64 %8 %7 1 
+    store i64 %i %8 
+    jmp l.0_FOR3_5 
+    tar l.1_FOR3_5 
+    destroy %i 
+    destroy %cdst 
+    ret 
+
+define @f.ptr.cpy ptr ptr i64
+    alloca ptr %cdst 
+    store ptr %cdst &0 
+    alloca ptr %csrc 
+    store ptr %csrc &1 
+    alloca i64 %i 
+    store i64 %i 0 
+    tar l.0_FOR3_6 
+    load i64 %1 %i 
+    lt i64 %2 %1 &2 
+    ass u8 %0 %2 
+    brc %0 l.2_FOR3_6 l.1_FOR3_6 
+    tar l.2_FOR3_6 
+    load ptr %3 %cdst 
+    load i64 %4 %i 
+    add ptr %5 %3 %4 
+    ass ptr %6 %5 
+    load ptr %7 %csrc 
+    load i64 %8 %i 
+    add ptr %9 %7 %8 
     ass ptr %10 %9 
     load i8 %11 %10 
-    store i8 %ch %11 
-    jmp l.0_WHILE2_0 
-    tar l.1_WHILE2_0 
-    load i64 %13 %size 
-    ass i64 %12 %13 
-    destroy %ch 
-    destroy %size 
-    ret %12 
-    destroy %ch 
-    destroy %size 
+    store i8 %6 %11 
+    load i64 %12 %i 
+    add i64 %13 %12 1 
+    store i64 %i %13 
+    jmp l.0_FOR3_6 
+    tar l.1_FOR3_6 
+    destroy %i 
+    destroy %csrc 
+    destroy %cdst 
     ret 
 
-define @f.cstr.set ptr i8 i64
+define @f.ptr.mov ptr ptr i64
+    alloca ptr %cdst 
+    store ptr %cdst &0 
+    alloca ptr %csrc 
+    store ptr %csrc &1 
+    alloca i64 %todo 
+    div i64 %0 &2 8 
+    mul i64 %1 %0 8 
+    store i64 %todo %1 
+    alloca i64 %rest 
+    load i64 %2 %todo 
+    sub i64 %3 &2 %2 
+    store i64 %rest %3 
+    alloca ptr %dst64 
+    store ptr %dst64 &0 
+    alloca ptr %src64 
+    store ptr %src64 &1 
     alloca i64 %i 
     store i64 %i 0 
-    tar l.0_WHILE2_1 
-    load i64 %1 %i 
-    lt i64 %2 %1 &2 
-    ass u8 %0 %2 
-    brc %0 l.2_WHILE2_1 l.1_WHILE2_1 
-    tar l.2_WHILE2_1 
-    load i64 %3 %i 
-    add ptr %4 &0 %3 
-    ass ptr %5 %4 
-    store i8 %5 &1 
-    load i64 %6 %i 
-    add i64 %7 %6 1 
-    store i64 %i %7 
-    jmp l.0_WHILE2_1 
-    tar l.1_WHILE2_1 
+    tar l.0_FOR3_7 
+    load i64 %5 %i 
+    load i64 %6 %todo 
+    lt i64 %7 %5 %6 
+    ass u8 %4 %7 
+    brc %4 l.2_FOR3_7 l.1_FOR3_7 
+    tar l.2_FOR3_7 
+    load ptr %8 %dst64 
+    load i64 %9 %i 
+    add ptr %10 %8 %9 
+    ass ptr %11 %10 
+    load ptr %12 %src64 
+    load i64 %13 %i 
+    add ptr %14 %12 %13 
+    ass ptr %15 %14 
+    load i64 %16 %15 
+    store i64 %11 %16 
+    load ptr %17 %src64 
+    load i64 %18 %i 
+    add ptr %19 %17 %18 
+    ass ptr %20 %19 
+    store i64 %20 0 
+    load i64 %21 %i 
+    add i64 %22 %21 8 
+    store i64 %i %22 
+    jmp l.0_FOR3_7 
+    tar l.1_FOR3_7 
+    tar l.0_FOR3_8 
+    load i64 %24 %i 
+    lt i64 %25 %24 &2 
+    ass u8 %23 %25 
+    brc %23 l.2_FOR3_8 l.1_FOR3_8 
+    tar l.2_FOR3_8 
+    load ptr %26 %cdst 
+    load i64 %27 %i 
+    add ptr %28 %26 %27 
+    ass ptr %29 %28 
+    load ptr %30 %csrc 
+    load i64 %31 %i 
+    add ptr %32 %30 %31 
+    ass ptr %33 %32 
+    load i8 %34 %33 
+    store i8 %29 %34 
+    load ptr %35 %csrc 
+    load i64 %36 %i 
+    add ptr %37 %35 %36 
+    ass ptr %38 %37 
+    store i8 %38 0 
+    load i64 %39 %i 
+    add i64 %40 %39 1 
+    store i64 %i %40 
+    jmp l.0_FOR3_8 
+    tar l.1_FOR3_8 
     destroy %i 
+    destroy %src64 
+    destroy %dst64 
+    destroy %rest 
+    destroy %todo 
+    destroy %csrc 
+    destroy %cdst 
     ret 
 
-define @f.cstr.cpy ptr ptr i64
+define @f.ptr.shl ptr i64 i64
+    alloca ptr %cdst 
+    store ptr %cdst &0 
+    alloca i64 %todo 
+    div i64 %0 &2 8 
+    mul i64 %1 %0 8 
+    store i64 %todo %1 
+    alloca i64 %rest 
+    load i64 %2 %todo 
+    sub i64 %3 &2 %2 
+    store i64 %rest %3 
+    alloca ptr %src 
+    sub ptr %4 &0 &1 
+    store ptr %src %4 
+    alloca ptr %dst64 
+    load ptr %5 %src 
+    store ptr %dst64 %5 
+    alloca ptr %src64 
+    store ptr %src64 &0 
     alloca i64 %i 
     store i64 %i 0 
-    tar l.0_WHILE2_2 
-    load i64 %1 %i 
-    lt i64 %2 %1 &2 
-    ass u8 %0 %2 
-    brc %0 l.2_WHILE2_2 l.1_WHILE2_2 
-    tar l.2_WHILE2_2 
-    load i64 %3 %i 
-    add ptr %4 &0 %3 
-    ass ptr %5 %4 
-    load i64 %6 %i 
-    add ptr %7 &1 %6 
-    ass ptr %8 %7 
-    load i8 %9 %8 
-    store i8 %5 %9 
-    load i64 %10 %i 
-    add i64 %11 %10 1 
-    store i64 %i %11 
-    jmp l.0_WHILE2_2 
-    tar l.1_WHILE2_2 
+    tar l.0_FOR3_9 
+    load i64 %7 %i 
+    load i64 %8 %todo 
+    lt i64 %9 %7 %8 
+    ass u8 %6 %9 
+    brc %6 l.2_FOR3_9 l.1_FOR3_9 
+    tar l.2_FOR3_9 
+    load ptr %10 %dst64 
+    load i64 %11 %i 
+    add ptr %12 %10 %11 
+    ass ptr %13 %12 
+    load ptr %14 %src64 
+    load i64 %15 %i 
+    add ptr %16 %14 %15 
+    ass ptr %17 %16 
+    load i64 %18 %17 
+    store i64 %13 %18 
+    load i64 %19 %i 
+    add i64 %20 %19 8 
+    store i64 %i %20 
+    jmp l.0_FOR3_9 
+    tar l.1_FOR3_9 
+    tar l.0_FOR3_10 
+    load i64 %22 %i 
+    lt i64 %23 %22 &2 
+    ass u8 %21 %23 
+    brc %21 l.2_FOR3_10 l.1_FOR3_10 
+    tar l.2_FOR3_10 
+    load ptr %24 %cdst 
+    load i64 %25 %i 
+    add ptr %26 %24 %25 
+    ass ptr %27 %26 
+    load ptr %28 %src 
+    load i64 %29 %i 
+    add ptr %30 %28 %29 
+    ass ptr %31 %30 
+    load i8 %32 %31 
+    store i8 %27 %32 
+    load i64 %33 %i 
+    add i64 %34 %33 1 
+    store i64 %i %34 
+    jmp l.0_FOR3_10 
+    tar l.1_FOR3_10 
     destroy %i 
+    destroy %src64 
+    destroy %dst64 
+    destroy %src 
+    destroy %rest 
+    destroy %todo 
+    destroy %cdst 
+    ret 
+
+define @f.ptr.shr ptr i64 i64
+    alloca ptr %cdst 
+    store ptr %cdst &0 
+    alloca i64 %todo 
+    div i64 %0 &2 8 
+    mul i64 %1 %0 8 
+    store i64 %todo %1 
+    alloca i64 %rest 
+    load i64 %2 %todo 
+    sub i64 %3 &2 %2 
+    store i64 %rest %3 
+    alloca ptr %src 
+    add ptr %4 &0 &1 
+    store ptr %src %4 
+    alloca ptr %dst64 
+    load ptr %5 %src 
+    store ptr %dst64 %5 
+    alloca ptr %src64 
+    store ptr %src64 &0 
+    alloca i64 %i 
+    sub i64 %6 &2 1 
+    store i64 %i %6 
+    tar l.0_FOR3_11 
+    load i64 %8 %i 
+    load i64 %9 %todo 
+    gt i64 %10 %8 %9 
+    ass u8 %7 %10 
+    brc %7 l.2_FOR3_11 l.1_FOR3_11 
+    tar l.2_FOR3_11 
+    load ptr %11 %cdst 
+    load i64 %12 %i 
+    add ptr %13 %11 %12 
+    ass ptr %14 %13 
+    load ptr %15 %src 
+    load i64 %16 %i 
+    add ptr %17 %15 %16 
+    ass ptr %18 %17 
+    load i8 %19 %18 
+    store i8 %14 %19 
+    load i64 %20 %i 
+    sub i64 %21 %20 1 
+    store i64 %i %21 
+    jmp l.0_FOR3_11 
+    tar l.1_FOR3_11 
+    tar l.0_FOR3_12 
+    load i64 %23 %i 
+    gq i64 %24 %23 0 
+    ass u8 %22 %24 
+    brc %22 l.2_FOR3_12 l.1_FOR3_12 
+    tar l.2_FOR3_12 
+    load ptr %25 %dst64 
+    load i64 %26 %i 
+    add ptr %27 %25 %26 
+    ass ptr %28 %27 
+    load ptr %29 %src64 
+    load i64 %30 %i 
+    add ptr %31 %29 %30 
+    ass ptr %32 %31 
+    load i64 %33 %32 
+    store i64 %28 %33 
+    load i64 %34 %i 
+    sub i64 %35 %34 8 
+    store i64 %i %35 
+    jmp l.0_FOR3_12 
+    tar l.1_FOR3_12 
+    destroy %i 
+    destroy %src64 
+    destroy %dst64 
+    destroy %src 
+    destroy %rest 
+    destroy %todo 
+    destroy %cdst 
     ret 
 
 define @f.io.input ptr i64
@@ -355,36 +1285,1619 @@ define @f.io.error ptr
     ret 
 
 define @f.io.print_char i8
-    alloca i8 %ch_s 
-    store i8 %ch_s &0 
+    alloca i8 %ch_stack 
+    store i8 %ch_stack &0 
     ass i64 %1 1 
-    ass ptr %3 %ch_s 
+    ass ptr %3 %ch_stack 
     ass ptr %2 %3 
     ass i64 %4 1 
     call @f.sys.write %1 %2 %4 
-    destroy %ch_s 
+    destroy %ch_stack 
+    ret 
+
+define @f.io.print_int i64
+    allocs 24 %str 
+    ass ptr %2 %str 
+    ass ptr %1 %2 
+    ass i8 %3 0 
+    ass i64 %4 24 
+    call @f.ptr.set %1 %3 %4 
+    ass ptr %7 %str 
+    ass ptr %6 %7 
+    ass i64 %8 &0 
+    call @f.parse.int.get %6 %8 
+    alloca i64 %len 
+    ass ptr %11 %str 
+    ass ptr %10 %11 
+    call @f.cstr.len %9 %10 
+    store i64 %len %9 
+    ass i64 %13 1 
+    ass ptr %15 %str 
+    ass ptr %14 %15 
+    load i64 %17 %len 
+    ass i64 %16 %17 
+    call @f.sys.write %13 %14 %16 
+    destroy %len 
+    destroy %str 
+    ret 
+
+define @f.io.print_uint u64
+    allocs 24 %str 
+    ass ptr %2 %str 
+    ass ptr %1 %2 
+    ass i8 %3 0 
+    ass i64 %4 24 
+    call @f.ptr.set %1 %3 %4 
+    ass ptr %7 %str 
+    ass ptr %6 %7 
+    ass u64 %8 &0 
+    call @f.parse.uint.get %6 %8 
+    alloca i64 %len 
+    ass ptr %11 %str 
+    ass ptr %10 %11 
+    call @f.cstr.len %9 %10 
+    store i64 %len %9 
+    ass i64 %13 1 
+    ass ptr %15 %str 
+    ass ptr %14 %15 
+    load i64 %17 %len 
+    ass i64 %16 %17 
+    call @f.sys.write %13 %14 %16 
+    destroy %len 
+    destroy %str 
+    ret 
+
+define @f.io.print_hex u64
+    allocs 24 %str 
+    ass ptr %2 %str 
+    ass ptr %1 %2 
+    ass i8 %3 0 
+    ass i64 %4 24 
+    call @f.ptr.set %1 %3 %4 
+    ass ptr %7 %str 
+    ass ptr %6 %7 
+    ass u64 %8 &0 
+    call @f.parse.hex.get %6 %8 
+    alloca i64 %len 
+    ass ptr %11 %str 
+    ass ptr %10 %11 
+    call @f.cstr.len %9 %10 
+    store i64 %len %9 
+    ass i64 %13 1 
+    ass ptr %15 %str 
+    ass ptr %14 %15 
+    load i64 %17 %len 
+    ass i64 %16 %17 
+    call @f.sys.write %13 %14 %16 
+    destroy %len 
+    destroy %str 
+    ret 
+
+define @f.parse.boolean.get ptr u8
+    eq u8 %1 &1 false 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_22 l.1_IF2_22 
+    tar l.0_IF2_22 
+    ass ptr %3 &0 
+    ass ptr %4 &cstr.0 
+    ass i64 %5 5 
+    call @f.cstr.cpy %3 %4 %5 
+    jmp l.1_LOG2_22 
+    tar l.1_IF2_22 
+    eq u8 %7 &1 true 
+    ass u8 %6 %7 
+    brc %6 l.0_ELIF2_22_2 l.1_ELIF2_22_2 
+    tar l.0_ELIF2_22_2 
+    ass ptr %9 &0 
+    ass ptr %10 &cstr.1 
+    ass i64 %11 4 
+    call @f.cstr.cpy %9 %10 %11 
+    jmp l.1_LOG2_22 
+    tar l.1_ELIF2_22_2 
+    tar l.0_ELSE2_22 
+    ass ptr %13 &0 
+    ass ptr %14 &cstr.2 
+    ass i64 %15 4 
+    call @f.cstr.cpy %13 %14 %15 
+    tar l.1_LOG2_22 
+    ret 
+
+define u8 @f.parse.boolean.by ptr
+    ass ptr %2 &1 
+    ass ptr %3 &cstr.3 
+    call @f.cstr.cmp %1 %2 %3 
+    ass ptr %5 &1 
+    ass ptr %6 &cstr.4 
+    call @f.cstr.cmp %4 %5 %6 
+    or i8 %7 %1 %4 
+    ass u8 %0 %7 
+    brc %0 l.0_IF2_23 l.1_IF2_23 
+    tar l.0_IF2_23 
+    ass u8 %8 false 
+    ret %8 
+    tar l.1_LOG2_23 
+    tar l.1_IF2_23 
+    ass ptr %11 &1 
+    ass ptr %12 &cstr.5 
+    call @f.cstr.cmp %10 %11 %12 
+    ass ptr %14 &1 
+    ass ptr %15 &cstr.6 
+    call @f.cstr.cmp %13 %14 %15 
+    or i8 %16 %10 %13 
+    ass u8 %9 %16 
+    brc %9 l.0_IF2_24 l.1_IF2_24 
+    tar l.0_IF2_24 
+    ass u8 %17 true 
+    ret %17 
+    tar l.1_LOG2_24 
+    tar l.1_IF2_24 
+    ass u8 %18 false 
+    ret %18 
+    ret 
+
+define u8 @f.parse.boolean.by_s ptr ptr
+    eq ptr %1 &2 0 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_25 l.1_IF2_25 
+    tar l.0_IF2_25 
+    ass u8 %2 false 
+    ret %2 
+    tar l.1_LOG2_25 
+    tar l.1_IF2_25 
+    ass ptr %5 &1 
+    ass ptr %6 &cstr.7 
+    call @f.cstr.cmp %4 %5 %6 
+    ass ptr %8 &1 
+    ass ptr %9 &cstr.8 
+    call @f.cstr.cmp %7 %8 %9 
+    or i8 %10 %4 %7 
+    ass u8 %3 %10 
+    brc %3 l.0_IF2_26 l.1_IF2_26 
+    tar l.0_IF2_26 
+    ass ptr %11 &2 
+    store u8 %11 false 
+    ass u8 %12 true 
+    ret %12 
+    tar l.1_LOG2_26 
+    tar l.1_IF2_26 
+    ass ptr %15 &1 
+    ass ptr %16 &cstr.9 
+    call @f.cstr.cmp %14 %15 %16 
+    ass ptr %18 &1 
+    ass ptr %19 &cstr.10 
+    call @f.cstr.cmp %17 %18 %19 
+    or i8 %20 %14 %17 
+    ass u8 %13 %20 
+    brc %13 l.0_IF2_27 l.1_IF2_27 
+    tar l.0_IF2_27 
+    ass ptr %21 &2 
+    store u8 %21 true 
+    ass u8 %22 true 
+    ret %22 
+    tar l.1_LOG2_27 
+    tar l.1_IF2_27 
+    ass u8 %23 false 
+    ret %23 
+    ret 
+
+define @f.parse.uint.get ptr u64
+    eq u64 %1 &1 0 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_28 l.1_IF2_28 
+    tar l.0_IF2_28 
+    ass ptr %2 &0 
+    store i8 %2 48 
+    jmp l.1_LOG2_28 
+    tar l.1_IF2_28 
+    tar l.0_ELSE2_28 
+    alloca u64 %size 
+    ass u64 %4 &1 
+    call @f.math.uint.log10 %3 %4 
+    store u64 %size %3 
+    alloca u64 %value 
+    store u64 %value &1 
+    alloca i64 %i 
+    load u64 %5 %size 
+    store i64 %i %5 
+    tar l.0_FOR4_2 
+    load i64 %7 %i 
+    gq i64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.2_FOR4_2 l.1_FOR4_2 
+    tar l.2_FOR4_2 
+    alloca u64 %dig 
+    load u64 %9 %value 
+    mod u64 %10 %9 10 
+    store u64 %dig %10 
+    load i64 %11 %i 
+    add ptr %12 &0 %11 
+    ass ptr %13 %12 
+    load u64 %14 %dig 
+    add u64 %15 %14 48 
+    store i8 %13 %15 
+    load u64 %16 %value 
+    div u64 %17 %16 10 
+    store u64 %value %17 
+    load i64 %18 %i 
+    sub i64 %19 %18 1 
+    store i64 %i %19 
+    destroy %dig 
+    jmp l.0_FOR4_2 
+    tar l.1_FOR4_2 
+    destroy %i 
+    destroy %value 
+    destroy %size 
+    tar l.1_LOG2_28 
+    ret 
+
+define u64 @f.parse.uint.by ptr
+    alloca i64 %size 
+    ass ptr %1 &1 
+    call @f.cstr.len %0 %1 
+    store i64 %size %0 
+    alloca u64 %out 
+    store u64 %out 0 
+    alloca i64 %startdigit 
+    store i64 %startdigit 0 
+    alloca i64 %digits 
+    store i64 %digits 0 
+    alloca i64 %i 
+    load i64 %2 %size 
+    sub i64 %3 %2 1 
+    store i64 %i %3 
+    tar l.0_WHILE2_29 
+    load i64 %5 %i 
+    gq i64 %6 %5 0 
+    ass u8 %4 %6 
+    brc %4 l.2_WHILE2_29 l.1_WHILE2_29 
+    tar l.2_WHILE2_29 
+    alloca i8 %c 
+    load i64 %7 %i 
+    add ptr %8 &1 %7 
+    ass ptr %9 %8 
+    load i8 %10 %9 
+    store i8 %c %10 
+    load i8 %12 %c 
+    gq i8 %13 %12 48 
+    load i8 %14 %c 
+    lq i8 %15 %14 57 
+    and u8 %16 %13 %15 
+    ass u8 %11 %16 
+    brc %11 l.0_IF3_13 l.1_IF3_13 
+    tar l.0_IF3_13 
+    load i8 %17 %c 
+    sub i8 %18 %17 48 
+    ass u64 %20 10 
+    load i64 %22 %digits 
+    ass u64 %21 %22 
+    call @f.math.uint.pow %19 %20 %21 
+    mul i8 %23 %18 %19 
+    load u64 %24 %out 
+    add u64 %25 %24 %23 
+    store u64 %out %25 
+    load i64 %26 %digits 
+    add i64 %27 %26 1 
+    store i64 %digits %27 
+    load i64 %28 %i 
+    sub i64 %29 %28 1 
+    store i64 %i %29 
+    jmp l.1_LOG3_13 
+    tar l.1_IF3_13 
+    tar l.0_ELSE3_13 
+    ass u64 %30 0 
+    destroy %c 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %30 
+    tar l.1_LOG3_13 
+    destroy %c 
+    jmp l.0_WHILE2_29 
+    tar l.1_WHILE2_29 
+    load u64 %32 %out 
+    ass u64 %31 %32 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %31 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret 
+
+define u8 @f.parse.uint.by_s ptr ptr
+    eq ptr %1 &2 0 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_30 l.1_IF2_30 
+    tar l.0_IF2_30 
+    ass u8 %2 false 
+    ret %2 
+    tar l.1_LOG2_30 
+    tar l.1_IF2_30 
+    alloca i64 %size 
+    ass ptr %4 &1 
+    call @f.cstr.len %3 %4 
+    store i64 %size %3 
+    alloca u64 %out 
+    store u64 %out 0 
+    alloca i64 %startdigit 
+    store i64 %startdigit 0 
+    alloca i64 %digits 
+    store i64 %digits 0 
+    alloca i64 %i 
+    load i64 %5 %size 
+    sub i64 %6 %5 1 
+    store i64 %i %6 
+    tar l.0_WHILE2_31 
+    load i64 %8 %i 
+    gq i64 %9 %8 0 
+    ass u8 %7 %9 
+    brc %7 l.2_WHILE2_31 l.1_WHILE2_31 
+    tar l.2_WHILE2_31 
+    alloca i8 %c 
+    load i64 %10 %i 
+    add ptr %11 &1 %10 
+    ass ptr %12 %11 
+    load i8 %13 %12 
+    store i8 %c %13 
+    load i8 %15 %c 
+    gq i8 %16 %15 48 
+    load i8 %17 %c 
+    lq i8 %18 %17 57 
+    and u8 %19 %16 %18 
+    ass u8 %14 %19 
+    brc %14 l.0_IF3_14 l.1_IF3_14 
+    tar l.0_IF3_14 
+    load i8 %20 %c 
+    sub i8 %21 %20 48 
+    ass u64 %23 10 
+    load i64 %25 %digits 
+    ass u64 %24 %25 
+    call @f.math.uint.pow %22 %23 %24 
+    mul i8 %26 %21 %22 
+    load u64 %27 %out 
+    add u64 %28 %27 %26 
+    store u64 %out %28 
+    load i64 %29 %digits 
+    add i64 %30 %29 1 
+    store i64 %digits %30 
+    load i64 %31 %i 
+    sub i64 %32 %31 1 
+    store i64 %i %32 
+    jmp l.1_LOG3_14 
+    tar l.1_IF3_14 
+    tar l.0_ELSE3_14 
+    ass u8 %33 false 
+    destroy %c 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %33 
+    tar l.1_LOG3_14 
+    destroy %c 
+    jmp l.0_WHILE2_31 
+    tar l.1_WHILE2_31 
+    ass ptr %34 &2 
+    load u64 %35 %out 
+    store u64 %34 %35 
+    ass u8 %36 true 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %36 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret 
+
+define @f.parse.int.get ptr i64
+    eq i64 %1 &1 0 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_32 l.1_IF2_32 
+    tar l.0_IF2_32 
+    ass ptr %2 &0 
+    store i8 %2 48 
+    jmp l.1_LOG2_32 
+    tar l.1_IF2_32 
+    tar l.0_ELSE2_32 
+    alloca i64 %minus 
+    store i64 %minus 0 
+    alloca i64 %value 
+    store i64 %value &1 
+    lt i64 %4 &1 0 
+    ass u8 %3 %4 
+    brc %3 l.0_IF3_15 l.1_IF3_15 
+    tar l.0_IF3_15 
+    store i64 %minus 1 
+    add ptr %5 &0 0 
+    ass ptr %6 %5 
+    store i8 %6 45 
+    load i64 %7 %value 
+    neg i64 %8 %7 
+    store i64 %value %8 
+    tar l.1_LOG3_15 
+    tar l.1_IF3_15 
+    alloca u64 %size 
+    load i64 %11 %value 
+    ass u64 %10 %11 
+    call @f.math.uint.log10 %9 %10 
+    store u64 %size %9 
+    alloca i64 %i 
+    load i64 %12 %minus 
+    load u64 %13 %size 
+    add i64 %14 %12 %13 
+    store i64 %i %14 
+    tar l.0_FOR4_3 
+    load i64 %16 %i 
+    load i64 %17 %minus 
+    gq i64 %18 %16 %17 
+    ass u8 %15 %18 
+    brc %15 l.2_FOR4_3 l.1_FOR4_3 
+    tar l.2_FOR4_3 
+    alloca u64 %dig 
+    load i64 %19 %value 
+    mod i64 %20 %19 10 
+    store u64 %dig %20 
+    load i64 %21 %i 
+    add ptr %22 &0 %21 
+    ass ptr %23 %22 
+    load u64 %24 %dig 
+    add u64 %25 %24 48 
+    store i8 %23 %25 
+    load i64 %26 %value 
+    div i64 %27 %26 10 
+    store i64 %value %27 
+    load i64 %28 %i 
+    sub i64 %29 %28 1 
+    store i64 %i %29 
+    destroy %dig 
+    jmp l.0_FOR4_3 
+    tar l.1_FOR4_3 
+    destroy %i 
+    destroy %size 
+    destroy %value 
+    destroy %minus 
+    tar l.1_LOG2_32 
+    ret 
+
+define i64 @f.parse.int.by ptr
+    alloca i64 %size 
+    ass ptr %1 &1 
+    call @f.cstr.len %0 %1 
+    store i64 %size %0 
+    alloca i64 %out 
+    store i64 %out 0 
+    alloca i64 %startdigit 
+    store i64 %startdigit 0 
+    alloca i64 %digits 
+    store i64 %digits 0 
+    alloca i64 %sign 
+    store i64 %sign 0 
+    add ptr %3 &1 0 
+    ass ptr %4 %3 
+    load i8 %5 %4 
+    eq i8 %6 %5 45 
+    ass u8 %2 %6 
+    brc %2 l.0_IF2_33 l.1_IF2_33 
+    tar l.0_IF2_33 
+    store i64 %sign 1 
+    tar l.1_LOG2_33 
+    tar l.1_IF2_33 
+    alloca i64 %i 
+    load i64 %7 %size 
+    sub i64 %8 %7 1 
+    store i64 %i %8 
+    tar l.0_WHILE2_34 
+    load i64 %10 %i 
+    load i64 %11 %sign 
+    gq i64 %12 %10 %11 
+    ass u8 %9 %12 
+    brc %9 l.2_WHILE2_34 l.1_WHILE2_34 
+    tar l.2_WHILE2_34 
+    alloca i8 %c 
+    load i64 %13 %i 
+    add ptr %14 &1 %13 
+    ass ptr %15 %14 
+    load i8 %16 %15 
+    store i8 %c %16 
+    load i8 %18 %c 
+    gq i8 %19 %18 48 
+    load i8 %20 %c 
+    lq i8 %21 %20 57 
+    and u8 %22 %19 %21 
+    ass u8 %17 %22 
+    brc %17 l.0_IF3_16 l.1_IF3_16 
+    tar l.0_IF3_16 
+    load i8 %23 %c 
+    sub i8 %24 %23 48 
+    ass u64 %26 10 
+    load i64 %28 %digits 
+    ass u64 %27 %28 
+    call @f.math.uint.pow %25 %26 %27 
+    mul i8 %29 %24 %25 
+    load i64 %30 %out 
+    add i64 %31 %30 %29 
+    store i64 %out %31 
+    load i64 %32 %digits 
+    add i64 %33 %32 1 
+    store i64 %digits %33 
+    load i64 %34 %i 
+    sub i64 %35 %34 1 
+    store i64 %i %35 
+    jmp l.1_LOG3_16 
+    tar l.1_IF3_16 
+    tar l.0_ELSE3_16 
+    ass i64 %36 0 
+    destroy %c 
+    destroy %i 
+    destroy %sign 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %36 
+    tar l.1_LOG3_16 
+    destroy %c 
+    jmp l.0_WHILE2_34 
+    tar l.1_WHILE2_34 
+    load i64 %38 %sign 
+    gt i64 %39 %38 0 
+    ass u8 %37 %39 
+    brc %37 l.0_IF2_35 l.1_IF2_35 
+    tar l.0_IF2_35 
+    load i64 %40 %out 
+    neg i64 %41 %40 
+    store i64 %out %41 
+    tar l.1_LOG2_35 
+    tar l.1_IF2_35 
+    load i64 %43 %out 
+    ass i64 %42 %43 
+    destroy %i 
+    destroy %sign 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %42 
+    destroy %i 
+    destroy %sign 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret 
+
+define u8 @f.parse.int.by_s ptr ptr
+    eq ptr %1 &2 0 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_36 l.1_IF2_36 
+    tar l.0_IF2_36 
+    ass u8 %2 false 
+    ret %2 
+    tar l.1_LOG2_36 
+    tar l.1_IF2_36 
+    alloca i64 %size 
+    ass ptr %4 &1 
+    call @f.cstr.len %3 %4 
+    store i64 %size %3 
+    alloca i64 %out 
+    store i64 %out 0 
+    alloca i64 %startdigit 
+    store i64 %startdigit 0 
+    alloca i64 %digits 
+    store i64 %digits 0 
+    alloca i64 %sign 
+    store i64 %sign 0 
+    add ptr %6 &1 0 
+    ass ptr %7 %6 
+    load i8 %8 %7 
+    eq i8 %9 %8 45 
+    ass u8 %5 %9 
+    brc %5 l.0_IF2_37 l.1_IF2_37 
+    tar l.0_IF2_37 
+    store i64 %sign 1 
+    tar l.1_LOG2_37 
+    tar l.1_IF2_37 
+    alloca i64 %i 
+    load i64 %10 %size 
+    sub i64 %11 %10 1 
+    store i64 %i %11 
+    tar l.0_WHILE2_38 
+    load i64 %13 %i 
+    load i64 %14 %sign 
+    gq i64 %15 %13 %14 
+    ass u8 %12 %15 
+    brc %12 l.2_WHILE2_38 l.1_WHILE2_38 
+    tar l.2_WHILE2_38 
+    alloca i8 %c 
+    load i64 %16 %i 
+    add ptr %17 &1 %16 
+    ass ptr %18 %17 
+    load i8 %19 %18 
+    store i8 %c %19 
+    load i8 %21 %c 
+    gq i8 %22 %21 48 
+    load i8 %23 %c 
+    lq i8 %24 %23 57 
+    and u8 %25 %22 %24 
+    ass u8 %20 %25 
+    brc %20 l.0_IF3_17 l.1_IF3_17 
+    tar l.0_IF3_17 
+    load i8 %26 %c 
+    sub i8 %27 %26 48 
+    ass u64 %29 10 
+    load i64 %31 %digits 
+    ass u64 %30 %31 
+    call @f.math.uint.pow %28 %29 %30 
+    mul i8 %32 %27 %28 
+    load i64 %33 %out 
+    add i64 %34 %33 %32 
+    store i64 %out %34 
+    load i64 %35 %digits 
+    add i64 %36 %35 1 
+    store i64 %digits %36 
+    load i64 %37 %i 
+    sub i64 %38 %37 1 
+    store i64 %i %38 
+    jmp l.1_LOG3_17 
+    tar l.1_IF3_17 
+    tar l.0_ELSE3_17 
+    ass u8 %39 false 
+    destroy %c 
+    destroy %i 
+    destroy %sign 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %39 
+    tar l.1_LOG3_17 
+    destroy %c 
+    jmp l.0_WHILE2_38 
+    tar l.1_WHILE2_38 
+    load i64 %41 %sign 
+    gt i64 %42 %41 0 
+    ass u8 %40 %42 
+    brc %40 l.0_IF2_39 l.1_IF2_39 
+    tar l.0_IF2_39 
+    load i64 %43 %out 
+    neg i64 %44 %43 
+    store i64 %out %44 
+    tar l.1_LOG2_39 
+    tar l.1_IF2_39 
+    ass ptr %45 &2 
+    load i64 %46 %out 
+    store i64 %45 %46 
+    ass u8 %47 true 
+    destroy %i 
+    destroy %sign 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %47 
+    destroy %i 
+    destroy %sign 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret 
+
+define @f.parse.hex.get ptr u64
+    ass ptr %0 &0 
+    store i8 %0 48 
+    add ptr %1 &0 1 
+    ass ptr %2 %1 
+    store i8 %2 120 
+    eq u64 %4 &1 0 
+    ass u8 %3 %4 
+    brc %3 l.0_IF2_40 l.1_IF2_40 
+    tar l.0_IF2_40 
+    add ptr %5 &0 2 
+    ass ptr %6 %5 
+    store i8 %6 48 
+    jmp l.1_LOG2_40 
+    tar l.1_IF2_40 
+    tar l.0_ELSE2_40 
+    alloca u64 %size 
+    ass u64 %8 16 
+    ass u64 %9 &1 
+    call @f.math.uint.logb %7 %8 %9 
+    store u64 %size %7 
+    alloca u64 %value 
+    store u64 %value &1 
+    alloca i64 %i 
+    load u64 %10 %size 
+    store i64 %i %10 
+    tar l.0_FOR4_4 
+    load i64 %12 %i 
+    gq i64 %13 %12 0 
+    ass u8 %11 %13 
+    brc %11 l.2_FOR4_4 l.1_FOR4_4 
+    tar l.2_FOR4_4 
+    alloca u64 %dig 
+    load u64 %14 %value 
+    mod u64 %15 %14 16 
+    store u64 %dig %15 
+    load u64 %18 %dig 
+    ass i64 %17 %18 
+    call @f.char.to.hex %16 %17 
+    load i64 %19 %i 
+    add ptr %20 &0 %19 
+    add ptr %21 %20 2 
+    ass ptr %22 %21 
+    store i8 %22 %16 
+    load u64 %23 %value 
+    div u64 %24 %23 16 
+    store u64 %value %24 
+    load i64 %25 %i 
+    sub i64 %26 %25 1 
+    store i64 %i %26 
+    destroy %dig 
+    jmp l.0_FOR4_4 
+    tar l.1_FOR4_4 
+    destroy %i 
+    destroy %value 
+    destroy %size 
+    tar l.1_LOG2_40 
+    ret 
+
+define u64 @f.parse.hex.by ptr
+    ass ptr %1 &1 
+    load i8 %2 %1 
+    nq i8 %3 %2 48 
+    add ptr %4 &1 1 
+    ass ptr %5 %4 
+    load i8 %6 %5 
+    nq i8 %7 %6 120 
+    or u8 %8 %3 %7 
+    ass u8 %0 %8 
+    brc %0 l.0_IF2_41 l.1_IF2_41 
+    tar l.0_IF2_41 
+    ass u64 %9 0 
+    ret %9 
+    tar l.1_LOG2_41 
+    tar l.1_IF2_41 
+    alloca i64 %size 
+    ass ptr %11 &1 
+    call @f.cstr.len %10 %11 
+    store i64 %size %10 
+    alloca u64 %out 
+    store u64 %out 0 
+    alloca i64 %startdigit 
+    store i64 %startdigit 0 
+    alloca i64 %digits 
+    store i64 %digits 0 
+    alloca i64 %i 
+    load i64 %12 %size 
+    sub i64 %13 %12 1 
+    store i64 %i %13 
+    tar l.0_WHILE2_42 
+    load i64 %15 %i 
+    gq i64 %16 %15 2 
+    ass u8 %14 %16 
+    brc %14 l.2_WHILE2_42 l.1_WHILE2_42 
+    tar l.2_WHILE2_42 
+    alloca i8 %c 
+    load i64 %17 %i 
+    add ptr %18 &1 %17 
+    ass ptr %19 %18 
+    load i8 %20 %19 
+    store i8 %c %20 
+    alloca i64 %num 
+    load i8 %23 %c 
+    ass i8 %22 %23 
+    call @f.char.by.hex %21 %22 
+    store i64 %num %21 
+    load i64 %25 %num 
+    gq i64 %26 %25 0 
+    ass u8 %24 %26 
+    brc %24 l.0_IF3_18 l.1_IF3_18 
+    tar l.0_IF3_18 
+    ass u64 %28 16 
+    load i64 %30 %digits 
+    ass u64 %29 %30 
+    call @f.math.uint.pow %27 %28 %29 
+    load i64 %31 %num 
+    mul i64 %32 %31 %27 
+    load u64 %33 %out 
+    add u64 %34 %33 %32 
+    store u64 %out %34 
+    load i64 %35 %digits 
+    add i64 %36 %35 1 
+    store i64 %digits %36 
+    load i64 %37 %i 
+    sub i64 %38 %37 1 
+    store i64 %i %38 
+    jmp l.1_LOG3_18 
+    tar l.1_IF3_18 
+    tar l.0_ELSE3_18 
+    ass u64 %39 0 
+    destroy %num 
+    destroy %c 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %39 
+    tar l.1_LOG3_18 
+    destroy %num 
+    destroy %c 
+    jmp l.0_WHILE2_42 
+    tar l.1_WHILE2_42 
+    load u64 %41 %out 
+    ass u64 %40 %41 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %40 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret 
+
+define u8 @f.parse.hex.by_s ptr ptr
+    eq ptr %1 &2 0 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_43 l.1_IF2_43 
+    tar l.0_IF2_43 
+    ass u8 %2 false 
+    ret %2 
+    tar l.1_LOG2_43 
+    tar l.1_IF2_43 
+    ass ptr %4 &1 
+    load i8 %5 %4 
+    nq i8 %6 %5 48 
+    add ptr %7 &1 1 
+    ass ptr %8 %7 
+    load i8 %9 %8 
+    nq i8 %10 %9 120 
+    or u8 %11 %6 %10 
+    ass u8 %3 %11 
+    brc %3 l.0_IF2_44 l.1_IF2_44 
+    tar l.0_IF2_44 
+    ass u8 %12 false 
+    ret %12 
+    tar l.1_LOG2_44 
+    tar l.1_IF2_44 
+    alloca i64 %size 
+    ass ptr %14 &1 
+    call @f.cstr.len %13 %14 
+    store i64 %size %13 
+    alloca u64 %out 
+    store u64 %out 0 
+    alloca i64 %startdigit 
+    store i64 %startdigit 0 
+    alloca i64 %digits 
+    store i64 %digits 0 
+    alloca i64 %i 
+    load i64 %15 %size 
+    sub i64 %16 %15 1 
+    store i64 %i %16 
+    tar l.0_WHILE2_45 
+    load i64 %18 %i 
+    gq i64 %19 %18 2 
+    ass u8 %17 %19 
+    brc %17 l.2_WHILE2_45 l.1_WHILE2_45 
+    tar l.2_WHILE2_45 
+    alloca i8 %c 
+    load i64 %20 %i 
+    add ptr %21 &1 %20 
+    ass ptr %22 %21 
+    load i8 %23 %22 
+    store i8 %c %23 
+    alloca i64 %num 
+    load i8 %26 %c 
+    ass i8 %25 %26 
+    call @f.char.by.hex %24 %25 
+    store i64 %num %24 
+    load i64 %28 %num 
+    gq i64 %29 %28 0 
+    ass u8 %27 %29 
+    brc %27 l.0_IF3_19 l.1_IF3_19 
+    tar l.0_IF3_19 
+    ass u64 %31 16 
+    load i64 %33 %digits 
+    ass u64 %32 %33 
+    call @f.math.uint.pow %30 %31 %32 
+    load i64 %34 %num 
+    mul i64 %35 %34 %30 
+    load u64 %36 %out 
+    add u64 %37 %36 %35 
+    store u64 %out %37 
+    load i64 %38 %digits 
+    add i64 %39 %38 1 
+    store i64 %digits %39 
+    load i64 %40 %i 
+    sub i64 %41 %40 1 
+    store i64 %i %41 
+    jmp l.1_LOG3_19 
+    tar l.1_IF3_19 
+    tar l.0_ELSE3_19 
+    ass u8 %42 false 
+    destroy %num 
+    destroy %c 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %42 
+    tar l.1_LOG3_19 
+    destroy %num 
+    destroy %c 
+    jmp l.0_WHILE2_45 
+    tar l.1_WHILE2_45 
+    ass ptr %43 &2 
+    load u64 %44 %out 
+    store u64 %43 %44 
+    ass u8 %45 true 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %45 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret 
+
+define @f.parse.oct.get ptr u64
+    ass ptr %0 &0 
+    store i8 %0 48 
+    add ptr %1 &0 1 
+    ass ptr %2 %1 
+    store i8 %2 111 
+    eq u64 %4 &1 0 
+    ass u8 %3 %4 
+    brc %3 l.0_IF2_46 l.1_IF2_46 
+    tar l.0_IF2_46 
+    add ptr %5 &0 2 
+    ass ptr %6 %5 
+    store i8 %6 48 
+    jmp l.1_LOG2_46 
+    tar l.1_IF2_46 
+    tar l.0_ELSE2_46 
+    alloca u64 %size 
+    ass u64 %8 8 
+    ass u64 %9 &1 
+    call @f.math.uint.logb %7 %8 %9 
+    store u64 %size %7 
+    alloca u64 %value 
+    store u64 %value &1 
+    alloca i64 %i 
+    load u64 %10 %size 
+    store i64 %i %10 
+    tar l.0_FOR4_5 
+    load i64 %12 %i 
+    gq i64 %13 %12 0 
+    ass u8 %11 %13 
+    brc %11 l.2_FOR4_5 l.1_FOR4_5 
+    tar l.2_FOR4_5 
+    alloca u64 %dig 
+    load u64 %14 %value 
+    mod u64 %15 %14 8 
+    store u64 %dig %15 
+    load u64 %18 %dig 
+    ass i64 %17 %18 
+    call @f.char.to.oct %16 %17 
+    load i64 %19 %i 
+    add ptr %20 &0 %19 
+    add ptr %21 %20 2 
+    ass ptr %22 %21 
+    store i8 %22 %16 
+    load u64 %23 %value 
+    div u64 %24 %23 8 
+    store u64 %value %24 
+    load i64 %25 %i 
+    sub i64 %26 %25 1 
+    store i64 %i %26 
+    destroy %dig 
+    jmp l.0_FOR4_5 
+    tar l.1_FOR4_5 
+    destroy %i 
+    destroy %value 
+    destroy %size 
+    tar l.1_LOG2_46 
+    ret 
+
+define u64 @f.parse.oct.by ptr
+    ass ptr %1 &1 
+    load i8 %2 %1 
+    nq i8 %3 %2 48 
+    add ptr %4 &1 1 
+    ass ptr %5 %4 
+    load i8 %6 %5 
+    nq i8 %7 %6 111 
+    or u8 %8 %3 %7 
+    ass u8 %0 %8 
+    brc %0 l.0_IF2_47 l.1_IF2_47 
+    tar l.0_IF2_47 
+    ass u64 %9 0 
+    ret %9 
+    tar l.1_LOG2_47 
+    tar l.1_IF2_47 
+    alloca i64 %size 
+    ass ptr %11 &1 
+    call @f.cstr.len %10 %11 
+    store i64 %size %10 
+    alloca u64 %out 
+    store u64 %out 0 
+    alloca i64 %startdigit 
+    store i64 %startdigit 0 
+    alloca i64 %digits 
+    store i64 %digits 0 
+    alloca i64 %i 
+    load i64 %12 %size 
+    sub i64 %13 %12 1 
+    store i64 %i %13 
+    tar l.0_WHILE2_48 
+    load i64 %15 %i 
+    gq i64 %16 %15 2 
+    ass u8 %14 %16 
+    brc %14 l.2_WHILE2_48 l.1_WHILE2_48 
+    tar l.2_WHILE2_48 
+    alloca i8 %c 
+    load i64 %17 %i 
+    add ptr %18 &1 %17 
+    ass ptr %19 %18 
+    load i8 %20 %19 
+    store i8 %c %20 
+    alloca i64 %num 
+    load i8 %23 %c 
+    ass i8 %22 %23 
+    call @f.char.by.oct %21 %22 
+    store i64 %num %21 
+    load i64 %25 %num 
+    gq i64 %26 %25 0 
+    ass u8 %24 %26 
+    brc %24 l.0_IF3_20 l.1_IF3_20 
+    tar l.0_IF3_20 
+    ass u64 %28 8 
+    load i64 %30 %digits 
+    ass u64 %29 %30 
+    call @f.math.uint.pow %27 %28 %29 
+    load i64 %31 %num 
+    mul i64 %32 %31 %27 
+    load u64 %33 %out 
+    add u64 %34 %33 %32 
+    store u64 %out %34 
+    load i64 %35 %digits 
+    add i64 %36 %35 1 
+    store i64 %digits %36 
+    load i64 %37 %i 
+    sub i64 %38 %37 1 
+    store i64 %i %38 
+    jmp l.1_LOG3_20 
+    tar l.1_IF3_20 
+    tar l.0_ELSE3_20 
+    ass u64 %39 0 
+    destroy %num 
+    destroy %c 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %39 
+    tar l.1_LOG3_20 
+    destroy %num 
+    destroy %c 
+    jmp l.0_WHILE2_48 
+    tar l.1_WHILE2_48 
+    load u64 %41 %out 
+    ass u64 %40 %41 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %40 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret 
+
+define u8 @f.parse.oct.by_s ptr ptr
+    eq ptr %1 &2 0 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_49 l.1_IF2_49 
+    tar l.0_IF2_49 
+    ass u8 %2 false 
+    ret %2 
+    tar l.1_LOG2_49 
+    tar l.1_IF2_49 
+    ass ptr %4 &1 
+    load i8 %5 %4 
+    nq i8 %6 %5 48 
+    add ptr %7 &1 1 
+    ass ptr %8 %7 
+    load i8 %9 %8 
+    nq i8 %10 %9 111 
+    or u8 %11 %6 %10 
+    ass u8 %3 %11 
+    brc %3 l.0_IF2_50 l.1_IF2_50 
+    tar l.0_IF2_50 
+    ass u8 %12 false 
+    ret %12 
+    tar l.1_LOG2_50 
+    tar l.1_IF2_50 
+    alloca i64 %size 
+    ass ptr %14 &1 
+    call @f.cstr.len %13 %14 
+    store i64 %size %13 
+    alloca u64 %out 
+    store u64 %out 0 
+    alloca i64 %startdigit 
+    store i64 %startdigit 0 
+    alloca i64 %digits 
+    store i64 %digits 0 
+    alloca i64 %i 
+    load i64 %15 %size 
+    sub i64 %16 %15 1 
+    store i64 %i %16 
+    tar l.0_WHILE2_51 
+    load i64 %18 %i 
+    gq i64 %19 %18 2 
+    ass u8 %17 %19 
+    brc %17 l.2_WHILE2_51 l.1_WHILE2_51 
+    tar l.2_WHILE2_51 
+    alloca i8 %c 
+    load i64 %20 %i 
+    add ptr %21 &1 %20 
+    ass ptr %22 %21 
+    load i8 %23 %22 
+    store i8 %c %23 
+    alloca i64 %num 
+    load i8 %26 %c 
+    ass i8 %25 %26 
+    call @f.char.by.oct %24 %25 
+    store i64 %num %24 
+    load i64 %28 %num 
+    gq i64 %29 %28 0 
+    ass u8 %27 %29 
+    brc %27 l.0_IF3_21 l.1_IF3_21 
+    tar l.0_IF3_21 
+    ass u64 %31 8 
+    load i64 %33 %digits 
+    ass u64 %32 %33 
+    call @f.math.uint.pow %30 %31 %32 
+    load i64 %34 %num 
+    mul i64 %35 %34 %30 
+    load u64 %36 %out 
+    add u64 %37 %36 %35 
+    store u64 %out %37 
+    load i64 %38 %digits 
+    add i64 %39 %38 1 
+    store i64 %digits %39 
+    load i64 %40 %i 
+    sub i64 %41 %40 1 
+    store i64 %i %41 
+    jmp l.1_LOG3_21 
+    tar l.1_IF3_21 
+    tar l.0_ELSE3_21 
+    ass u8 %42 false 
+    destroy %num 
+    destroy %c 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %42 
+    tar l.1_LOG3_21 
+    destroy %num 
+    destroy %c 
+    jmp l.0_WHILE2_51 
+    tar l.1_WHILE2_51 
+    ass ptr %43 &2 
+    load u64 %44 %out 
+    store u64 %43 %44 
+    ass u8 %45 true 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %45 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret 
+
+define @f.parse.bin.get ptr u64
+    ass ptr %0 &0 
+    store i8 %0 48 
+    add ptr %1 &0 1 
+    ass ptr %2 %1 
+    store i8 %2 98 
+    eq u64 %4 &1 0 
+    ass u8 %3 %4 
+    brc %3 l.0_IF2_52 l.1_IF2_52 
+    tar l.0_IF2_52 
+    add ptr %5 &0 2 
+    ass ptr %6 %5 
+    store i8 %6 48 
+    jmp l.1_LOG2_52 
+    tar l.1_IF2_52 
+    tar l.0_ELSE2_52 
+    alloca u64 %size 
+    ass u64 %8 2 
+    ass u64 %9 &1 
+    call @f.math.uint.logb %7 %8 %9 
+    store u64 %size %7 
+    alloca u64 %value 
+    store u64 %value &1 
+    alloca i64 %i 
+    load u64 %10 %size 
+    store i64 %i %10 
+    tar l.0_FOR4_6 
+    load i64 %12 %i 
+    gq i64 %13 %12 0 
+    ass u8 %11 %13 
+    brc %11 l.2_FOR4_6 l.1_FOR4_6 
+    tar l.2_FOR4_6 
+    alloca u64 %dig 
+    load u64 %14 %value 
+    mod u64 %15 %14 2 
+    store u64 %dig %15 
+    load u64 %18 %dig 
+    ass i64 %17 %18 
+    call @f.char.to.bin %16 %17 
+    load i64 %19 %i 
+    add ptr %20 &0 %19 
+    add ptr %21 %20 2 
+    ass ptr %22 %21 
+    store i8 %22 %16 
+    load u64 %23 %value 
+    div u64 %24 %23 2 
+    store u64 %value %24 
+    load i64 %25 %i 
+    sub i64 %26 %25 1 
+    store i64 %i %26 
+    destroy %dig 
+    jmp l.0_FOR4_6 
+    tar l.1_FOR4_6 
+    destroy %i 
+    destroy %value 
+    destroy %size 
+    tar l.1_LOG2_52 
+    ret 
+
+define u64 @f.parse.bin.by ptr
+    ass ptr %1 &1 
+    load i8 %2 %1 
+    nq i8 %3 %2 48 
+    add ptr %4 &1 1 
+    ass ptr %5 %4 
+    load i8 %6 %5 
+    nq i8 %7 %6 98 
+    or u8 %8 %3 %7 
+    ass u8 %0 %8 
+    brc %0 l.0_IF2_53 l.1_IF2_53 
+    tar l.0_IF2_53 
+    ass u64 %9 0 
+    ret %9 
+    tar l.1_LOG2_53 
+    tar l.1_IF2_53 
+    alloca i64 %size 
+    ass ptr %11 &1 
+    call @f.cstr.len %10 %11 
+    store i64 %size %10 
+    alloca u64 %out 
+    store u64 %out 0 
+    alloca i64 %startdigit 
+    store i64 %startdigit 0 
+    alloca i64 %digits 
+    store i64 %digits 0 
+    alloca i64 %i 
+    load i64 %12 %size 
+    sub i64 %13 %12 1 
+    store i64 %i %13 
+    tar l.0_WHILE2_54 
+    load i64 %15 %i 
+    gq i64 %16 %15 2 
+    ass u8 %14 %16 
+    brc %14 l.2_WHILE2_54 l.1_WHILE2_54 
+    tar l.2_WHILE2_54 
+    alloca i8 %c 
+    load i64 %17 %i 
+    add ptr %18 &1 %17 
+    ass ptr %19 %18 
+    load i8 %20 %19 
+    store i8 %c %20 
+    alloca i64 %num 
+    load i8 %23 %c 
+    ass i8 %22 %23 
+    call @f.char.by.bin %21 %22 
+    store i64 %num %21 
+    load i64 %25 %num 
+    gq i64 %26 %25 0 
+    ass u8 %24 %26 
+    brc %24 l.0_IF3_22 l.1_IF3_22 
+    tar l.0_IF3_22 
+    ass u64 %28 2 
+    load i64 %30 %digits 
+    ass u64 %29 %30 
+    call @f.math.uint.pow %27 %28 %29 
+    load i64 %31 %num 
+    mul i64 %32 %31 %27 
+    load u64 %33 %out 
+    add u64 %34 %33 %32 
+    store u64 %out %34 
+    load i64 %35 %digits 
+    add i64 %36 %35 1 
+    store i64 %digits %36 
+    load i64 %37 %i 
+    sub i64 %38 %37 1 
+    store i64 %i %38 
+    jmp l.1_LOG3_22 
+    tar l.1_IF3_22 
+    tar l.0_ELSE3_22 
+    ass u64 %39 0 
+    destroy %num 
+    destroy %c 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %39 
+    tar l.1_LOG3_22 
+    destroy %num 
+    destroy %c 
+    jmp l.0_WHILE2_54 
+    tar l.1_WHILE2_54 
+    load u64 %41 %out 
+    ass u64 %40 %41 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %40 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret 
+
+define u8 @f.parse.bin.by_s ptr ptr
+    eq ptr %1 &2 0 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_55 l.1_IF2_55 
+    tar l.0_IF2_55 
+    ass u8 %2 false 
+    ret %2 
+    tar l.1_LOG2_55 
+    tar l.1_IF2_55 
+    ass ptr %4 &1 
+    load i8 %5 %4 
+    nq i8 %6 %5 48 
+    add ptr %7 &1 1 
+    ass ptr %8 %7 
+    load i8 %9 %8 
+    nq i8 %10 %9 98 
+    or u8 %11 %6 %10 
+    ass u8 %3 %11 
+    brc %3 l.0_IF2_56 l.1_IF2_56 
+    tar l.0_IF2_56 
+    ass u8 %12 false 
+    ret %12 
+    tar l.1_LOG2_56 
+    tar l.1_IF2_56 
+    alloca i64 %size 
+    ass ptr %14 &1 
+    call @f.cstr.len %13 %14 
+    store i64 %size %13 
+    alloca u64 %out 
+    store u64 %out 0 
+    alloca i64 %startdigit 
+    store i64 %startdigit 0 
+    alloca i64 %digits 
+    store i64 %digits 0 
+    alloca i64 %i 
+    load i64 %15 %size 
+    sub i64 %16 %15 1 
+    store i64 %i %16 
+    tar l.0_WHILE2_57 
+    load i64 %18 %i 
+    gq i64 %19 %18 2 
+    ass u8 %17 %19 
+    brc %17 l.2_WHILE2_57 l.1_WHILE2_57 
+    tar l.2_WHILE2_57 
+    alloca i8 %c 
+    load i64 %20 %i 
+    add ptr %21 &1 %20 
+    ass ptr %22 %21 
+    load i8 %23 %22 
+    store i8 %c %23 
+    alloca i64 %num 
+    load i8 %26 %c 
+    ass i8 %25 %26 
+    call @f.char.by.bin %24 %25 
+    store i64 %num %24 
+    load i64 %28 %num 
+    gq i64 %29 %28 0 
+    ass u8 %27 %29 
+    brc %27 l.0_IF3_23 l.1_IF3_23 
+    tar l.0_IF3_23 
+    ass u64 %31 2 
+    load i64 %33 %digits 
+    ass u64 %32 %33 
+    call @f.math.uint.pow %30 %31 %32 
+    load i64 %34 %num 
+    mul i64 %35 %34 %30 
+    load u64 %36 %out 
+    add u64 %37 %36 %35 
+    store u64 %out %37 
+    load i64 %38 %digits 
+    add i64 %39 %38 1 
+    store i64 %digits %39 
+    load i64 %40 %i 
+    sub i64 %41 %40 1 
+    store i64 %i %41 
+    jmp l.1_LOG3_23 
+    tar l.1_IF3_23 
+    tar l.0_ELSE3_23 
+    ass u8 %42 false 
+    destroy %num 
+    destroy %c 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %42 
+    tar l.1_LOG3_23 
+    destroy %num 
+    destroy %c 
+    jmp l.0_WHILE2_57 
+    tar l.1_WHILE2_57 
+    ass ptr %43 &2 
+    load u64 %44 %out 
+    store u64 %43 %44 
+    ass u8 %45 true 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret %45 
+    destroy %i 
+    destroy %digits 
+    destroy %startdigit 
+    destroy %out 
+    destroy %size 
+    ret 
+
+define u64 @f.time.nget
+    allocs 16 %sp 
+    ass u64 %1 0 
+    ass ptr %3 %sp 
+    ass ptr %2 %3 
+    call @f.sys.clock_gettime %1 %2 
+    add ptr %4 %sp 0 
+    load i64 %5 %4 
+    ass u64 %6 %5 
+    mul u64 %7 %6 1000000000 
+    add ptr %8 %sp 8 
+    load i64 %9 %8 
+    ass u64 %10 %9 
+    add u64 %11 %7 %10 
+    ass u64 %12 %11 
+    destroy %sp 
+    ret %12 
+    destroy %sp 
+    ret 
+
+define @f.time.msleep i64
+    allocs 16 %sp 
+    add ptr %0 %sp 0 
+    div i64 %1 &0 1000 
+    store i64 %0 %1 
+    add ptr %2 %sp 8 
+    mod i64 %3 &0 1000 
+    mul i64 %4 %3 1000000 
+    store i64 %2 %4 
+    ass ptr %7 %sp 
+    ass ptr %6 %7 
+    ass ptr %8 0 
+    call @f.sys.nanosleep %6 %8 
+    destroy %sp 
+    ret 
+
+define @f.time.usleep i64
+    allocs 16 %sp 
+    add ptr %0 %sp 0 
+    div i64 %1 &0 1000000 
+    store i64 %0 %1 
+    add ptr %2 %sp 8 
+    mod i64 %3 &0 1000000 
+    mul i64 %4 %3 1000 
+    store i64 %2 %4 
+    ass ptr %7 %sp 
+    ass ptr %6 %7 
+    ass ptr %8 0 
+    call @f.sys.nanosleep %6 %8 
+    destroy %sp 
+    ret 
+
+define @f.time.nsleep i64
+    allocs 16 %sp 
+    add ptr %0 %sp 0 
+    div i64 %1 &0 1000000000 
+    store i64 %0 %1 
+    add ptr %2 %sp 8 
+    mod i64 %3 &0 1000000000 
+    store i64 %2 %3 
+    ass ptr %6 %sp 
+    ass ptr %5 %6 
+    ass ptr %7 0 
+    call @f.sys.nanosleep %5 %7 
+    destroy %sp 
     ret 
 
 global i64 @f.main
-    allocs 32 %buffer 
-    ass ptr %1 &cstr.0 
+    ass ptr %1 &cstr.11 
     call @f.io.print %1 
-    ass ptr %3 &cstr.1 
-    call @f.io.print %3 
-    ass ptr %6 %buffer 
-    ass ptr %5 %6 
-    ass i64 %7 32 
-    call @f.io.input %5 %7 
-    ass ptr %9 &cstr.2 
-    call @f.io.print %9 
-    ass ptr %12 %buffer 
-    ass ptr %11 %12 
+    alloca i64 %i 
+    store i64 %i 0 
+    tar l.0_FOR3_24 
+    load i64 %3 %i 
+    lt i64 %4 %3 5 
+    ass u8 %2 %4 
+    brc %2 l.2_FOR3_24 l.1_FOR3_24 
+    tar l.2_FOR3_24 
+    alloca u64 %tp 
+    call @f.time.nget %5 
+    store u64 %tp %5 
+    load u64 %8 %tp 
+    div u64 %9 %8 1000000000 
+    ass u64 %7 %9 
+    call @f.io.print_uint %7 
+    ass ptr %11 &cstr.12 
     call @f.io.print %11 
-    ass ptr %14 &cstr.3 
-    call @f.io.print %14 
-    ass i64 %15 0 
-    destroy %buffer 
-    ret %15 
-    destroy %buffer 
+    ass i64 %13 1000000000 
+    call @f.time.nsleep %13 
+    load i64 %14 %i 
+    inc i64 %15 %14 
+    store i64 %i %15 
+    destroy %tp 
+    jmp l.0_FOR3_24 
+    tar l.1_FOR3_24 
+    destroy %i 
+    ass ptr %17 &cstr.13 
+    call @f.io.print %17 
+    ass i64 %19 1000000000 
+    call @f.time.nsleep %19 
+    ass i64 %20 0 
+    ret %20 
     ret 
 

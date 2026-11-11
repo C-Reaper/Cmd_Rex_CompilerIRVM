@@ -18,15 +18,17 @@ int main(int argc,char** argv){
 
     RexLang ll = RexLang_New("./bin",PATH_SRC,PATH_IRVM,64);
     RexLang_Build(&ll);
-
-    IRVM vm = IRVM_New();
-    IRVM_AddScript(&vm,PATH_IRVM);
-    IRVM_Build(&vm);
     
-    IRVM_Comp exe = IRVM_Comp_New(vm,PATH_ASM);
-    IRVM_Comp_Build(&exe);
-    IRVM_Comp_CreateOutput(&exe);
-    IRVM_Comp_Free(&exe);
+    if(!ll.ev.error){
+        IRVM vm = IRVM_New();
+        IRVM_AddScript(&vm,PATH_IRVM);
+        IRVM_Build(&vm);
+        
+        IRVM_Comp exe = IRVM_Comp_New(vm,PATH_ASM);
+        IRVM_Comp_Build(&exe);
+        IRVM_Comp_CreateOutput(&exe);
+        IRVM_Comp_Free(&exe);
+    }
 
     RexLang_Free(&ll);
     return 0;

@@ -5,7 +5,7 @@
 namespace math {
     define PI   3.141592654;
     define E    2.718281828;
-    
+    /*
     namespace lib {
         f64 sin(f64 x){
             asm "fld " x;
@@ -87,20 +87,22 @@ namespace math {
             return x;
         }
     }
-
+    */
     namespace uint {
         u64 pow(u64 base,u64 ex){
+            u64 exp = ex;
             u64 out = 1;
-            while ex>0 {
+            while exp>0 {
                 out *= base;
-                ex -= 1;
+                exp -= 1;
             }
             return out;
         }
         u64 logb(u64 base,u64 res){// BASE ab 16, res, out
+            u64 val = res;
             u64 out = -1;
-            while res > 0 {
-                res /= base;
+            while val > 0 {
+                val /= base;
                 out += 1;
             }
             return out;
@@ -145,7 +147,7 @@ namespace math {
             return b;
         }
     }
-
+    /*
     namespace float {
         void setmode(u16 mode){
             asm "fldcw " mode;
@@ -198,7 +200,7 @@ namespace math {
             return math::float::pow(2.718281828,x);
         }
     }
-
+    */
     /*
     namespace aprox {
         f64 sin_tp19(f64 x){
@@ -274,7 +276,6 @@ namespace math {
         }
     }
     */
-
     /*
     struct Vec2[
         pub f64 x,

@@ -332,7 +332,7 @@ CStr RexLang_VariableType(RexLang* ll,Token* a){
         Variable* v_a = Scope_FindVariable(&ll->ev.sc,a->str);
         if(v_a) return RexLang_TypeOfDref(v_a->typename);
     }
-    if(a->tt==TOKEN_REXLANG_BOOLEAN)    return CStr_Cpy(BOOL_TYPE);
+    if(a->tt==TOKEN_BOOL)               return CStr_Cpy(BOOL_TYPE);
     if(a->tt==TOKEN_NUMBER)             return CStr_Cpy(I64_TYPE);
     if(a->tt==TOKEN_CONSTSTRING_DOUBLE) return CStr_Cpy(STR_TYPE);
     if(a->tt==TOKEN_CONSTSTRING_SINGLE) return CStr_Cpy(CHAR_TYPE);
@@ -351,7 +351,7 @@ CStr RexLang_TokenType(RexLang* ll,Token* a){
         Variable* v_a = Scope_FindVariable(&ll->ev.sc,a->str);
         if(v_a) return v_a->typename;
     }
-    if(a->tt==TOKEN_REXLANG_BOOLEAN)    return BOOL_TYPE;
+    if(a->tt==TOKEN_BOOL)               return BOOL_TYPE;
     if(a->tt==TOKEN_NUMBER)             return I64_TYPE;
     if(a->tt==TOKEN_CONSTSTRING_DOUBLE) return STR_TYPE;
     if(a->tt==TOKEN_CONSTSTRING_SINGLE) return CHAR_TYPE;
@@ -1003,29 +1003,6 @@ CStr RexLang_FInstOf(RexLang* ll,Token* a,CStr inst){
     }
     return NULL;
 }
-
-Boolean RexLang_Extract(RexLang* ll,Token* a,Number* n){
-    if(a->tt==TOKEN_STRING){
-        return False;
-    }else if(a->tt==TOKEN_NUMBER){
-        *n = a->v_i64;
-        return True;
-    }else{
-        Compiler_ErrorHandler(&ll->ev,"Number -> 1. Arg: %s is not a int type!",a->str);
-        return False;
-    }
-}
-Boolean RexLang_ExtractBool(RexLang* ll,Token* a,Boolean* b){
-    if(a->tt==TOKEN_STRING){
-        return False;
-    }else if(a->tt==TOKEN_REXLANG_BOOLEAN){
-        *b = a->v_b1;
-        return True;
-    }else{
-        Compiler_ErrorHandler(&ll->ev,"1. Arg: %s is not a bool type!",a->str);
-        return False;
-    }
-}
 Boolean RexLang_ErrorsInArg(RexLang* ll,Token* a){
     if(a->tt==TOKEN_NONE){
         Compiler_ErrorHandler(&ll->ev,"Errors -> Tokentype of %s is NONE!",a->str);
@@ -1055,7 +1032,7 @@ Boolean RexLang_ErrorsInArg(RexLang* ll,Token* a){
             return 1;
         }
     }
-    if(a->tt==TOKEN_REXLANG_BOOLEAN){
+    if(a->tt==TOKEN_BOOL){
         if(a->v_b1 == BOOL_PARSE_ERROR){
             Compiler_ErrorHandler(&ll->ev,"Errors -> bool %d is invalid!",a->v_b1);
             return 1;
@@ -1109,6 +1086,9 @@ Token RexLang_GetIRVMToken(RexLang* ll,Token* a){
         }
         case TOKEN_FLOAT:{
             return Token_Cpy(a);
+        }
+        case TOKEN_REXLANG_NULL:{
+            return Token_New_I64(TOKEN_NUMBER,0);
         }
         case TOKEN_STRING:{
             Variable* v = Scope_FindVariable(&ll->ev.sc,a->str);
@@ -1402,6 +1382,10 @@ Token RexLang_ExecuteCast(RexLang* ll,CStr tname,Token* a){
         
         if(a->tt==TOKEN_NUMBER){
             String_AppendNumber(&ret,a->v_i64);
+        }else if(a->tt==TOKEN_BOOL){
+            String_AppendBoolean(&ret,a->v_b1);
+        }else if(a->tt==TOKEN_FLOAT){
+            String_AppendDouble(&ret,a->v_f64);
         }else{
             Variable* v = Scope_FindVariable(&ll->ev.sc,a->str);
             if(v){
@@ -1450,7 +1434,9 @@ Token RexLang_ExecuteAdr(RexLang* ll,Token* a){
 
     const Number ssa_id = ll->ssas++;
     const Token t_a = RexLang_GetIRVMTokenTarget(ll,a);
-
+    if(t_a.tt == TOKEN_IRVM_PARAM)
+        Compiler_ErrorHandler(&ll->ev,"adr of parameter invalid!");
+    
     CStr typename_a = RexLang_GetPtrType(ll,a);
     CStr stack_name = CStr_Format("%%%d",ssa_id);
     RexLang_Variable_Build_SSA(ll,stack_name,typename_a,ssa_id);
@@ -1549,6 +1535,36 @@ Token RexLang_Execute5(RexLang* ll,CStr inst,Token* a,Token* b){
     CStr stack_name = CStr_Format("%%%d",ssa_id);
     RexLang_Variable_Build_SSA(ll,stack_name,typename_a,ssa_id);
     CStr_Free(&typename_a);
+    
+    RexLang_AppendTM(ll,TokenMap_Make((Token[]){
+        IRVM_GetInst(&ll->vm,inst),
+        Token_By(TOKEN_TYPE,RexLang_Type(ll,type->name)),
+        Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ssa_id)),
+        ssa_a,
+        ssa_b,
+        Token_Null()
+    }));
+
+    return Token_Move(TOKEN_STRING,stack_name);
+}
+Token RexLang_ExecuteType5(RexLang* ll,CStr rettype,CStr inst,Token* a,Token* b){
+    if(RexLang_ErrorsInArg(ll,a))   return Token_Null();
+    if(RexLang_ErrorsInArg(ll,b))   return Token_Null();
+
+    Type* type = Scope_TypeOf(&ll->ev.sc,a);
+    if(!type) type = Scope_TypeOf(&ll->ev.sc,b);
+
+    if(!type){
+        Compiler_ErrorHandler(&ll->ev,"type of tokens invalid!");
+        return Token_Null();
+    }
+
+    const Token ssa_a = RexLang_GetIRVMTokenTargetSSA(ll,a);
+    const Token ssa_b = RexLang_GetIRVMTokenTargetSSA(ll,b);
+
+    const Number ssa_id = ll->ssas++;
+    CStr stack_name = CStr_Format("%%%d",ssa_id);
+    RexLang_Variable_Build_SSA(ll,stack_name,rettype,ssa_id);
     
     RexLang_AppendTM(ll,TokenMap_Make((Token[]){
         IRVM_GetInst(&ll->vm,inst),

@@ -1,4 +1,4 @@
-import "../lib/System.rex";
+import System;
 
 define CLOCK_REALTIME           0;
 define CLOCK_MONOTONIC          1;
@@ -15,7 +15,7 @@ define CLOCK_TAI               11;
 namespace time {
     u64 nget(){
         sys::Timespec sp;
-        sys::clock_gettime(,&sp);
+        sys::clock_gettime(CLOCK_REALTIME,&sp);
         return (u64)sp.tv_sec * 1000000000 + (u64)sp.tv_nsec;
     }
     
