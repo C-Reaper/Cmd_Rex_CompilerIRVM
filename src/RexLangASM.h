@@ -47,6 +47,8 @@ typedef struct RexLang {
     CVector defines; // Vector<Define>
     Vector logicpath; // Vector<LogicBlock>
     char* dllpath;
+    char* libpath;
+    char* genpath;
     char* src;
     char* output;
     Vec_CStr return_ssas;

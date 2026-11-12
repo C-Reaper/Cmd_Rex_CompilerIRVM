@@ -1,7 +1,7 @@
-import "../lib/IO.rex";
-import "../lib/Parser.rex";
-import "../lib/Pointer.rex";
-import "../lib/Memory.rex";
+import IO;
+import Parser;
+import Pointer;
+import Memory;
 
 namespace con {
     struct Vector[
@@ -121,11 +121,12 @@ namespace con {
             self->set_c(self->size-count,elements,count);
         }
         pub void pop_c(Vector* self,u64 count){
+            u64 rcount = count;
             if self->size<count {
-                count = self->size;
+                rcount = self->size;
             }
-            self->size-=count;
-            self->shrink(count);
+            self->size -= rcount;
+            self->shrink(rcount);
         }
 
         pub void print(Vector* self){
@@ -136,7 +137,8 @@ namespace con {
             ptr::cpy(cstr,"| Header: ",10);
             parse::hex::get(cstr+12,(u64)self->memory);
             parse::uint::get(cstr+30,(u64)self->elementsize);
-            parse::uint::get(cstr+40,(u64)self->size);
+            parse::uint::get(cstr+36,(u64)self->memory_size);
+            parse::uint::get(cstr+42,(u64)self->size);
             io::print(cstr);
 
             for u64 i = 0,i<self->size,i+=1 {
@@ -162,135 +164,6 @@ namespace con {
                 }
                 
                 ptr::cpy(cstr+48,"\n",2);
-                io::print(cstr);
-            }
-            io::print("----------------------------------------------\n");
-        }
-    }
-
-
-    struct Node[
-        pub void* data,
-        pub u64 size,
-        pub void* next
-    ];
-
-    struct List[
-        Node* first,
-        u64 size,
-        mem::Allocator* alloc
-    ];
-
-    impl List{
-        pub void init(List* self,mem::Allocator* alloc){
-            self->alloc = alloc;
-            self->size = 0;
-            self->first = null;
-        }
-        pub void clear(List* self){
-            con::Node* n = self->first;
-            for u64 i = 0,i<self->size,i+=1 {
-                self->alloc->free(n->data);
-                con::Node* swap = n;
-                n = n->next;
-                self->alloc->free(swap);
-            }
-            self->first = null;
-            self->size = 0;
-        }
-        pub void delete(List* self){
-            self->clear();
-            self->alloc = null;
-        }
-        pub List new(mem::Allocator* alloc){
-            List list;
-            list.init(alloc);
-            return list;
-        }
-
-        pub Node* find(List* self,u64 i){
-            if i<0 || i>=self->size {
-                return null;
-            }
-            con::Node* element = self->first;
-            for ,i>0,i-=1 {
-                element = element->next;
-            }
-            return element;
-        }
-
-        pub void* get(List* self,u64 i){
-            if i<0 || i>=self->size || self->size<=0 {
-                return null;
-            }
-            con::Node* element = self->find(i);
-            return element->data;
-        }
-        pub void set(List* self,u64 i,void* element,u64 elementsize){
-            if i>=0 && i<self->size {
-                con::Node* n = self->find(i);
-                self->alloc->free(n->data);
-                
-                n->size = elementsize;
-                n->data = self->alloc->alloc(elementsize);
-                ptr::cpy(n->data,(void*)element,elementsize);
-            }
-        }
-
-        pub u64 size(List* self){
-            return self->size;
-        }
-        
-        pub void push(List* self,void* element,u64 elementsize){
-            con::Node* n = self->alloc->alloc(24);
-            n->size = elementsize;
-            n->data = self->alloc->alloc(elementsize);
-            ptr::cpy(n->data,(void*)element,elementsize);
-            
-            n->next = self->first;
-            self->first = n;
-            self->size+=1;
-        }
-        pub void pop(List* self){
-            con::Node* first = self->first;
-            if self->first != null {
-                con::Node* next = first->next;
-                self->alloc->free(first->data);
-                self->alloc->free(first);
-                self->first = next;
-                self->size-=1;
-            }
-        }
-
-        pub void print(List* self){
-            io::print("--------------------- List -------------------\n");
-            i8[70] cstr;
-            ptr::set(cstr,32,69);
-            ptr::cpy(cstr+68,"\n",2);
-            ptr::cpy(cstr,"| Header: ",10);
-            parse::uint::get(cstr+40,(u64)self->size);
-            io::print(cstr);
-
-            for u64 i = 0,i<self->size,i+=1 {
-                con::Node* element = self->find(i);
-                u64 visiual = 0;
-                
-                if element->size==1 {
-                    visiual = *((u8*)element);
-                }elif element->size==2 {
-                    visiual = *((u16*)element);
-                }elif element->size==4 {
-                    visiual = *((u32*)element);
-                }elif element->size==8 {
-                    visiual = *((u64*)element);
-                }
-                
-                ptr::set(cstr,32,69);
-                ptr::cpy(cstr,"| Element: ",11);
-                parse::uint::get(cstr+14,(u64)i);
-                parse::uint::get(cstr+18,*(u64*)element);
-                parse::uint::get(cstr+38,visiual);
-                ptr::cpy(cstr+68,"\n",2);
                 io::print(cstr);
             }
             io::print("----------------------------------------------\n");

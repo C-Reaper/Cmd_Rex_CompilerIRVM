@@ -331,18 +331,103 @@ Boolean RexLang_Compress(RexLang* ll,TokenMap* tm){
     return False;
 }
 
+TokenMap RexLang_ShutingYard_Transform(ShutingYard* sy,TokenMap* toks) {
+    TokenMap Stack = TokenMap_New();
+    TokenMap Operators = TokenMap_New();
+    
+    for(int i = 0;i<toks->size;i++){
+        Token* tok = (Token*)Vector_Get(toks,i);
+        tok->it = i;
+
+        if(PrecedenceMap_Contains(&sy->pm,tok)){
+            SY_Precedence pd = PrecedenceMap_PrecedenceOf(&sy->pm,tok);
+            
+            if(pd==PRECEDENCE_BRACKL){
+                Vector_Push(&Operators,(Token[]){ Token_Cpy(tok) });
+            }else if(pd==PRECEDENCE_BRACKR){
+                SY_Precedence cpd = 0;
+                while(Operators.size>=0){
+                    if(Operators.size==0){
+                        return Stack;
+                    }
+                    
+                    Token* last = (Token*)Vector_Get(&Operators,Operators.size-1);
+                    cpd = PrecedenceMap_PrecedenceOf(&sy->pm,last);
+
+                    if(cpd!=PRECEDENCE_BRACKL){
+                        Vector_Push(&Stack,last);
+                        Vector_PopTop(&Operators);
+                    }else{
+                        Vector_PopTop(&Operators);
+                        break;
+                    }
+                }
+            }else{
+                ShutingYard_AddOp(sy,&Stack,&Operators,(Token[]){ Token_Cpy(tok) });
+            }
+        }else{
+            Vector_Push(&Stack,(Token[]){ Token_Cpy(tok) });
+        }
+
+        if(i==toks->size-1){
+            ShutingYard_PopTo(sy,&Stack,&Operators,PRECEDENCE_DONTCARE);
+        }
+    }
+
+    TokenMap_Free(&Operators);
+    return Stack;
+}
+FunctionRT RexLang_ShutingYard_Execute(Compiler* ev,ShutingYard* sy,TokenMap* sytoks) {
+    TokenMap Stack = TokenMap_New();
+    for(int i = 0;i<sytoks->size;i++){
+        Token* tok = (Token*)Vector_Get(sytoks,i);
+
+        if(ExecuteMap_Contains(&sy->em,tok)){
+            Executer* exe = ExecuteMap_Find(&sy->em,tok);
+
+            const int count = I32_Min(exe->Args,Stack.size);
+            TokenMap args = TokenMap_New();
+            
+            for(int j = count;j>0 && j <= Stack.size;j--){
+                Token* e = (Token*)Vector_Get(&Stack,Stack.size-j);
+                Vector_Push(&args,e);
+            }
+
+            Preexecuter* pe = PreexecuteMap_Find(&sy->pem,tok->tt);
+            if(pe){
+                Token back = Token_Null();
+                Boolean b = pe->Handler(ev,&args,i,count,&back);
+                
+                if(b){
+                    Vector_Free(&args);
+                    return b;
+                }else if(back.tt != TOKEN_NONE){
+                    TokenMap_Free(&args);
+                    Vector_PopTopCount(&Stack,count);
+                    Vector_Push(&Stack,&back);
+                    continue;
+                }
+            }
+            
+            Token Item = exe->Handler(ev,tok,&args);
+            TokenMap_Free(&args);
+            
+            Vector_PopTopCount(&Stack,count);
+            Vector_Push(&Stack,&Item);
+        }else{
+            Vector_Push(&Stack,(Token[]){ Token_Cpy(tok) });
+        }
+    }
+    TokenMap_Free(&Stack);
+    return 0;
+}
 FunctionRT RexLang_ShutingYard(Compiler* ev,TokenMap* tm) {
     ev->sc.range++;
     
     if(tm->size>1){
-        TokenMap cpy = TokenMap_Cpy(tm);
-        TokenMap borrowed = ShutingYard_Transform_D(&ev->sy,&cpy);
-        TokenMap ttm = TokenMap_Cpy(&borrowed);
-        Vector_Free(&borrowed);
-        Boolean ret = ShutingYard_Execute_D(&ev->sy,&ttm,&ev->sc);
-        TokenMap_Free(&ttm);
-        TokenMap_Free(&cpy);
-
+        TokenMap sytm = RexLang_ShutingYard_Transform(&ev->sy,tm);
+        Boolean ret = RexLang_ShutingYard_Execute(ev,&ev->sy,&sytm);
+        TokenMap_Free(&sytm);
         Scope_Pop(&ev->sc);
         return ret;
     }else if(tm->size==1){
@@ -564,18 +649,26 @@ Boolean RexLang_Import(RexLang* ll,TokenMap* tm){
     }else if(file->tt==TOKEN_STRING){
         //CStr current = *(CStr*)CVector_Get(&ll->filesstack,ll->filesstack.size-1);
         CStr path = CStr_Concat(file->str,"." REXLANG_TYPE);
-        CStr realpath = Files_FromPath("./lib/",path);
-        CStr_Free(&path);
-
-        if(!CVector_Contains(&ll->filesinc,(CStr[]){ realpath })){
-            CVector_Push(&ll->filesstack,(CStr[]){ CStr_Cpy(realpath) });
-            CVector_Push(&ll->filesinc,(CStr[]){ CStr_Cpy(realpath) });
-            
-            Environment_AddScript(&ll->ev,ll->ev.iter,realpath);
+        CStr realpath = Files_FromPath(ll->libpath,path);
         
-            CVector_PopTop(&ll->filesstack);
-        }else{
-            //Compiler_ErrorHandler(&ll->ev,"module \"%s\" already included!",file->str);
+        if(!Files_Exists(realpath))
+            CStr_Move(&realpath,Files_FromPath(ll->genpath,path));
+        
+        if(!Files_Exists(realpath))
+            Compiler_ErrorHandler(&ll->ev,"module \"%s\" doesn't exist!",file->str);
+        else{
+            CStr_Free(&path);
+
+            if(!CVector_Contains(&ll->filesinc,(CStr[]){ realpath })){
+                CVector_Push(&ll->filesstack,(CStr[]){ CStr_Cpy(realpath) });
+                CVector_Push(&ll->filesinc,(CStr[]){ CStr_Cpy(realpath) });
+
+                Environment_AddScript(&ll->ev,ll->ev.iter,realpath);
+            
+                CVector_PopTop(&ll->filesstack);
+            }else{
+                //Compiler_ErrorHandler(&ll->ev,"module \"%s\" already included!",file->str);
+            }
         }
         
         CStr_Free(&realpath);
@@ -1219,9 +1312,9 @@ Boolean RexLang_Assembly(RexLang* ll,TokenMap* tm){
 }
 
 Boolean RexLang_FunctionCall_Acs(RexLang* ll,TokenMap* tm,int i,int args,Token* tok){
-    if(args >= 2 && i >= args && i - args + 1 < tm->size){
-        Token* accssed = (Token*)Vector_Get(tm,i-args);
-        Token* func = (Token*)Vector_Get(tm,i-args+1);
+    if(tm->size >= 2){
+        Token* accssed = (Token*)Vector_Get(tm,0);
+        Token* func = (Token*)Vector_Get(tm,1);
 
         if(accssed->tt==TOKEN_STRING && func->tt==TOKEN_FUNCTION){
             Variable* v = Scope_FindVariable(&ll->ev.sc,accssed->str);
@@ -1277,9 +1370,9 @@ Boolean RexLang_FunctionCall_Acs(RexLang* ll,TokenMap* tm,int i,int args,Token* 
     return FUNCTIONRT_NONE;
 }
 Boolean RexLang_FunctionCall_Arw(RexLang* ll,TokenMap* tm,int i,int args,Token* tok){
-    if(args >= 2 && i >= args && i - args + 1 < tm->size){
-        Token* accssed = (Token*)Vector_Get(tm,i-args);
-        Token* func = (Token*)Vector_Get(tm,i-args+1);
+    if(tm->size >= 2){
+        Token* accssed = (Token*)Vector_Get(tm,0);
+        Token* func = (Token*)Vector_Get(tm,1);
 
         if(accssed->tt==TOKEN_STRING && func->tt==TOKEN_FUNCTION){
             Variable* v = Scope_FindVariable(&ll->ev.sc,accssed->str);
@@ -1661,7 +1754,7 @@ void RexLang_LoadIntType(RexLang* ll,CStr type){
         }),RexLang_Destroyer,RexLang_Cpyer)
     });
 }
-RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
+RexLang RexLang_New(char* dllpath,char* libpath,char* genpath,char* src,char* output,char bits) {
     RexLang ll;
     ll.ev = Compiler_New(
         KeywordMap_Make((KeywordRP[]){
@@ -2050,6 +2143,8 @@ RexLang RexLang_New(char* dllpath,char* src,char* output,char bits) {
     ll.src = CStr_Cpy(src);
     ll.output = CStr_Cpy(output);
     ll.dllpath = CStr_Cpy(dllpath);
+    ll.libpath = CStr_Cpy(libpath);
+    ll.genpath = CStr_Cpy(genpath);
 
     ll.filesstack = CVector_New(sizeof(CStr),(void*)CStr_Free,NULL,(void*)CStr_PCmp,(void*)CStr_print);
     ll.filesinc = CVector_New(sizeof(CStr),(void*)CStr_Free,NULL,(void*)CStr_PCmp,(void*)CStr_print);
@@ -2114,6 +2209,8 @@ void RexLang_Free(RexLang* ll) {
 
     Vec_CStr_Free(&ll->return_ssas);
     CStr_Free(&ll->dllpath);
+    CStr_Free(&ll->libpath);
+    CStr_Free(&ll->genpath);
     CStr_Free(&ll->src);
     CStr_Free(&ll->output);
 
@@ -2124,7 +2221,7 @@ void RexLang_Free(RexLang* ll) {
 }
 void RexLang_Print(RexLang* ll) {
     printf("--- RexLang ---\n");
-    printf("dlls: %s, src: %s, output: %s\n",ll->dllpath,ll->src,ll->output);
+    printf("dlls: %s, lib: %s, gen: %s, src: %s, output: %s\n",ll->dllpath,ll->libpath,ll->genpath,ll->src,ll->output);
     CVector_Print(&ll->filesinc);
     CVector_Print(&ll->defines);
     Compiler_Print(&ll->ev);

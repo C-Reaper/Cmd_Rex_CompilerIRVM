@@ -18,7 +18,7 @@ namespace mem {
     impl Allocator{
         pub void init(Allocator* self,void* block,u64 size){
             if block == null {
-                self->memory = sys::mmap(null,size,3,0x22,0,0);
+                self->memory = sys::alloc(size);
                 self->flags = 0;
             }else{
                 self->memory = block;
@@ -34,7 +34,7 @@ namespace mem {
         }
         pub void delete(Allocator* self){
             if self->memory != null && self->flags == 0 {
-                sys::munmap(self->memory,self->length);
+                sys::free(self->memory,self->length);
             }
             self->memory = null;
             self->length = 0;

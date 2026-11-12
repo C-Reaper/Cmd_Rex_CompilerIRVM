@@ -1,4 +1,4 @@
-import "../lib/Memory.rex";
+import Memory;
 
 namespace st {
     struct String[
@@ -88,15 +88,17 @@ namespace st {
 
         pub void push_c(String* self,i8* cstr,u64 count){
             self->expand(count);
-            self->size+=count;
-            self->set_c(self->size-count,cstr,count);
+            self->size += count;
+            self->set_c(self->size - count,cstr,count);
         }
         pub void pop_c(String* self,u64 count){
-            if self->size<count {
-                count = self->size;
+            u64 rcount = count;
+            if self->size < count {
+                rcount = self->size;
             }
-            self->size-=count;
-            self->shrink(count);
+            
+            self->size -= rcount;
+            self->shrink(rcount);
         }
 
         pub i8* cpy(String* self){
@@ -112,7 +114,8 @@ namespace st {
             return self;
         }
         pub String* char(String* self,i8 ch){
-            self->push_c(&ch,1);
+            i8 st_ch = ch;
+            self->push_c(&st_ch,1);
             return self;
         }
         pub String* cstr(String* self,i8* ptr){
@@ -144,14 +147,14 @@ namespace st {
             self->push_c(block,len);
             return self;
         }
-        pub String* float(String* self,f64 n,u64 postdigits){
-            i8[48] block;
-            ptr::set(block,0,48);
-            parse::float::get(block,n,postdigits);
-            u64 len = cstr::len(block);
-            self->push_c(block,len);
-            return self;
-        }
+        //pub String* float(String* self,f64 n,u64 postdigits){
+        //    i8[48] block;
+        //    ptr::set(block,0,48);
+        //    parse::float::get(block,n,postdigits);
+        //    u64 len = cstr::len(block);
+        //    self->push_c(block,len);
+        //    return self;
+        //}
 
         pub String* hex(String* self,i64 n){
             i8[48] block;
@@ -182,7 +185,9 @@ namespace st {
             i8[48] block;
             ptr::set(block,0,48);
             
-            void** ptr = &n;
+            void* addr = n;
+            void** ptr = &addr;
+
             for i32 j = 0,j<8,j+=1 {
                 u8 ch = *((u8*)(ptr+j));
                 *(block+j*2) = char::to::hex((u64)(ch & 0xF0) >> 8);

@@ -6,27 +6,24 @@ import Pointer;
 import IO;
 import Time;
 import Memory;
+import OStream;
+import IStream;
+import Vector;
+import List;
+import String;
 
-global i64 main(){
-    //i8[10000] buffer;
-    //mem::Allocator alloc = mem::Allocator::by(buffer,10000);
-    mem::Allocator alloc = mem::Allocator::make(10000);
+global i32 main(){
+    i8[40000] buffer;
+    mem::Allocator alloc = mem::Allocator::by(buffer,40000);
 
-    alloc.print();
-    
-    void* ptr0 = alloc.alloc(10);
-    void* ptr1 = alloc.alloc(20);
-    void* ptr2 = alloc.alloc(30);
+    ios::OStream cout = ios::OStream::new(&alloc,1);
+    cout.cstr("Hello World\n")->flush();
+    cout.delete();
 
-    alloc.print();
+    ios::IStream cin = ios::IStream::new(&alloc,0);
+    u64 input = cin.uint();
+    cin.delete();
 
-    alloc.free(ptr1);
-
-    alloc.print();
-    
-    alloc.free(ptr2);
-
-    alloc.print();
     alloc.delete();
     return 0;
 }

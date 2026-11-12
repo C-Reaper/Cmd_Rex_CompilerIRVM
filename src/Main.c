@@ -16,7 +16,7 @@ int main(int argc,char** argv){
     //    return 1;
     //}
 
-    RexLang ll = RexLang_New("./bin",PATH_SRC,PATH_IRVM,64);
+    RexLang ll = RexLang_New("./bin","./lib/x64/Linux","./lib/x64/generic",PATH_SRC,PATH_IRVM,64);
     RexLang_Build(&ll);
     
     if(!ll.ev.error){

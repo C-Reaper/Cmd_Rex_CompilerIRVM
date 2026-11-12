@@ -18,17 +18,16 @@ f.syscall:
 	mov rdx,r9
 	;mov	r10,r10
 	mov r8,r11
-	xor r9,r9
+	;mov r9,stack
 	syscall
 	mov rbx,rax
 	ret
 
 _start:
 	mov rbp,rsp
-	mov	rsi,1
-	mov	rdi,2
+	;mov	rsi,1
+	;mov	rdi,2
 	call f.main
-	;mov rax,69
-	mov	rdi,rbx
 	mov	rax,60
+	mov	edi,ebx
 	syscall
