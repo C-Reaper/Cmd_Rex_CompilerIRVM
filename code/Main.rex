@@ -1,27 +1,28 @@
-import Parser;
 import System;
-import CStr;
-import Char;
-import Pointer;
-import IO;
-import Time;
 import Memory;
-import OStream;
-import Vector;
-import List;
-import String;
-import IStream;
+import IO;
+import File;
+
+//import Parser;
+//import CStr;
+//import Char;
+//import Pointer;
+//import Time;
+//import OStream;
+//import Vector;
+//import List;
+//import String;
+//import IStream;
 
 global i32 main(){
-    //i8[40000] buffer;
-    //mem::Allocator alloc = mem::Allocator::by(buffer,40000);
-    mem::Allocator alloc = mem::Allocator::make(40000);
+    //i8[65535] buffer;
+    //mem::Allocator alloc = mem::Allocator::by(buffer,65535);
+    mem::Allocator alloc = mem::Allocator::make(65535);
 
-    ios::IStream cin = ios::IStream::new(&alloc,0);
-    u64 input1 = cin.uint();
-    u64 input2 = cin.uint();
-    cin.delete();
+    fsys::File stdout = fsys::File::new(1);
+    stdout.write("Hello World!\n",13);
+    stdout.close();
 
     alloc.delete();
-    return input1 + input2;
+    return 0;
 }

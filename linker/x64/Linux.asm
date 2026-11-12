@@ -7,6 +7,7 @@ bits 64
 
 global _start
 global f.syscall
+extern f.sys.exit
 extern f.main
 
 section .text
@@ -18,16 +19,13 @@ f.syscall:
 	mov rdx,r9
 	;mov	r10,r10
 	mov r8,r11
-	;mov r9,stack
+	xor r9,r9
 	syscall
 	mov rbx,rax
 	ret
 
 _start:
 	mov rbp,rsp
-	;mov	rsi,1
-	;mov	rdi,2
 	call f.main
-	mov	rax,60
-	mov	edi,ebx
-	syscall
+	mov	rsi,rbx
+	call f.sys.exit

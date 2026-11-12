@@ -1,0 +1,5 @@
+import System;
+
+namespace time {
+
+}
