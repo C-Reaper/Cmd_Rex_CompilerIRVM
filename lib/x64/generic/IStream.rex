@@ -51,8 +51,8 @@ namespace ios {
             con::Vector vline = con::Vector::new(self->alloc,1);
         
             u64 bytes_read = 32;
-            while bytes_read >= 32 || buffer[31] != 10 {
-               bytes_read = sys::read(self->file,buffer,32);
+            while bytes_read >= 32 && buffer[31] != 10 {
+               bytes_read = sys::read(self->file,buffer,31);
                vline.push_c(buffer,bytes_read);
             }
         

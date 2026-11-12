@@ -61,7 +61,7 @@ namespace sys {
     }
 
     void* alloc(u64 len){
-        return (void*)syscall(9,0,len,3,34,0);
+        return (void*)syscall(9,0,len,3,34,-1);
     }
     void free(void* addr,u64 len){
         syscall(11,(u64)addr,len,0,0,0);

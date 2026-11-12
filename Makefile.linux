@@ -48,42 +48,42 @@ $(BIN_DIR)/%.so: $(LIB_DIR)/%.c
 
 comp_86_Linux:
 	mkdir -p ./build
-	nasm -f elf32 -g -F dwarf ./asm/Main.asm -o ./build/Program.o
+	nasm -f elf32 -g -F dwarf ./asm/Output.asm -o ./build/Program.o
 	nasm -f elf32 -g -F dwarf ./linker/x86/Linux.asm -o ./build/Entry.o
 	ld -m elf_i386 -no-pie ./build/Program.o ./build/Entry.o -o ./build/Output
 	./build/Output; echo $$?
 
 comp_64_Linux:
 	mkdir -p ./build
-	nasm -f elf64 -g -F dwarf ./asm/Main.asm -o ./build/Program.o
+	nasm -f elf64 -g -F dwarf ./asm/Output.asm -o ./build/Program.o
 	nasm -f elf64 -g -F dwarf ./linker/x64/Linux.asm -o ./build/Entry.o
 	ld -m elf_x86_64 -no-pie ./build/Program.o ./build/Entry.o -o ./build/Output
 	./build/Output; echo $$?
 
 comp_86_Win10:
 	mkdir -p ./build
-	nasm -f win32 -g -F cv8 ./asm/Main.asm -o ./build/Program.o
+	nasm -f win32 -g -F cv8 ./asm/Output.asm -o ./build/Program.o
 	nasm -f win32 -g -F cv8 ./linker/x86/Win10.asm -o ./build/Entry.o
 	i686-w64-mingw32-gcc -nostdlib -Wl,-e,_start -Wl,--subsystem,console ./build/Program.o ./build/Entry.o -lkernel32 -o ./build/Output.exe
 	wine ./build/Output.exe; echo $$?
 
 comp_64_Win10:
 	mkdir -p ./build
-	nasm -f win64 -g -F cv8 ./asm/Main.asm -o ./build/Program.o
+	nasm -f win64 -g -F cv8 ./asm/Output.asm -o ./build/Program.o
 	nasm -f win64 -g -F cv8 ./linker/x64/Win10.asm -o ./build/Entry.o
 	x86_64-w64-mingw32-gcc -nostdlib -Wl,-e,_start -Wl,--subsystem,console ./build/Program.o ./build/Entry.o -lkernel32 -o ./build/Output.exe
 	wine ./build/Output.exe; echo $$?
 
 comp_86_Win11:
 	mkdir -p ./build
-	nasm -f win32 -g -F cv8 ./asm/Main.asm -o ./build/Program.o
+	nasm -f win32 -g -F cv8 ./asm/Output.asm -o ./build/Program.o
 	nasm -f win32 -g -F cv8 ./linker/x86/Win11.asm -o ./build/Entry.o
 	i686-w64-mingw32-gcc -nostdlib -Wl,-e,_start -Wl,--subsystem,console ./build/Program.o ./build/Entry.o -lkernel32 -o ./build/Output.exe
 	wine ./build/Output.exe; echo $$?
 
 comp_64_Win11:
 	mkdir -p ./build
-	nasm -f win64 -g -F cv8 ./asm/Main.asm -o ./build/Program.o
+	nasm -f win64 -g -F cv8 ./asm/Output.asm -o ./build/Program.o
 	nasm -f win64 -g -F cv8 ./linker/x64/Win11.asm -o ./build/Entry.o
 	x86_64-w64-mingw32-gcc -nostdlib -Wl,-e,_start -Wl,--subsystem,console ./build/Program.o ./build/Entry.o -lkernel32 -o ./build/Output.exe
 	wine ./build/Output.exe; echo $$?

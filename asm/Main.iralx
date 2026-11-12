@@ -23,19 +23,18 @@ data i8 &cstr.21 '|' ' ' 'H' 'e' 'a' 'd' 'e' 'r' ':' ' ' 0
 data i8 &cstr.22 '|' ' ' 'E' 'l' 'e' 'm' 'e' 'n' 't' ':' ' ' 0
 data i8 &cstr.23 10 0
 data i8 &cstr.24 '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' 10 0
-data i8 &cstr.25 '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 0
-data i8 &cstr.26 '-' '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 0
-data i8 &cstr.27 'x' '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 'A' 'B' 'C' 'D' 'E' 'F' 'a' 'b' 'c' 'd' 'e' 'f' 0
-data i8 &cstr.28 'o' '0' '1' '2' '3' '4' '5' '6' '7' 0
-data i8 &cstr.29 'b' '0' '1' 0
-data i8 &cstr.30 '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' ' ' 'L' 'i' 's' 't' ' ' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' 10 0
-data i8 &cstr.31 10 0
-data i8 &cstr.32 '|' ' ' 'H' 'e' 'a' 'd' 'e' 'r' ':' ' ' ' ' 'C' 'o' 'u' 'n' 't' ':' ' ' 0
-data i8 &cstr.33 '|' ' ' 'E' 'l' 'e' 'm' 'e' 'n' 't' ':' ' ' 0
-data i8 &cstr.34 'S' 'i' 'z' 'e' ':' ' ' 0
-data i8 &cstr.35 10 0
-data i8 &cstr.36 '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' 10 0
-data i8 &cstr.37 'H' 'e' 'l' 'l' 'o' ' ' 'W' 'o' 'r' 'l' 'd' 10 0
+data i8 &cstr.25 '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' ' ' 'L' 'i' 's' 't' ' ' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' 10 0
+data i8 &cstr.26 10 0
+data i8 &cstr.27 '|' ' ' 'H' 'e' 'a' 'd' 'e' 'r' ':' ' ' ' ' 'C' 'o' 'u' 'n' 't' ':' ' ' 0
+data i8 &cstr.28 '|' ' ' 'E' 'l' 'e' 'm' 'e' 'n' 't' ':' ' ' 0
+data i8 &cstr.29 'S' 'i' 'z' 'e' ':' ' ' 0
+data i8 &cstr.30 10 0
+data i8 &cstr.31 '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' 10 0
+data i8 &cstr.32 '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 0
+data i8 &cstr.33 '-' '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 0
+data i8 &cstr.34 'x' '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 'A' 'B' 'C' 'D' 'E' 'F' 'a' 'b' 'c' 'd' 'e' 'f' 0
+data i8 &cstr.35 'o' '0' '1' '2' '3' '4' '5' '6' '7' 0
+data i8 &cstr.36 'b' '0' '1' 0
 
 define i64 @f.cstr.len ptr
     alloca i64 %size 
@@ -790,11 +789,12 @@ define ptr @f.sys.alloc u64
     ass u64 %3 &1 
     ass u64 %4 3 
     ass u64 %5 34 
-    ass u64 %6 0 
+    neg i64 %7 1 
+    ass u64 %6 %7 
     call @f.syscall %0 %1 %2 %3 %4 %5 %6 
-    ass ptr %7 %0 
-    ass ptr %8 %7 
-    ret %8 
+    ass ptr %8 %0 
+    ass ptr %9 %8 
+    ret %9 
     ret 
 
 define @f.sys.free ptr u64
@@ -5015,763 +5015,6 @@ define @f.con.Vector.print ptr
     destroy %cstr 
     ret 
 
-define @f.ios.IStream.init ptr ptr i64
-    ass ptr %0 &0 
-    add ptr %1 %0 0 
-    store i64 %1 &2 
-    ass ptr %2 &0 
-    add ptr %3 %2 8 
-    store ptr %3 &1 
-    ret 
-
-define i64 ptr @f.ios.IStream.new ptr i64
-    allocs 16 %stream 
-    ass ptr %2 %stream 
-    ass ptr %1 %2 
-    ass ptr %3 &2 
-    ass i64 %4 &3 
-    call @f.ios.IStream.init %1 %3 %4 
-    ass ptr %5 %stream 
-    add ptr %6 %5 0 
-    load i64 %7 %6 
-    add ptr %8 %5 8 
-    load ptr %9 %8 
-    destroy %stream 
-    ret %7 %9 
-    destroy %stream 
-    ret 
-
-define @f.ios.IStream.delete ptr
-    ass ptr %1 &0 
-    add ptr %2 %1 0 
-    load i64 %3 %2 
-    gt i64 %4 %3 2 
-    ass u8 %0 %4 
-    brc %0 l.0_IF2_79 l.1_IF2_79 
-    tar l.0_IF2_79 
-    ass ptr %7 &0 
-    add ptr %8 %7 0 
-    load i64 %9 %8 
-    ass u64 %6 %9 
-    call @f.sys.close %6 
-    tar l.1_LOG2_79 
-    tar l.1_IF2_79 
-    ass ptr %10 &0 
-    add ptr %11 %10 0 
-    neg i64 %12 1 
-    store i64 %11 %12 
-    ret 
-
-define ptr @f.ios.IStream.line ptr
-    allocs 32 %buffer 
-    ass ptr %2 %buffer 
-    ass ptr %1 %2 
-    ass i8 %3 0 
-    ass i64 %4 32 
-    call @f.ptr.set %1 %3 %4 
-    allocs 40 %vline 
-    ass ptr %11 &1 
-    add ptr %12 %11 8 
-    load ptr %13 %12 
-    ass ptr %10 %13 
-    ass u64 %14 1 
-    call @f.con.Vector.new %5 %6 %7 %8 %9 %10 %14 
-    ass ptr %15 %vline 
-    add ptr %16 %15 0 
-    store u64 %16 %5 
-    add ptr %17 %15 8 
-    store u64 %17 %6 
-    add ptr %18 %15 16 
-    store u64 %18 %7 
-    add ptr %19 %15 24 
-    store ptr %19 %8 
-    add ptr %20 %15 32 
-    store ptr %20 %9 
-    alloca u64 %bytes_read 
-    store u64 %bytes_read 32 
-    tar l.0_WHILE2_80 
-    load u64 %22 %bytes_read 
-    gq u64 %23 %22 32 
-    ass ptr %24 %buffer 
-    add ptr %25 %24 31 
-    ass ptr %26 %25 
-    load i8 %27 %26 
-    nq i8 %28 %27 10 
-    or u8 %29 %23 %28 
-    ass u8 %21 %29 
-    brc %21 l.2_WHILE2_80 l.1_WHILE2_80 
-    tar l.2_WHILE2_80 
-    ass ptr %32 &1 
-    add ptr %33 %32 0 
-    load i64 %34 %33 
-    ass u64 %31 %34 
-    ass ptr %36 %buffer 
-    ass ptr %35 %36 
-    ass u64 %37 32 
-    call @f.sys.read %30 %31 %35 %37 
-    store u64 %bytes_read %30 
-    ass ptr %40 %vline 
-    ass ptr %39 %40 
-    ass ptr %42 %buffer 
-    ass ptr %41 %42 
-    load u64 %44 %bytes_read 
-    ass u64 %43 %44 
-    call @f.con.Vector.push_c %39 %41 %43 
-    jmp l.0_WHILE2_80 
-    tar l.1_WHILE2_80 
-    alloca u64 %size 
-    ass ptr %47 %vline 
-    ass ptr %46 %47 
-    call @f.con.Vector.get_size %45 %46 
-    store u64 %size %45 
-    alloca ptr %out 
-    ass ptr %48 &1 
-    add ptr %49 %48 8 
-    load ptr %52 %49 
-    ass ptr %51 %52 
-    load u64 %54 %size 
-    add u64 %55 %54 1 
-    ass u64 %53 %55 
-    call @f.mem.Allocator.alloc %50 %51 %53 
-    store ptr %out %50 
-    load ptr %58 %out 
-    ass ptr %57 %58 
-    ass ptr %62 %vline 
-    ass ptr %61 %62 
-    call @f.con.Vector.get_data %60 %61 
-    ass ptr %59 %60 
-    load u64 %64 %size 
-    ass i64 %63 %64 
-    call @f.ptr.cpy %57 %59 %63 
-    load ptr %65 %out 
-    load u64 %66 %size 
-    add ptr %67 %65 %66 
-    ass ptr %68 %67 
-    store i8 %68 0 
-    alloca ptr %out 
-    store ptr %out 0 
-    ass ptr %71 %vline 
-    ass ptr %70 %71 
-    call @f.con.Vector.delete %70 
-    load ptr %73 %out 
-    ass ptr %72 %73 
-    destroy %out 
-    destroy %out 
-    destroy %size 
-    destroy %bytes_read 
-    destroy %vline 
-    destroy %buffer 
-    ret %72 
-    ass ptr %74 0 
-    destroy %out 
-    destroy %out 
-    destroy %size 
-    destroy %bytes_read 
-    destroy %vline 
-    destroy %buffer 
-    ret %74 
-    destroy %out 
-    destroy %out 
-    destroy %size 
-    destroy %bytes_read 
-    destroy %vline 
-    destroy %buffer 
-    ret 
-
-define i8 @f.ios.IStream.char ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca i8 %ch 
-    load ptr %2 %line 
-    add ptr %3 %2 0 
-    ass ptr %4 %3 
-    load i8 %5 %4 
-    store i8 %ch %5 
-    ass ptr %6 &1 
-    add ptr %7 %6 8 
-    load ptr %10 %7 
-    ass ptr %9 %10 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    call @f.mem.Allocator.free %9 %11 
-    load i8 %14 %ch 
-    ass i8 %13 %14 
-    destroy %ch 
-    destroy %line 
-    ret %13 
-    destroy %ch 
-    destroy %line 
-    ret 
-
-define @f.ios.IStream.buff ptr ptr u64
-    alloca ptr %line 
-    ass ptr %1 &0 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %max 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    store u64 %max %2 
-    load u64 %6 %max 
-    lt u64 %7 %6 &2 
-    ass u8 %5 %7 
-    brc %5 l.0_IF2_81 l.1_IF2_81 
-    tar l.0_IF2_81 
-    ass ptr %9 &1 
-    load ptr %11 %line 
-    ass ptr %10 %11 
-    load u64 %13 %max 
-    ass i64 %12 %13 
-    call @f.ptr.cpy %9 %10 %12 
-    jmp l.1_LOG2_81 
-    tar l.1_IF2_81 
-    tar l.0_ELSE2_81 
-    ass ptr %15 &1 
-    load ptr %17 %line 
-    ass ptr %16 %17 
-    ass i64 %18 &2 
-    call @f.ptr.cpy %15 %16 %18 
-    tar l.1_LOG2_81 
-    ass ptr %19 &0 
-    add ptr %20 %19 8 
-    load ptr %23 %20 
-    ass ptr %22 %23 
-    load ptr %25 %line 
-    ass ptr %24 %25 
-    call @f.mem.Allocator.free %22 %24 
-    destroy %max 
-    destroy %line 
-    ret 
-
-define ptr @f.ios.IStream.cstr ptr u64
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    load ptr %3 %line 
-    ass ptr %2 %3 
-    destroy %line 
-    ret %2 
-    destroy %line 
-    ret 
-
-define u64 @f.ios.IStream.uint ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %size 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    sub i64 %5 %2 1 
-    store u64 %size %5 
-    load ptr %6 %line 
-    load u64 %7 %size 
-    add ptr %8 %6 %7 
-    ass ptr %9 %8 
-    store i8 %9 0 
-    alloca i32 %i 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    ass ptr %13 &cstr.25 
-    call @f.cstr.findnot %10 %11 %13 
-    store i32 %i %10 
-    alloca u64 %num 
-    load ptr %16 %line 
-    ass ptr %15 %16 
-    call @f.parse.uint.by %14 %15 
-    store u64 %num %14 
-    ass ptr %17 &1 
-    add ptr %18 %17 8 
-    load ptr %21 %18 
-    ass ptr %20 %21 
-    load ptr %23 %line 
-    ass ptr %22 %23 
-    call @f.mem.Allocator.free %20 %22 
-    load u64 %25 %num 
-    ass u64 %24 %25 
-    destroy %num 
-    destroy %i 
-    destroy %size 
-    destroy %line 
-    ret %24 
-    destroy %num 
-    destroy %i 
-    destroy %size 
-    destroy %line 
-    ret 
-
-define i64 @f.ios.IStream.int ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %size 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    sub i64 %5 %2 1 
-    store u64 %size %5 
-    load ptr %6 %line 
-    load u64 %7 %size 
-    add ptr %8 %6 %7 
-    ass ptr %9 %8 
-    store i8 %9 0 
-    alloca i32 %i 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    ass ptr %13 &cstr.26 
-    call @f.cstr.findnot %10 %11 %13 
-    store i32 %i %10 
-    alloca i64 %num 
-    load ptr %16 %line 
-    ass ptr %15 %16 
-    call @f.parse.int.by %14 %15 
-    store i64 %num %14 
-    ass ptr %17 &1 
-    add ptr %18 %17 8 
-    load ptr %21 %18 
-    ass ptr %20 %21 
-    load ptr %23 %line 
-    ass ptr %22 %23 
-    call @f.mem.Allocator.free %20 %22 
-    load i64 %25 %num 
-    ass i64 %24 %25 
-    destroy %num 
-    destroy %i 
-    destroy %size 
-    destroy %line 
-    ret %24 
-    destroy %num 
-    destroy %i 
-    destroy %size 
-    destroy %line 
-    ret 
-
-define u8 @f.ios.IStream.boolean ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %size 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    sub i64 %5 %2 1 
-    store u64 %size %5 
-    load ptr %6 %line 
-    load u64 %7 %size 
-    add ptr %8 %6 %7 
-    ass ptr %9 %8 
-    store i8 %9 0 
-    alloca u8 %b 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    call @f.parse.boolean.by %10 %11 
-    store u8 %b %10 
-    ass ptr %13 &1 
-    add ptr %14 %13 8 
-    load ptr %17 %14 
-    ass ptr %16 %17 
-    load ptr %19 %line 
-    ass ptr %18 %19 
-    call @f.mem.Allocator.free %16 %18 
-    load u8 %21 %b 
-    ass u8 %20 %21 
-    destroy %b 
-    destroy %size 
-    destroy %line 
-    ret %20 
-    destroy %b 
-    destroy %size 
-    destroy %line 
-    ret 
-
-define u64 @f.ios.IStream.hex ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %size 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    sub i64 %5 %2 1 
-    store u64 %size %5 
-    load ptr %6 %line 
-    load u64 %7 %size 
-    add ptr %8 %6 %7 
-    ass ptr %9 %8 
-    store i8 %9 0 
-    alloca i32 %i 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    ass ptr %13 &cstr.27 
-    call @f.cstr.findnot %10 %11 %13 
-    store i32 %i %10 
-    alloca u64 %num 
-    load ptr %16 %line 
-    ass ptr %15 %16 
-    call @f.parse.hex.by %14 %15 
-    store u64 %num %14 
-    ass ptr %17 &1 
-    add ptr %18 %17 8 
-    load ptr %21 %18 
-    ass ptr %20 %21 
-    load ptr %23 %line 
-    ass ptr %22 %23 
-    call @f.mem.Allocator.free %20 %22 
-    load u64 %25 %num 
-    ass u64 %24 %25 
-    destroy %num 
-    destroy %i 
-    destroy %size 
-    destroy %line 
-    ret %24 
-    destroy %num 
-    destroy %i 
-    destroy %size 
-    destroy %line 
-    ret 
-
-define u64 @f.ios.IStream.oct ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %size 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    sub i64 %5 %2 1 
-    store u64 %size %5 
-    load ptr %6 %line 
-    load u64 %7 %size 
-    add ptr %8 %6 %7 
-    ass ptr %9 %8 
-    store i8 %9 0 
-    alloca i32 %i 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    ass ptr %13 &cstr.28 
-    call @f.cstr.findnot %10 %11 %13 
-    store i32 %i %10 
-    alloca u64 %num 
-    load ptr %16 %line 
-    ass ptr %15 %16 
-    call @f.parse.oct.by %14 %15 
-    store u64 %num %14 
-    ass ptr %17 &1 
-    add ptr %18 %17 8 
-    load ptr %21 %18 
-    ass ptr %20 %21 
-    load ptr %23 %line 
-    ass ptr %22 %23 
-    call @f.mem.Allocator.free %20 %22 
-    load u64 %25 %num 
-    ass u64 %24 %25 
-    destroy %num 
-    destroy %i 
-    destroy %size 
-    destroy %line 
-    ret %24 
-    destroy %num 
-    destroy %i 
-    destroy %size 
-    destroy %line 
-    ret 
-
-define u64 @f.ios.IStream.bin ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %size 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    sub i64 %5 %2 1 
-    store u64 %size %5 
-    load ptr %6 %line 
-    load u64 %7 %size 
-    add ptr %8 %6 %7 
-    ass ptr %9 %8 
-    store i8 %9 0 
-    alloca i32 %i 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    ass ptr %13 &cstr.29 
-    call @f.cstr.findnot %10 %11 %13 
-    store i32 %i %10 
-    alloca u64 %num 
-    load ptr %16 %line 
-    ass ptr %15 %16 
-    call @f.parse.bin.by %14 %15 
-    store u64 %num %14 
-    ass ptr %17 &1 
-    add ptr %18 %17 8 
-    load ptr %21 %18 
-    ass ptr %20 %21 
-    load ptr %23 %line 
-    ass ptr %22 %23 
-    call @f.mem.Allocator.free %20 %22 
-    load u64 %25 %num 
-    ass u64 %24 %25 
-    destroy %num 
-    destroy %i 
-    destroy %size 
-    destroy %line 
-    ret %24 
-    destroy %num 
-    destroy %i 
-    destroy %size 
-    destroy %line 
-    ret 
-
-define u8 @f.ios.IStream.uint_s ptr ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %size 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    sub i64 %5 %2 1 
-    store u64 %size %5 
-    load ptr %6 %line 
-    load u64 %7 %size 
-    add ptr %8 %6 %7 
-    ass ptr %9 %8 
-    store i8 %9 0 
-    alloca u8 %ret 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    ass ptr %13 &2 
-    call @f.parse.uint.by_s %10 %11 %13 
-    store u8 %ret %10 
-    ass ptr %14 &1 
-    add ptr %15 %14 8 
-    load ptr %18 %15 
-    ass ptr %17 %18 
-    load ptr %20 %line 
-    ass ptr %19 %20 
-    call @f.mem.Allocator.free %17 %19 
-    load u8 %22 %ret 
-    ass u8 %21 %22 
-    destroy %ret 
-    destroy %size 
-    destroy %line 
-    ret %21 
-    destroy %ret 
-    destroy %size 
-    destroy %line 
-    ret 
-
-define u8 @f.ios.IStream.int_s ptr ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %size 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    sub i64 %5 %2 1 
-    store u64 %size %5 
-    load ptr %6 %line 
-    load u64 %7 %size 
-    add ptr %8 %6 %7 
-    ass ptr %9 %8 
-    store i8 %9 0 
-    alloca u8 %ret 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    ass ptr %13 &2 
-    call @f.parse.int.by_s %10 %11 %13 
-    store u8 %ret %10 
-    ass ptr %14 &1 
-    add ptr %15 %14 8 
-    load ptr %18 %15 
-    ass ptr %17 %18 
-    load ptr %20 %line 
-    ass ptr %19 %20 
-    call @f.mem.Allocator.free %17 %19 
-    load u8 %22 %ret 
-    ass u8 %21 %22 
-    destroy %ret 
-    destroy %size 
-    destroy %line 
-    ret %21 
-    destroy %ret 
-    destroy %size 
-    destroy %line 
-    ret 
-
-define u8 @f.ios.IStream.boolean_s ptr ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %size 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    sub i64 %5 %2 1 
-    store u64 %size %5 
-    load ptr %6 %line 
-    load u64 %7 %size 
-    add ptr %8 %6 %7 
-    ass ptr %9 %8 
-    store i8 %9 0 
-    alloca u8 %ret 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    ass ptr %13 &2 
-    call @f.parse.boolean.by_s %10 %11 %13 
-    store u8 %ret %10 
-    ass ptr %14 &1 
-    add ptr %15 %14 8 
-    load ptr %18 %15 
-    ass ptr %17 %18 
-    load ptr %20 %line 
-    ass ptr %19 %20 
-    call @f.mem.Allocator.free %17 %19 
-    load u8 %22 %ret 
-    ass u8 %21 %22 
-    destroy %ret 
-    destroy %size 
-    destroy %line 
-    ret %21 
-    destroy %ret 
-    destroy %size 
-    destroy %line 
-    ret 
-
-define u8 @f.ios.IStream.hex_s ptr ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %size 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    sub i64 %5 %2 1 
-    store u64 %size %5 
-    load ptr %6 %line 
-    load u64 %7 %size 
-    add ptr %8 %6 %7 
-    ass ptr %9 %8 
-    store i8 %9 0 
-    alloca u8 %ret 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    ass ptr %13 &2 
-    call @f.parse.hex.by_s %10 %11 %13 
-    store u8 %ret %10 
-    ass ptr %14 &1 
-    add ptr %15 %14 8 
-    load ptr %18 %15 
-    ass ptr %17 %18 
-    load ptr %20 %line 
-    ass ptr %19 %20 
-    call @f.mem.Allocator.free %17 %19 
-    load u8 %22 %ret 
-    ass u8 %21 %22 
-    destroy %ret 
-    destroy %size 
-    destroy %line 
-    ret %21 
-    destroy %ret 
-    destroy %size 
-    destroy %line 
-    ret 
-
-define u8 @f.ios.IStream.oct_s ptr ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %size 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    sub i64 %5 %2 1 
-    store u64 %size %5 
-    load ptr %6 %line 
-    load u64 %7 %size 
-    add ptr %8 %6 %7 
-    ass ptr %9 %8 
-    store i8 %9 0 
-    alloca u8 %ret 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    ass ptr %13 &2 
-    call @f.parse.oct.by_s %10 %11 %13 
-    store u8 %ret %10 
-    ass ptr %14 &1 
-    add ptr %15 %14 8 
-    load ptr %18 %15 
-    ass ptr %17 %18 
-    load ptr %20 %line 
-    ass ptr %19 %20 
-    call @f.mem.Allocator.free %17 %19 
-    load u8 %22 %ret 
-    ass u8 %21 %22 
-    destroy %ret 
-    destroy %size 
-    destroy %line 
-    ret %21 
-    destroy %ret 
-    destroy %size 
-    destroy %line 
-    ret 
-
-define u8 @f.ios.IStream.bin_s ptr ptr
-    alloca ptr %line 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
-    store ptr %line %0 
-    alloca u64 %size 
-    load ptr %4 %line 
-    ass ptr %3 %4 
-    call @f.cstr.len %2 %3 
-    sub i64 %5 %2 1 
-    store u64 %size %5 
-    load ptr %6 %line 
-    load u64 %7 %size 
-    add ptr %8 %6 %7 
-    ass ptr %9 %8 
-    store i8 %9 0 
-    alloca u8 %ret 
-    load ptr %12 %line 
-    ass ptr %11 %12 
-    ass ptr %13 &2 
-    call @f.parse.bin.by_s %10 %11 %13 
-    store u8 %ret %10 
-    ass ptr %14 &1 
-    add ptr %15 %14 8 
-    load ptr %18 %15 
-    ass ptr %17 %18 
-    load ptr %20 %line 
-    ass ptr %19 %20 
-    call @f.mem.Allocator.free %17 %19 
-    load u8 %22 %ret 
-    ass u8 %21 %22 
-    destroy %ret 
-    destroy %size 
-    destroy %line 
-    ret %21 
-    destroy %ret 
-    destroy %size 
-    destroy %line 
-    ret 
-
 define @f.con.List.init ptr ptr
     ass ptr %0 &0 
     add ptr %1 %0 16 
@@ -5874,12 +5117,12 @@ define ptr @f.con.List.find ptr u64
     gq u64 %5 &2 %4 
     or u8 %6 %1 %5 
     ass u8 %0 %6 
-    brc %0 l.0_IF2_82 l.1_IF2_82 
-    tar l.0_IF2_82 
+    brc %0 l.0_IF2_79 l.1_IF2_79 
+    tar l.0_IF2_79 
     ass ptr %7 0 
     ret %7 
-    tar l.1_LOG2_82 
-    tar l.1_IF2_82 
+    tar l.1_LOG2_79 
+    tar l.1_IF2_79 
     alloca ptr %element 
     ass ptr %8 &1 
     add ptr %9 %8 0 
@@ -5923,12 +5166,12 @@ define ptr @f.con.List.get ptr u64
     lq u64 %10 %9 0 
     or u8 %11 %6 %10 
     ass u8 %0 %11 
-    brc %0 l.0_IF2_83 l.1_IF2_83 
-    tar l.0_IF2_83 
+    brc %0 l.0_IF2_80 l.1_IF2_80 
+    tar l.0_IF2_80 
     ass ptr %12 0 
     ret %12 
-    tar l.1_LOG2_83 
-    tar l.1_IF2_83 
+    tar l.1_LOG2_80 
+    tar l.1_IF2_80 
     alloca ptr %element 
     ass ptr %14 &1 
     ass u64 %15 &2 
@@ -5951,8 +5194,8 @@ define @f.con.List.set ptr u64 ptr u64
     lt u64 %5 &1 %4 
     and u8 %6 %1 %5 
     ass u8 %0 %6 
-    brc %0 l.0_IF2_84 l.1_IF2_84 
-    tar l.0_IF2_84 
+    brc %0 l.0_IF2_81 l.1_IF2_81 
+    tar l.0_IF2_81 
     alloca ptr %n 
     ass ptr %8 &0 
     ass u64 %9 &1 
@@ -5988,8 +5231,8 @@ define @f.con.List.set ptr u64 ptr u64
     ass i64 %36 &3 
     call @f.ptr.cpy %30 %34 %36 
     destroy %n 
-    tar l.1_LOG2_84 
-    tar l.1_IF2_84 
+    tar l.1_LOG2_81 
+    tar l.1_IF2_81 
     ret 
 
 define u64 @f.con.List.size ptr
@@ -6058,8 +5301,8 @@ define @f.con.List.pop ptr
     load ptr %6 %5 
     nq ptr %7 %6 0 
     ass u8 %3 %7 
-    brc %3 l.0_IF2_85 l.1_IF2_85 
-    tar l.0_IF2_85 
+    brc %3 l.0_IF2_82 l.1_IF2_82 
+    tar l.0_IF2_82 
     alloca ptr %next 
     load ptr %8 %first 
     add ptr %9 %8 16 
@@ -6091,13 +5334,13 @@ define @f.con.List.pop ptr
     sub u64 %33 %32 1 
     store u64 %31 %33 
     destroy %next 
-    tar l.1_LOG2_85 
-    tar l.1_IF2_85 
+    tar l.1_LOG2_82 
+    tar l.1_IF2_82 
     destroy %first 
     ret 
 
 define @f.con.List.print ptr
-    ass ptr %1 &cstr.30 
+    ass ptr %1 &cstr.25 
     call @f.io.print %1 
     allocs 70 %cstr 
     ass ptr %4 %cstr 
@@ -6108,12 +5351,12 @@ define @f.con.List.print ptr
     ass ptr %9 %cstr 
     add ptr %10 %9 68 
     ass ptr %8 %10 
-    ass ptr %11 &cstr.31 
+    ass ptr %11 &cstr.26 
     ass i64 %12 2 
     call @f.ptr.cpy %8 %11 %12 
     ass ptr %15 %cstr 
     ass ptr %14 %15 
-    ass ptr %16 &cstr.32 
+    ass ptr %16 &cstr.27 
     ass i64 %17 17 
     call @f.ptr.cpy %14 %16 %17 
     ass ptr %20 %cstr 
@@ -6218,7 +5461,7 @@ define @f.con.List.print ptr
     call @f.ptr.set %85 %87 %88 
     ass ptr %91 %cstr 
     ass ptr %90 %91 
-    ass ptr %92 &cstr.33 
+    ass ptr %92 &cstr.28 
     ass i64 %93 11 
     call @f.ptr.cpy %90 %92 %93 
     ass ptr %96 %cstr 
@@ -6231,7 +5474,7 @@ define @f.con.List.print ptr
     ass ptr %103 %cstr 
     add ptr %104 %103 18 
     ass ptr %102 %104 
-    ass ptr %105 &cstr.34 
+    ass ptr %105 &cstr.29 
     ass i64 %106 6 
     call @f.ptr.cpy %102 %105 %106 
     ass ptr %109 %cstr 
@@ -6251,7 +5494,7 @@ define @f.con.List.print ptr
     ass ptr %123 %cstr 
     add ptr %124 %123 68 
     ass ptr %122 %124 
-    ass ptr %125 &cstr.35 
+    ass ptr %125 &cstr.30 
     ass i64 %126 2 
     call @f.ptr.cpy %122 %125 %126 
     ass ptr %129 %cstr 
@@ -6265,7 +5508,7 @@ define @f.con.List.print ptr
     jmp l.0_FOR3_34 
     tar l.1_FOR3_34 
     destroy %i 
-    ass ptr %133 &cstr.36 
+    ass ptr %133 &cstr.31 
     call @f.io.print %133 
     destroy %cstr 
     ret 
@@ -6353,12 +5596,12 @@ define i8 @f.st.String.get ptr u64
     load u64 %3 %2 
     gq u64 %4 &2 %3 
     ass u8 %0 %4 
-    brc %0 l.0_IF2_86 l.1_IF2_86 
-    tar l.0_IF2_86 
+    brc %0 l.0_IF2_83 l.1_IF2_83 
+    tar l.0_IF2_83 
     ass i8 %5 0 
     ret %5 
-    tar l.1_LOG2_86 
-    tar l.1_IF2_86 
+    tar l.1_LOG2_83 
+    tar l.1_IF2_83 
     ass ptr %6 &1 
     add ptr %7 %6 16 
     load ptr %8 %7 
@@ -6380,8 +5623,8 @@ define @f.st.String.set_c ptr u64 ptr u64
     lq u64 %8 %4 %7 
     and u8 %9 %3 %8 
     ass u8 %0 %9 
-    brc %0 l.0_IF2_87 l.1_IF2_87 
-    tar l.0_IF2_87 
+    brc %0 l.0_IF2_84 l.1_IF2_84 
+    tar l.0_IF2_84 
     ass ptr %12 &0 
     add ptr %13 %12 16 
     load ptr %14 %13 
@@ -6390,8 +5633,8 @@ define @f.st.String.set_c ptr u64 ptr u64
     ass ptr %16 &2 
     ass i64 %17 &3 
     call @f.ptr.cpy %11 %16 %17 
-    tar l.1_LOG2_87 
-    tar l.1_IF2_87 
+    tar l.1_LOG2_84 
+    tar l.1_IF2_84 
     ret 
 
 define @f.st.String.expand ptr u64
@@ -6407,8 +5650,8 @@ define @f.st.String.expand ptr u64
     load u64 %8 %6 
     gt u64 %9 %7 %8 
     ass u8 %4 %9 
-    brc %4 l.0_IF2_88 l.1_IF2_88 
-    tar l.0_IF2_88 
+    brc %4 l.0_IF2_85 l.1_IF2_85 
+    tar l.0_IF2_85 
     alloca u64 %newsize 
     ass ptr %10 &0 
     add ptr %11 %10 8 
@@ -6465,8 +5708,8 @@ define @f.st.String.expand ptr u64
     store u64 %50 %51 
     destroy %block 
     destroy %newsize 
-    tar l.1_LOG2_88 
-    tar l.1_IF2_88 
+    tar l.1_LOG2_85 
+    tar l.1_IF2_85 
     destroy %length 
     ret 
 
@@ -6486,8 +5729,8 @@ define @f.st.String.shrink ptr u64
     gt u64 %11 %10 5 
     and u8 %12 %9 %11 
     ass u8 %4 %12 
-    brc %4 l.0_IF2_89 l.1_IF2_89 
-    tar l.0_IF2_89 
+    brc %4 l.0_IF2_86 l.1_IF2_86 
+    tar l.0_IF2_86 
     alloca ptr %block 
     ass ptr %13 &0 
     add ptr %14 %13 24 
@@ -6526,8 +5769,8 @@ define @f.st.String.shrink ptr u64
     load u64 %45 %newsize 
     store u64 %44 %45 
     destroy %block 
-    tar l.1_LOG2_89 
-    tar l.1_IF2_89 
+    tar l.1_LOG2_86 
+    tar l.1_IF2_86 
     destroy %newsize 
     ret 
 
@@ -6619,14 +5862,14 @@ define @f.st.String.pop_c ptr u64
     load u64 %3 %2 
     lt u64 %4 %3 &1 
     ass u8 %0 %4 
-    brc %0 l.0_IF2_90 l.1_IF2_90 
-    tar l.0_IF2_90 
+    brc %0 l.0_IF2_87 l.1_IF2_87 
+    tar l.0_IF2_87 
     ass ptr %5 &0 
     add ptr %6 %5 0 
     load u64 %7 %6 
     store u64 %rcount %7 
-    tar l.1_LOG2_90 
-    tar l.1_IF2_90 
+    tar l.1_LOG2_87 
+    tar l.1_IF2_87 
     ass ptr %8 &0 
     add ptr %9 %8 0 
     load u64 %10 %9 
@@ -7068,77 +6311,800 @@ define ptr @f.st.String.mem ptr ptr u64
     destroy %count 
     ret 
 
-global i32 @f.main
-    allocs 40000 %buffer 
-    allocs 16 %alloc 
-    ass ptr %4 %buffer 
-    ass ptr %3 %4 
-    ass u64 %5 40000 
-    call @f.mem.Allocator.by %0 %1 %2 %3 %5 
-    ass ptr %6 %alloc 
-    add ptr %7 %6 0 
-    store ptr %7 %0 
-    add ptr %8 %6 8 
-    store u32 %8 %1 
-    add ptr %9 %6 12 
-    store u32 %9 %2 
-    allocs 40 %cout 
-    ass ptr %16 %alloc 
-    ass ptr %15 %16 
-    ass i64 %17 1 
-    call @f.ios.OStream.new %10 %11 %12 %13 %14 %15 %17 
-    ass ptr %18 %cout 
-    add ptr %19 %18 0 
-    store i64 %19 %10 
-    add ptr %20 %18 8 
-    store u64 %20 %11 
-    add ptr %21 %18 16 
-    store u64 %21 %12 
-    add ptr %22 %18 24 
-    store ptr %22 %13 
-    add ptr %23 %18 32 
-    store ptr %23 %14 
-    ass ptr %26 %cout 
-    ass ptr %25 %26 
-    ass ptr %27 &cstr.37 
-    call @f.ios.OStream.cstr %24 %25 %27 
-    ass ptr %29 %24 
-    call @f.ios.OStream.flush %28 %29 
-    ass ptr %32 %cout 
-    ass ptr %31 %32 
-    call @f.ios.OStream.delete %31 
-    allocs 16 %cin 
-    ass ptr %36 %alloc 
+define @f.ios.IStream.init ptr ptr i64
+    ass ptr %0 &0 
+    add ptr %1 %0 0 
+    store i64 %1 &2 
+    ass ptr %2 &0 
+    add ptr %3 %2 8 
+    store ptr %3 &1 
+    ret 
+
+define i64 ptr @f.ios.IStream.new ptr i64
+    allocs 16 %stream 
+    ass ptr %2 %stream 
+    ass ptr %1 %2 
+    ass ptr %3 &2 
+    ass i64 %4 &3 
+    call @f.ios.IStream.init %1 %3 %4 
+    ass ptr %5 %stream 
+    add ptr %6 %5 0 
+    load i64 %7 %6 
+    add ptr %8 %5 8 
+    load ptr %9 %8 
+    destroy %stream 
+    ret %7 %9 
+    destroy %stream 
+    ret 
+
+define @f.ios.IStream.delete ptr
+    ass ptr %1 &0 
+    add ptr %2 %1 0 
+    load i64 %3 %2 
+    gt i64 %4 %3 2 
+    ass u8 %0 %4 
+    brc %0 l.0_IF2_88 l.1_IF2_88 
+    tar l.0_IF2_88 
+    ass ptr %7 &0 
+    add ptr %8 %7 0 
+    load i64 %9 %8 
+    ass u64 %6 %9 
+    call @f.sys.close %6 
+    tar l.1_LOG2_88 
+    tar l.1_IF2_88 
+    ass ptr %10 &0 
+    add ptr %11 %10 0 
+    neg i64 %12 1 
+    store i64 %11 %12 
+    ret 
+
+define ptr @f.ios.IStream.line ptr
+    allocs 32 %buffer 
+    ass ptr %2 %buffer 
+    ass ptr %1 %2 
+    ass i8 %3 0 
+    ass i64 %4 32 
+    call @f.ptr.set %1 %3 %4 
+    allocs 40 %vline 
+    ass ptr %11 &1 
+    add ptr %12 %11 8 
+    load ptr %13 %12 
+    ass ptr %10 %13 
+    ass u64 %14 1 
+    call @f.con.Vector.new %5 %6 %7 %8 %9 %10 %14 
+    ass ptr %15 %vline 
+    add ptr %16 %15 0 
+    store u64 %16 %5 
+    add ptr %17 %15 8 
+    store u64 %17 %6 
+    add ptr %18 %15 16 
+    store u64 %18 %7 
+    add ptr %19 %15 24 
+    store ptr %19 %8 
+    add ptr %20 %15 32 
+    store ptr %20 %9 
+    alloca u64 %bytes_read 
+    store u64 %bytes_read 32 
+    tar l.0_WHILE2_89 
+    load u64 %22 %bytes_read 
+    gq u64 %23 %22 32 
+    ass ptr %24 %buffer 
+    add ptr %25 %24 31 
+    ass ptr %26 %25 
+    load i8 %27 %26 
+    nq i8 %28 %27 10 
+    and u8 %29 %23 %28 
+    ass u8 %21 %29 
+    brc %21 l.2_WHILE2_89 l.1_WHILE2_89 
+    tar l.2_WHILE2_89 
+    ass ptr %32 &1 
+    add ptr %33 %32 0 
+    load i64 %34 %33 
+    ass u64 %31 %34 
+    ass ptr %36 %buffer 
     ass ptr %35 %36 
-    ass i64 %37 0 
-    call @f.ios.IStream.new %33 %34 %35 %37 
-    ass ptr %38 %cin 
-    add ptr %39 %38 0 
-    store i64 %39 %33 
-    add ptr %40 %38 8 
-    store ptr %40 %34 
-    alloca u64 %input 
-    ass ptr %43 %cin 
-    ass ptr %42 %43 
-    call @f.ios.IStream.uint %41 %42 
-    store u64 %input %41 
-    ass ptr %46 %cin 
-    ass ptr %45 %46 
-    call @f.ios.IStream.delete %45 
-    ass ptr %49 %alloc 
-    ass ptr %48 %49 
-    call @f.mem.Allocator.delete %48 
-    ass i32 %50 0 
-    destroy %input 
-    destroy %cin 
-    destroy %cout 
-    destroy %alloc 
+    ass u64 %37 31 
+    call @f.sys.read %30 %31 %35 %37 
+    store u64 %bytes_read %30 
+    ass ptr %40 %vline 
+    ass ptr %39 %40 
+    ass ptr %42 %buffer 
+    ass ptr %41 %42 
+    load u64 %44 %bytes_read 
+    ass u64 %43 %44 
+    call @f.con.Vector.push_c %39 %41 %43 
+    jmp l.0_WHILE2_89 
+    tar l.1_WHILE2_89 
+    alloca u64 %size 
+    ass ptr %47 %vline 
+    ass ptr %46 %47 
+    call @f.con.Vector.get_size %45 %46 
+    store u64 %size %45 
+    alloca ptr %out 
+    ass ptr %48 &1 
+    add ptr %49 %48 8 
+    load ptr %52 %49 
+    ass ptr %51 %52 
+    load u64 %54 %size 
+    add u64 %55 %54 1 
+    ass u64 %53 %55 
+    call @f.mem.Allocator.alloc %50 %51 %53 
+    store ptr %out %50 
+    load ptr %58 %out 
+    ass ptr %57 %58 
+    ass ptr %62 %vline 
+    ass ptr %61 %62 
+    call @f.con.Vector.get_data %60 %61 
+    ass ptr %59 %60 
+    load u64 %64 %size 
+    ass i64 %63 %64 
+    call @f.ptr.cpy %57 %59 %63 
+    load ptr %65 %out 
+    load u64 %66 %size 
+    add ptr %67 %65 %66 
+    ass ptr %68 %67 
+    store i8 %68 0 
+    ass ptr %71 %vline 
+    ass ptr %70 %71 
+    call @f.con.Vector.delete %70 
+    load ptr %73 %out 
+    ass ptr %72 %73 
+    destroy %out 
+    destroy %size 
+    destroy %bytes_read 
+    destroy %vline 
     destroy %buffer 
-    ret %50 
-    destroy %input 
-    destroy %cin 
-    destroy %cout 
-    destroy %alloc 
+    ret %72 
+    destroy %out 
+    destroy %size 
+    destroy %bytes_read 
+    destroy %vline 
     destroy %buffer 
+    ret 
+
+define i8 @f.ios.IStream.char ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca i8 %ch 
+    load ptr %2 %line 
+    add ptr %3 %2 0 
+    ass ptr %4 %3 
+    load i8 %5 %4 
+    store i8 %ch %5 
+    ass ptr %6 &1 
+    add ptr %7 %6 8 
+    load ptr %10 %7 
+    ass ptr %9 %10 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    call @f.mem.Allocator.free %9 %11 
+    load i8 %14 %ch 
+    ass i8 %13 %14 
+    destroy %ch 
+    destroy %line 
+    ret %13 
+    destroy %ch 
+    destroy %line 
+    ret 
+
+define @f.ios.IStream.buff ptr ptr u64
+    alloca ptr %line 
+    ass ptr %1 &0 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %max 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    store u64 %max %2 
+    load u64 %6 %max 
+    lt u64 %7 %6 &2 
+    ass u8 %5 %7 
+    brc %5 l.0_IF2_90 l.1_IF2_90 
+    tar l.0_IF2_90 
+    ass ptr %9 &1 
+    load ptr %11 %line 
+    ass ptr %10 %11 
+    load u64 %13 %max 
+    ass i64 %12 %13 
+    call @f.ptr.cpy %9 %10 %12 
+    jmp l.1_LOG2_90 
+    tar l.1_IF2_90 
+    tar l.0_ELSE2_90 
+    ass ptr %15 &1 
+    load ptr %17 %line 
+    ass ptr %16 %17 
+    ass i64 %18 &2 
+    call @f.ptr.cpy %15 %16 %18 
+    tar l.1_LOG2_90 
+    ass ptr %19 &0 
+    add ptr %20 %19 8 
+    load ptr %23 %20 
+    ass ptr %22 %23 
+    load ptr %25 %line 
+    ass ptr %24 %25 
+    call @f.mem.Allocator.free %22 %24 
+    destroy %max 
+    destroy %line 
+    ret 
+
+define ptr @f.ios.IStream.cstr ptr u64
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    load ptr %3 %line 
+    ass ptr %2 %3 
+    destroy %line 
+    ret %2 
+    destroy %line 
+    ret 
+
+define u64 @f.ios.IStream.uint ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    sub i64 %5 %2 1 
+    store u64 %size %5 
+    load ptr %6 %line 
+    load u64 %7 %size 
+    add ptr %8 %6 %7 
+    ass ptr %9 %8 
+    store i8 %9 0 
+    alloca i32 %i 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    ass ptr %13 &cstr.32 
+    call @f.cstr.findnot %10 %11 %13 
+    store i32 %i %10 
+    alloca u64 %num 
+    load ptr %16 %line 
+    ass ptr %15 %16 
+    call @f.parse.uint.by %14 %15 
+    store u64 %num %14 
+    ass ptr %17 &1 
+    add ptr %18 %17 8 
+    load ptr %21 %18 
+    ass ptr %20 %21 
+    load ptr %23 %line 
+    ass ptr %22 %23 
+    call @f.mem.Allocator.free %20 %22 
+    load u64 %25 %num 
+    ass u64 %24 %25 
+    destroy %num 
+    destroy %i 
+    destroy %size 
+    destroy %line 
+    ret %24 
+    destroy %num 
+    destroy %i 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define i64 @f.ios.IStream.int ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    sub i64 %5 %2 1 
+    store u64 %size %5 
+    load ptr %6 %line 
+    load u64 %7 %size 
+    add ptr %8 %6 %7 
+    ass ptr %9 %8 
+    store i8 %9 0 
+    alloca i32 %i 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    ass ptr %13 &cstr.33 
+    call @f.cstr.findnot %10 %11 %13 
+    store i32 %i %10 
+    alloca i64 %num 
+    load ptr %16 %line 
+    ass ptr %15 %16 
+    call @f.parse.int.by %14 %15 
+    store i64 %num %14 
+    ass ptr %17 &1 
+    add ptr %18 %17 8 
+    load ptr %21 %18 
+    ass ptr %20 %21 
+    load ptr %23 %line 
+    ass ptr %22 %23 
+    call @f.mem.Allocator.free %20 %22 
+    load i64 %25 %num 
+    ass i64 %24 %25 
+    destroy %num 
+    destroy %i 
+    destroy %size 
+    destroy %line 
+    ret %24 
+    destroy %num 
+    destroy %i 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.boolean ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    sub i64 %5 %2 1 
+    store u64 %size %5 
+    load ptr %6 %line 
+    load u64 %7 %size 
+    add ptr %8 %6 %7 
+    ass ptr %9 %8 
+    store i8 %9 0 
+    alloca u8 %b 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    call @f.parse.boolean.by %10 %11 
+    store u8 %b %10 
+    ass ptr %13 &1 
+    add ptr %14 %13 8 
+    load ptr %17 %14 
+    ass ptr %16 %17 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    call @f.mem.Allocator.free %16 %18 
+    load u8 %21 %b 
+    ass u8 %20 %21 
+    destroy %b 
+    destroy %size 
+    destroy %line 
+    ret %20 
+    destroy %b 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u64 @f.ios.IStream.hex ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    sub i64 %5 %2 1 
+    store u64 %size %5 
+    load ptr %6 %line 
+    load u64 %7 %size 
+    add ptr %8 %6 %7 
+    ass ptr %9 %8 
+    store i8 %9 0 
+    alloca i32 %i 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    ass ptr %13 &cstr.34 
+    call @f.cstr.findnot %10 %11 %13 
+    store i32 %i %10 
+    alloca u64 %num 
+    load ptr %16 %line 
+    ass ptr %15 %16 
+    call @f.parse.hex.by %14 %15 
+    store u64 %num %14 
+    ass ptr %17 &1 
+    add ptr %18 %17 8 
+    load ptr %21 %18 
+    ass ptr %20 %21 
+    load ptr %23 %line 
+    ass ptr %22 %23 
+    call @f.mem.Allocator.free %20 %22 
+    load u64 %25 %num 
+    ass u64 %24 %25 
+    destroy %num 
+    destroy %i 
+    destroy %size 
+    destroy %line 
+    ret %24 
+    destroy %num 
+    destroy %i 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u64 @f.ios.IStream.oct ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    sub i64 %5 %2 1 
+    store u64 %size %5 
+    load ptr %6 %line 
+    load u64 %7 %size 
+    add ptr %8 %6 %7 
+    ass ptr %9 %8 
+    store i8 %9 0 
+    alloca i32 %i 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    ass ptr %13 &cstr.35 
+    call @f.cstr.findnot %10 %11 %13 
+    store i32 %i %10 
+    alloca u64 %num 
+    load ptr %16 %line 
+    ass ptr %15 %16 
+    call @f.parse.oct.by %14 %15 
+    store u64 %num %14 
+    ass ptr %17 &1 
+    add ptr %18 %17 8 
+    load ptr %21 %18 
+    ass ptr %20 %21 
+    load ptr %23 %line 
+    ass ptr %22 %23 
+    call @f.mem.Allocator.free %20 %22 
+    load u64 %25 %num 
+    ass u64 %24 %25 
+    destroy %num 
+    destroy %i 
+    destroy %size 
+    destroy %line 
+    ret %24 
+    destroy %num 
+    destroy %i 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u64 @f.ios.IStream.bin ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    sub i64 %5 %2 1 
+    store u64 %size %5 
+    load ptr %6 %line 
+    load u64 %7 %size 
+    add ptr %8 %6 %7 
+    ass ptr %9 %8 
+    store i8 %9 0 
+    alloca i32 %i 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    ass ptr %13 &cstr.36 
+    call @f.cstr.findnot %10 %11 %13 
+    store i32 %i %10 
+    alloca u64 %num 
+    load ptr %16 %line 
+    ass ptr %15 %16 
+    call @f.parse.bin.by %14 %15 
+    store u64 %num %14 
+    ass ptr %17 &1 
+    add ptr %18 %17 8 
+    load ptr %21 %18 
+    ass ptr %20 %21 
+    load ptr %23 %line 
+    ass ptr %22 %23 
+    call @f.mem.Allocator.free %20 %22 
+    load u64 %25 %num 
+    ass u64 %24 %25 
+    destroy %num 
+    destroy %i 
+    destroy %size 
+    destroy %line 
+    ret %24 
+    destroy %num 
+    destroy %i 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.uint_s ptr ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    sub i64 %5 %2 1 
+    store u64 %size %5 
+    load ptr %6 %line 
+    load u64 %7 %size 
+    add ptr %8 %6 %7 
+    ass ptr %9 %8 
+    store i8 %9 0 
+    alloca u8 %ret 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    ass ptr %13 &2 
+    call @f.parse.uint.by_s %10 %11 %13 
+    store u8 %ret %10 
+    ass ptr %14 &1 
+    add ptr %15 %14 8 
+    load ptr %18 %15 
+    ass ptr %17 %18 
+    load ptr %20 %line 
+    ass ptr %19 %20 
+    call @f.mem.Allocator.free %17 %19 
+    load u8 %22 %ret 
+    ass u8 %21 %22 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret %21 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.int_s ptr ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    sub i64 %5 %2 1 
+    store u64 %size %5 
+    load ptr %6 %line 
+    load u64 %7 %size 
+    add ptr %8 %6 %7 
+    ass ptr %9 %8 
+    store i8 %9 0 
+    alloca u8 %ret 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    ass ptr %13 &2 
+    call @f.parse.int.by_s %10 %11 %13 
+    store u8 %ret %10 
+    ass ptr %14 &1 
+    add ptr %15 %14 8 
+    load ptr %18 %15 
+    ass ptr %17 %18 
+    load ptr %20 %line 
+    ass ptr %19 %20 
+    call @f.mem.Allocator.free %17 %19 
+    load u8 %22 %ret 
+    ass u8 %21 %22 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret %21 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.boolean_s ptr ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    sub i64 %5 %2 1 
+    store u64 %size %5 
+    load ptr %6 %line 
+    load u64 %7 %size 
+    add ptr %8 %6 %7 
+    ass ptr %9 %8 
+    store i8 %9 0 
+    alloca u8 %ret 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    ass ptr %13 &2 
+    call @f.parse.boolean.by_s %10 %11 %13 
+    store u8 %ret %10 
+    ass ptr %14 &1 
+    add ptr %15 %14 8 
+    load ptr %18 %15 
+    ass ptr %17 %18 
+    load ptr %20 %line 
+    ass ptr %19 %20 
+    call @f.mem.Allocator.free %17 %19 
+    load u8 %22 %ret 
+    ass u8 %21 %22 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret %21 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.hex_s ptr ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    sub i64 %5 %2 1 
+    store u64 %size %5 
+    load ptr %6 %line 
+    load u64 %7 %size 
+    add ptr %8 %6 %7 
+    ass ptr %9 %8 
+    store i8 %9 0 
+    alloca u8 %ret 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    ass ptr %13 &2 
+    call @f.parse.hex.by_s %10 %11 %13 
+    store u8 %ret %10 
+    ass ptr %14 &1 
+    add ptr %15 %14 8 
+    load ptr %18 %15 
+    ass ptr %17 %18 
+    load ptr %20 %line 
+    ass ptr %19 %20 
+    call @f.mem.Allocator.free %17 %19 
+    load u8 %22 %ret 
+    ass u8 %21 %22 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret %21 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.oct_s ptr ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    sub i64 %5 %2 1 
+    store u64 %size %5 
+    load ptr %6 %line 
+    load u64 %7 %size 
+    add ptr %8 %6 %7 
+    ass ptr %9 %8 
+    store i8 %9 0 
+    alloca u8 %ret 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    ass ptr %13 &2 
+    call @f.parse.oct.by_s %10 %11 %13 
+    store u8 %ret %10 
+    ass ptr %14 &1 
+    add ptr %15 %14 8 
+    load ptr %18 %15 
+    ass ptr %17 %18 
+    load ptr %20 %line 
+    ass ptr %19 %20 
+    call @f.mem.Allocator.free %17 %19 
+    load u8 %22 %ret 
+    ass u8 %21 %22 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret %21 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.bin_s ptr ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    sub i64 %5 %2 1 
+    store u64 %size %5 
+    load ptr %6 %line 
+    load u64 %7 %size 
+    add ptr %8 %6 %7 
+    ass ptr %9 %8 
+    store i8 %9 0 
+    alloca u8 %ret 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    ass ptr %13 &2 
+    call @f.parse.bin.by_s %10 %11 %13 
+    store u8 %ret %10 
+    ass ptr %14 &1 
+    add ptr %15 %14 8 
+    load ptr %18 %15 
+    ass ptr %17 %18 
+    load ptr %20 %line 
+    ass ptr %19 %20 
+    call @f.mem.Allocator.free %17 %19 
+    load u8 %22 %ret 
+    ass u8 %21 %22 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret %21 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret 
+
+global i32 @f.main
+    allocs 16 %alloc 
+    ass u64 %3 40000 
+    call @f.mem.Allocator.make %0 %1 %2 %3 
+    ass ptr %4 %alloc 
+    add ptr %5 %4 0 
+    store ptr %5 %0 
+    add ptr %6 %4 8 
+    store u32 %6 %1 
+    add ptr %7 %4 12 
+    store u32 %7 %2 
+    allocs 16 %cin 
+    ass ptr %11 %alloc 
+    ass ptr %10 %11 
+    ass i64 %12 0 
+    call @f.ios.IStream.new %8 %9 %10 %12 
+    ass ptr %13 %cin 
+    add ptr %14 %13 0 
+    store i64 %14 %8 
+    add ptr %15 %13 8 
+    store ptr %15 %9 
+    alloca u64 %input1 
+    ass ptr %18 %cin 
+    ass ptr %17 %18 
+    call @f.ios.IStream.uint %16 %17 
+    store u64 %input1 %16 
+    alloca u64 %input2 
+    ass ptr %21 %cin 
+    ass ptr %20 %21 
+    call @f.ios.IStream.uint %19 %20 
+    store u64 %input2 %19 
+    ass ptr %24 %cin 
+    ass ptr %23 %24 
+    call @f.ios.IStream.delete %23 
+    ass ptr %27 %alloc 
+    ass ptr %26 %27 
+    call @f.mem.Allocator.delete %26 
+    load u64 %28 %input1 
+    load u64 %29 %input2 
+    add u64 %30 %28 %29 
+    ass i32 %31 %30 
+    destroy %input2 
+    destroy %input1 
+    destroy %cin 
+    destroy %alloc 
+    ret %31 
+    destroy %input2 
+    destroy %input1 
+    destroy %cin 
+    destroy %alloc 
     ret 
 

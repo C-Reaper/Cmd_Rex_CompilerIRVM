@@ -4,7 +4,7 @@
 
 #define PATH_SRC    "./code/Main.rex"
 #define PATH_IRVM   "./asm/Main.iralx"
-#define PATH_ASM    "./asm/Main.asm"
+#define PATH_ASM    "./asm/Output.asm"
 
 int main(int argc,char** argv){
     //if(argc<=1){
