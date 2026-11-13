@@ -46,7 +46,6 @@ typedef struct RexLang {
     CVector filesinc;
     CVector defines; // Vector<Define>
     Vector logicpath; // Vector<LogicBlock>
-    char* dllpath;
     char* libpath;
     char* genpath;
     char* src;

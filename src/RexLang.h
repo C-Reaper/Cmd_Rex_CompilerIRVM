@@ -1474,7 +1474,7 @@ void RexLang_Function_Handler(RexLang* ll,Token* t,Function* f){
     }
 }
 
-RexLang RexLang_New(char* dllpath,char* libpath,char* genpath,char* src,char* output) {
+RexLang RexLang_New(char* libpath,char* genpath,char* src,char* output) {
     RexLang ll;
     ll.ev = Compiler_New(
         KeywordMap_Make((KeywordRP[]){
@@ -1862,7 +1862,6 @@ RexLang RexLang_New(char* dllpath,char* libpath,char* genpath,char* src,char* ou
 
     ll.src = CStr_Cpy(src);
     ll.output = CStr_Cpy(output);
-    ll.dllpath = CStr_Cpy(dllpath);
     ll.libpath = CStr_Cpy(libpath);
     ll.genpath = CStr_Cpy(genpath);
 
@@ -1927,7 +1926,6 @@ void RexLang_Free(RexLang* ll) {
     Compiler_Free(&ll->ev);
 
     Vec_CStr_Free(&ll->return_ssas);
-    CStr_Free(&ll->dllpath);
     CStr_Free(&ll->libpath);
     CStr_Free(&ll->genpath);
     CStr_Free(&ll->src);
@@ -1940,7 +1938,7 @@ void RexLang_Free(RexLang* ll) {
 }
 void RexLang_Print(RexLang* ll) {
     printf("------------- RexLang -------------\n");
-    printf("dlls: %s, lib: %s, gen: %s, src: %s, output: %s\n",ll->dllpath,ll->libpath,ll->genpath,ll->src,ll->output);
+    printf("lib: %s, gen: %s, src: %s, output: %s\n",ll->libpath,ll->genpath,ll->src,ll->output);
     CVector_Print(&ll->filesinc);
     CVector_Print(&ll->defines);
     Compiler_Print(&ll->ev);

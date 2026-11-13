@@ -16,14 +16,14 @@ int main(int argc,char** argv){
     //    return 1;
     //}
 
-    RexLang ll = RexLang_New("./bin","./lib/x64/Linux","./lib/x64/generic",PATH_SRC,PATH_IRVM);
+    RexLang ll = RexLang_New("./lib/x64/Linux","./lib/x64/generic",PATH_SRC,PATH_IRVM);
     RexLang_Build(&ll);
-    //RexLang_PrintTypes(&ll);
     
     if(!ll.ev.error){
         IRVM vm = IRVM_New();
         IRVM_AddScript(&vm,PATH_IRVM);
         IRVM_Build(&vm);
+        //IRVM_Optimiser_Exe(&vm,0U,IRVM_OPTIMISATION_AS);
         
         IRVM_Comp exe = IRVM_Comp_New(vm,PATH_ASM);
         IRVM_Comp_Build(&exe);
