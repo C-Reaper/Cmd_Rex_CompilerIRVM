@@ -16,8 +16,9 @@ int main(int argc,char** argv){
     //    return 1;
     //}
 
-    RexLang ll = RexLang_New("./bin","./lib/x64/Linux","./lib/x64/generic",PATH_SRC,PATH_IRVM,64);
+    RexLang ll = RexLang_New("./bin","./lib/x64/Linux","./lib/x64/generic",PATH_SRC,PATH_IRVM);
     RexLang_Build(&ll);
+    //RexLang_PrintTypes(&ll);
     
     if(!ll.ev.error){
         IRVM vm = IRVM_New();

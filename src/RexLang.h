@@ -12,6 +12,7 @@
 #include "RexLangDefines.h"
 #include "RexLangASM.h"
 #include "RexLangInt.h"
+#include "RexLangTypes.h"
 
 
 Boolean RexLang_Compress(RexLang* ll,TokenMap* tm);
@@ -1473,288 +1474,7 @@ void RexLang_Function_Handler(RexLang* ll,Token* t,Function* f){
     }
 }
 
-void RexLang_LoadIntType(RexLang* ll,CStr type){
-    const Number size = IRVM_Impl_Size(type);
-    
-    TypeMap_Push(&ll->ev.sc.types,(Type[]){
-        Type_Make(type,sizeof(RexLangVariable),OperatorInterationMap_Make((OperatorInterater[]){
-            OperatorInterater_Make((CStr[]){ NULL },OperatorDefineMap_Make((OperatorDefiner[]){
-                OperatorDefiner_New(TOKEN_REXLANG_NEG,(Token(*)(void*,Token*,Vector*))Int_Handler_Neg),
-                OperatorDefiner_New(TOKEN_REXLANG_INC,(Token(*)(void*,Token*,Vector*))Int_Handler_Inc),
-                OperatorDefiner_New(TOKEN_REXLANG_DEC,(Token(*)(void*,Token*,Vector*))Int_Handler_Dec),
-                OperatorDefiner_New(TOKEN_REXLANG_NOT,(Token(*)(void*,Token*,Vector*))Int_Handler_Not),
-                OperatorDefiner_New(TOKEN_REXLANG_LOT,(Token(*)(void*,Token*,Vector*))Int_Handler_Lot),
-                OperatorDefiner_New(TOKEN_REXLANG_ADR,(Token(*)(void*,Token*,Vector*))Int_Handler_Adr),
-                OperatorDefiner_New(TOKEN_CAST,(Token(*)(void*,Token*,Vector*))Int_Handler_Cast),
-                OperatorDefiner_New(TOKEN_INIT,(Token(*)(void*,Token*,Vector*))RexLang_Init),
-                OperatorDefiner_New(TOKEN_REXLANG_SIZE,
-                    (Token(*)(void*,Token*,Vector*))(
-                        size == 1 ? Int_Handler_Size1 : (
-                        size == 2 ? Int_Handler_Size2 : (
-                        size == 4 ? Int_Handler_Size4 :
-                        Int_Handler_Size8))
-                    )
-                ),
-                //OperatorDefiner_New(TOKEN_DESTROY,NULL),
-                OPERATORDEFINER_END
-            })),
-            OperatorInterater_Make((CStr[]){ BOOL_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
-                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
-                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
-                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
-                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
-                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
-                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
-                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
-                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
-                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
-                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
-                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
-                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
-                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
-                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
-                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
-                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
-                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
-                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
-                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
-                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
-                OPERATORDEFINER_END
-            })),
-            OperatorInterater_Make((CStr[]){ I8_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
-                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
-                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
-                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
-                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
-                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
-                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
-                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
-                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
-                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
-                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
-                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
-                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
-                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
-                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
-                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
-                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
-                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
-                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
-                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
-                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
-                OPERATORDEFINER_END
-            })),
-            OperatorInterater_Make((CStr[]){ I16_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
-                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
-                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
-                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
-                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
-                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
-                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
-                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
-                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
-                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
-                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
-                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
-                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
-                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
-                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
-                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
-                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
-                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
-                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
-                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
-                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
-                OPERATORDEFINER_END
-            })),
-            OperatorInterater_Make((CStr[]){ I32_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
-                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
-                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
-                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
-                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
-                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
-                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
-                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
-                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
-                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
-                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
-                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
-                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
-                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
-                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
-                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
-                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
-                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
-                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
-                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
-                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
-                OPERATORDEFINER_END
-            })),
-            OperatorInterater_Make((CStr[]){ I64_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
-                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
-                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
-                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
-                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
-                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
-                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
-                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
-                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
-                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
-                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
-                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
-                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
-                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
-                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
-                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
-                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
-                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
-                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
-                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
-                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
-                OPERATORDEFINER_END
-            })),
-            OperatorInterater_Make((CStr[]){ U8_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
-                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
-                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
-                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
-                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
-                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
-                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
-                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
-                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
-                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
-                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
-                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
-                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
-                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
-                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
-                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
-                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
-                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
-                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
-                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
-                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
-                OPERATORDEFINER_END
-            })),
-            OperatorInterater_Make((CStr[]){ U16_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
-                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
-                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
-                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
-                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
-                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
-                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
-                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
-                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
-                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
-                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
-                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
-                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
-                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
-                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
-                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
-                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
-                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
-                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
-                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
-                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
-                OPERATORDEFINER_END
-            })),
-            OperatorInterater_Make((CStr[]){ U32_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
-                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
-                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
-                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
-                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
-                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
-                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
-                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
-                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
-                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
-                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
-                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
-                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
-                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
-                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
-                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
-                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
-                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
-                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
-                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
-                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
-                OPERATORDEFINER_END
-            })),
-            OperatorInterater_Make((CStr[]){ U64_TYPE,NULL },OperatorDefineMap_Make((OperatorDefiner[]){
-                OperatorDefiner_New(TOKEN_REXLANG_ASS,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Ass),
-                OperatorDefiner_New(TOKEN_REXLANG_ASD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asd),
-                OperatorDefiner_New(TOKEN_REXLANG_ASU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asu),
-                OperatorDefiner_New(TOKEN_REXLANG_ASM,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asm),
-                OperatorDefiner_New(TOKEN_REXLANG_ASV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Asv),
-                OperatorDefiner_New(TOKEN_REXLANG_ADD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Add),
-                OperatorDefiner_New(TOKEN_REXLANG_SUB,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Sub),
-                OperatorDefiner_New(TOKEN_REXLANG_MUL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mul),
-                OperatorDefiner_New(TOKEN_REXLANG_DIV,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Div),
-                OperatorDefiner_New(TOKEN_REXLANG_MOD,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Mod),
-                OperatorDefiner_New(TOKEN_REXLANG_AND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_And),
-                OperatorDefiner_New(TOKEN_REXLANG_OR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Or),
-                OperatorDefiner_New(TOKEN_REXLANG_XOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Xor),
-                OperatorDefiner_New(TOKEN_REXLANG_LND,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lnd),
-                OperatorDefiner_New(TOKEN_REXLANG_LOR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Lor),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_SHL,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shl),
-                OperatorDefiner_New(TOKEN_REXLANG_SHR,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Shr),
-                OperatorDefiner_New(TOKEN_REXLANG_EQU,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Equ),
-                OperatorDefiner_New(TOKEN_REXLANG_NEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Neq),
-                OperatorDefiner_New(TOKEN_REXLANG_LES,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Les),
-                OperatorDefiner_New(TOKEN_REXLANG_GRT,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grt),
-                OperatorDefiner_New(TOKEN_REXLANG_LEQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Leq),
-                OperatorDefiner_New(TOKEN_REXLANG_GRQ,(Token(*)(void*,Token*,Vector*))Int_Int_Handler_Grq),
-                OPERATORDEFINER_END
-            })),
-            OPERATORINTERATER_END
-        }),RexLang_Destroyer,RexLang_Cpyer)
-    });
-}
-RexLang RexLang_New(char* dllpath,char* libpath,char* genpath,char* src,char* output,char bits) {
+RexLang RexLang_New(char* dllpath,char* libpath,char* genpath,char* src,char* output) {
     RexLang ll;
     ll.ev = Compiler_New(
         KeywordMap_Make((KeywordRP[]){
@@ -2163,15 +1883,14 @@ RexLang RexLang_New(char* dllpath,char* libpath,char* genpath,char* src,char* ou
     RexLang_LoadIntType(&ll,U16_TYPE);
     RexLang_LoadIntType(&ll,U32_TYPE);
     RexLang_LoadIntType(&ll,U64_TYPE);
-
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,VOID_TYPE,"Ex_Packer",  (CStr[]){ VOID_TYPE,    NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,"pointer","Ex_Packer",  (CStr[]){ POINTER_TYPE, NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,"dref",   "Ex_Packer",  (CStr[]){ DREF_TYPE,    NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,"str",    "Ex_Packer",  (CStr[]){ STR_TYPE,     NULL },&ll.ev.sc) });
-    Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,"struct", "Ex_Packer",  (CStr[]){ STRUCT_TYPE,  NULL },&ll.ev.sc) });
     
-    //Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,F32_TYPE, "Ex_Packer",  (CStr[]){ F32_TYPE,     NULL },&ll.ev.sc) });
-    //Vector_Push(&ll.ev.epm,(ExternPackage[]){ ExternPackage_Make(ll.dllpath,F64_TYPE, "Ex_Packer",  (CStr[]){ F64_TYPE,     NULL },&ll.ev.sc) });
+    RexLang_LoadVoidType(&ll);
+    RexLang_LoadPointerType(&ll);
+    RexLang_LoadDrefType(&ll);
+    RexLang_LoadStructType(&ll);
+
+    //RexLang_LoadFloatType(&ll,F32_TYPE);
+    //RexLang_LoadFloatType(&ll,F64_TYPE);
     
     CVector_Push(&ll.filesstack,(CStr[]){ CStr_Cpy(src) });
     CVector_Push(&ll.filesinc,(CStr[]){ CStr_Cpy(src) });
@@ -2220,13 +1939,19 @@ void RexLang_Free(RexLang* ll) {
     Vector_Free(&ll->logicpath);
 }
 void RexLang_Print(RexLang* ll) {
-    printf("--- RexLang ---\n");
+    printf("------------- RexLang -------------\n");
     printf("dlls: %s, lib: %s, gen: %s, src: %s, output: %s\n",ll->dllpath,ll->libpath,ll->genpath,ll->src,ll->output);
     CVector_Print(&ll->filesinc);
     CVector_Print(&ll->defines);
     Compiler_Print(&ll->ev);
     IRVM_PrintFn(&ll->vm);
-    printf("--------------------------\n");
+    printf("-----------------------------------\n");
+}
+void RexLang_PrintTypes(RexLang* ll) {
+    printf("------------- RexLang -------------\n");
+    TypeMap_Print_N(&ll->ev.sc.types);
+    IRVM_PrintFn(&ll->vm);
+    printf("-----------------------------------\n");
 }
 
 #endif // !REXLANG_H
