@@ -25,40 +25,36 @@ define SEEK_SET     0;        // Datei Anfang.
 define SEEK_CUR     1;        // Datei relativ.
 define SEEK_END     2;        // Datei Ende.
 
-define STDIN        0;
-define STDOUT       1;
-define STDERR       2;
-
 namespace io {
     void input(i8* cstr,i64 len){
-        sys::read(0,cstr,len);
+        sys::read(stdin(),cstr,len);
     }
     void print(i8* cstr){
         i64 len = cstr::len(cstr);
-        sys::write(1,cstr,len);
+        sys::write(stdout(),cstr,len);
     }
     void error(i8* cstr){
         i64 len = cstr::len(cstr);
-        sys::write(2,cstr,len);
+        sys::write(stderr(),cstr,len);
     }
     
     void print_char(i8 ch){
         i8 ch_stack = ch;
-        sys::write(1,&ch_stack,1);
+        sys::write(stdout(),&ch_stack,1);
     }
     void print_int(i64 a){
         i8[24] str;
         ptr::set(str,0,24);
         parse::int::get(str,a);
         i64 len = cstr::len(str);
-        sys::write(1,str,len);
+        sys::write(stdout(),str,len);
     }
     void print_uint(u64 a){
         i8[24] str;
         ptr::set(str,0,24);
         parse::uint::get(str,a);
         i64 len = cstr::len(str);
-        sys::write(1,str,len);
+        sys::write(stdout(),str,len);
     }
     /*
     void print_float(f64 a){
@@ -74,6 +70,6 @@ namespace io {
         ptr::set(str,0,24);
         parse::hex::get(str,a);
         i64 len = cstr::len(str);
-        sys::write(1,str,len);
+        sys::write(stdout(),str,len);
     }
 }

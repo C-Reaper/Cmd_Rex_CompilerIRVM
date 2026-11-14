@@ -7,10 +7,27 @@ bits 64
 
 global _start
 global f.syscall
+
+global f.stdout
+global f.stderr
+global f.stdin
+
 extern f.sys.exit
 extern f.main
 
 section .text
+
+f.stdout:
+    mov rbx, 1
+    ret
+
+f.stderr:
+    mov rbx, 2
+    ret
+
+f.stdin:
+    mov rbx, 0
+    ret
 
 f.syscall:
 	mov rax,rsi

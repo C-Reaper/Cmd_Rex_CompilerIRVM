@@ -1,5 +1,9 @@
 extern u64 syscall(i64 a,i64 b,i64 c,i64 d,i64 e,i64 f);
 
+extern u64 stdin();
+extern u64 stdout();
+extern u64 stderr();
+
 define CLOCK_REALTIME           0;
 define CLOCK_MONOTONIC          1;
 define CLOCK_PROCESS_CPUTIME_ID 2;
