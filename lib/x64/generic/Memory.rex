@@ -17,12 +17,26 @@ namespace mem {
 
     impl Allocator{
         pub void init(Allocator* self,void* block,u64 size){
+            if self == null || size < 8 || size != (u32)size {
+                if self != null {
+                    self->memory = null;
+                    self->length = 0;
+                    self->flags = 0;
+                }
+                return;
+            }
+
             if block == null {
                 self->memory = sys::alloc(size);
                 self->flags = 0;
             }else{
                 self->memory = block;
                 self->flags = 1;
+            }
+
+            if self->memory == null {
+                self->length = 0;
+                return;
             }
 
             self->length = size;
@@ -58,124 +72,185 @@ namespace mem {
         }
 
         pub void* alloc(Allocator* self,u64 size){
-            void* addr = null;
-            Header* first = self->memory;
-            
-            while true {
-                if first+8+size > self->memory+self->length {
-                    return null;
-                }elif first->flags==0 && first->length>=size {
-                    u64 rem = first->length - size;
-                    u64 rsize = size;
-                    
-                    if rem<=8 {
-                        rsize = first->length;
-                    }
-                    
-                    first->flags = 1;
-                    first->length = rsize;
-                    addr = first + 8;
-
-                    Header* next = addr + rsize;
-                    if rem>8 && next+rem<=self->memory+self->length {
-                        next->length = rem - 8;
-                        next->flags = 0;
-                    }
-
-                    return addr;
-                }else{
-                    first = first + 8 + (u64)first->length;
-                }
+            if self == null || self->memory == null || size == 0 {
+                return null;
             }
-            return addr;
+
+            Header* first = self->memory;
+            void* end = self->memory + self->length;
+
+            while first < end {
+                if first + 8 > end {
+                    return null;
+                }
+
+                Header* next = first + 8 + (u64)first->length;
+                if next > end {
+                    return null;
+                }
+
+                if first->flags == 0 && first->length >= size {
+                    u64 remaining = (u64)first->length - size;
+                    u64 used = size;
+                    if remaining <= 8 {
+                        used = first->length;
+                    }
+
+                    first->flags = 1;
+                    first->length = used;
+                    if remaining > 8 {
+                        Header* remainder = first + 8 + used;
+                        remainder->length = remaining - 8;
+                        remainder->flags = 0;
+                    }
+                    return first + 8;
+                }
+
+                first = next;
+            }
+            return null;
         }
         pub void free(Allocator* self,void* addr){
-            if self == null || addr == null {
+            if self == null || self->memory == null || addr == null {
                 return;
             }
-            if addr<self->memory || addr>self->memory+self->length {
+            void* end = self->memory + self->length;
+            if addr < self->memory || addr >= end {
                 return;
             }
-            
+
             Header* prev = null;
             Header* first = self->memory;
-            
-            while true {
-                if first + 8 + (u64)first->length > self->memory+self->length {
+
+            while first < end {
+                if first + 8 > end {
                     return;
-                }elif addr >= first && addr < first + 8 + (u64)first->length {
+                }
+
+                Header* next = first + 8 + (u64)first->length;
+                if next > end {
+                    return;
+                }
+
+                if addr == first + 8 {
+                    if first->flags == 0 {
+                        return;
+                    }
                     first->flags = 0;
-                    
-                    Header* next = first + 8 + (u64)first->length;
-                    if next<=self->memory + self->length {
+
+                    if next + 8 <= end {
                         if next->flags==0 {
                             first->length += 8 + next->length;
                         }
                     }
 
-                    if prev>=self->memory {
+                    if prev != null {
                         if prev->flags==0 {
                             prev->length += 8 + first->length;
                         }
                     }
                     return;
-                }else{
-                    prev = first;
-                    first = first + 8 + (u64)first->length;
                 }
+
+                prev = first;
+                first = next;
             }
         }
         
         pub void* realloc(Allocator* self,void* addr,u64 size){
-            if addr<self->memory || addr>self->memory+self->length {
+            if self == null || self->memory == null {
                 return null;
             }
-            
+
+            if addr == null {
+                return self->alloc(size);
+            }
+            if size == 0 {
+                self->free(addr);
+                return null;
+            }
+
+            void* end = self->memory + self->length;
+            if addr < self->memory || addr >= end {
+                return null;
+            }
+
             Header* first = self->memory;
-            
-            while true {
-                if first + 8 + (u64)first->length > self->memory+self->length {
+
+            while first < end {
+                if first + 8 > end {
                     return null;
-                }elif addr >= first && addr < first+8+first->length {
-                    Header* next = first + 8 + (u64)first->length;
-                    
-                    if first->length>size {
-                        u64 diff = (u64)first->length - size - 8;
-                        if diff>0 {
+                }
+
+                Header* next = first + 8 + (u64)first->length;
+                if next > end {
+                    return null;
+                }
+
+                if addr == first + 8 {
+                    if first->length >= size {
+                        u64 remaining = (u64)first->length - size;
+                        if remaining > 8 {
                             first->length = size;
-                            Header* renext = first + 8 + (u64)first->length;
-                            renext->flags = 0;
-                            renext->length = diff;
+                            Header* remainder = first + 8 + size;
+                            remainder->flags = 0;
+                            remainder->length = remaining - 8;
+                            Header* after_remainder = remainder + 8 + (u64)remainder->length;
+                            if after_remainder + 8 <= end {
+                                if after_remainder->flags == 0 {
+                                    remainder->length += 8 + after_remainder->length;
+                                }
+                            }
                         }
                         return addr;
-                    }elif next->flags==0 {
-                        if first->length + 8 + next->length>size {
-                            u64 diff = (u64)first->length + (u64)next->length - size;// + 8 & - 8 => 0
-                            if diff>0 {
-                                first->length = size;
-                                Header* renext = first + 8 + (u64)first->length;
-                                renext->flags = 0;
-                                renext->length = diff;
-                            }else{
-                                first->length += 8 + next->length;
+                    }
+
+                    if next + 8 <= end {
+                        if next->flags == 0 {
+                            u64 available = (u64)first->length + 8 + (u64)next->length;
+                            if available >= size {
+                                u64 remaining = available - size;
+                                if remaining > 8 {
+                                    first->length = size;
+                                    Header* remainder = first + 8 + size;
+                                    remainder->flags = 0;
+                                    remainder->length = remaining - 8;
+                                    Header* after_remainder = remainder + 8 + (u64)remainder->length;
+                                    if after_remainder + 8 <= end {
+                                        if after_remainder->flags == 0 {
+                                            remainder->length += 8 + after_remainder->length;
+                                        }
+                                    }
+                                } else {
+                                    first->length = available;
+                                }
+                                return addr;
                             }
-                            return addr;
                         }
                     }
 
                     void* newptr = self->alloc(size);
+                    if newptr == null {
+                        return null;
+                    }
                     ptr::cpy(newptr,addr,first->length);
                     self->free(addr);
                     return newptr;
-                }else{
-                    first = first + 8 + (u64)first->length;
                 }
+
+                first = next;
             }
-            return addr;
+            return null;
         }
         pub void* calloc(Allocator* self,u64 count,u64 elementsize){
-            void* addr = self->alloc(count * elementsize);
-            ptr::set(addr,0,count * elementsize);
+            u64 size = count * elementsize;
+            if count != 0 && size / count != elementsize {
+                return null;
+            }
+            void* addr = self->alloc(size);
+            if addr != null {
+                ptr::set(addr,0,size);
+            }
             return addr;
         }
 

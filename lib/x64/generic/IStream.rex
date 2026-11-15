@@ -23,10 +23,28 @@ namespace ios {
         //    return ios::IStream::new(alloc,sys::open(path,O_RDONLY));
         //}
         pub void delete(IStream* self){
-            if self->file>2 {
-                sys::close(self->file);
+            if self->file > 2 {
+                if self->file != (i64)stdin() {
+                    if self->file != (i64)stdout() {
+                        if self->file != (i64)stderr() {
+                            sys::close(self->file);
+                        }
+                    }
+                }
             }
             self->file = -1;
+        }
+
+        u64 trim_line(IStream* self,i8* line){
+            u64 size = cstr::len(line);
+            if size > 0 && line[size - 1] == 10 {
+                size -= 1;
+            }
+            if size > 0 && line[size - 1] == 13 {
+                size -= 1;
+            }
+            line[size] = 0;
+            return size;
         }
 
         //pub u64 get_size(IStream* self){
@@ -45,17 +63,24 @@ namespace ios {
         //}
 
         pub i8* line(IStream* self){
-            i8[32] buffer;
-            ptr::set(buffer,0,32);
-            
+            i8[1] buffer;
             con::Vector vline = con::Vector::new(self->alloc,1);
-        
-            u64 bytes_read = 32;
-            while bytes_read >= 32 && buffer[31] != 10 {
-               bytes_read = sys::read(self->file,buffer,31);
-               vline.push_c(buffer,bytes_read);
+            u64 reading = 1;
+
+            while reading {
+                u64 bytes_read = sys::read(self->file,buffer,1);
+                if bytes_read >> 63 {
+                    reading = 0;
+                } elif bytes_read == 0 {
+                    reading = 0;
+                } else {
+                    vline.push_c(buffer,1);
+                    if buffer[0] == 10 {
+                        reading = 0;
+                    }
+                }
             }
-        
+
             u64 size = vline.get_size();
             i8* out = self->alloc->alloc(size + 1);
             ptr::cpy(out,vline.get_data(),size);
@@ -87,28 +112,35 @@ namespace ios {
         }
         pub u64 uint(IStream* self){
             i8* line = self->line();
-            u64 size = cstr::len(line)-1;
-            line[size] = 0;
+            u64 size = self->trim_line(line);
+            if size == 0 {
+                self->alloc->free(line);
+                return 0;
+            }
 
-            i32 i = cstr::findnot(line,"0123456789");
             u64 num = parse::uint::by(line);
             self->alloc->free(line);
             return num;
         }
         pub i64 int(IStream* self){
             i8* line = self->line();
-            u64 size = cstr::len(line)-1;
-            line[size] = 0;
-        
-            i32 i = cstr::findnot(line,"-0123456789");
+            u64 size = self->trim_line(line);
+            if size == 0 {
+                self->alloc->free(line);
+                return 0;
+            }
+
             i64 num = parse::int::by(line);
             self->alloc->free(line);
             return num;
         }
         pub bool boolean(IStream* self){
             i8* line = self->line();
-            u64 size = cstr::len(line)-1;
-            line[size] = 0;
+            u64 size = self->trim_line(line);
+            if size == 0 {
+                self->alloc->free(line);
+                return false;
+            }
 
             bool b = parse::boolean::by(line);
             self->alloc->free(line);
@@ -127,30 +159,36 @@ namespace ios {
     
         pub u64 hex(IStream* self){
             i8* line = self->line();
-            u64 size = cstr::len(line)-1;
-            line[size] = 0;
-        
-            i32 i = cstr::findnot(line,"x0123456789ABCDEFabcdef");
+            u64 size = self->trim_line(line);
+            if size == 0 {
+                self->alloc->free(line);
+                return 0;
+            }
+
             u64 num = parse::hex::by(line);
             self->alloc->free(line);
             return num;
         }
         pub u64 oct(IStream* self){
             i8* line = self->line();
-            u64 size = cstr::len(line)-1;
-            line[size] = 0;
-        
-            i32 i = cstr::findnot(line,"o01234567");
+            u64 size = self->trim_line(line);
+            if size == 0 {
+                self->alloc->free(line);
+                return 0;
+            }
+
             u64 num = parse::oct::by(line);
             self->alloc->free(line);
             return num;
         }
         pub u64 bin(IStream* self){
             i8* line = self->line();
-            u64 size = cstr::len(line)-1;
-            line[size] = 0;
-        
-            i32 i = cstr::findnot(line,"b01");
+            u64 size = self->trim_line(line);
+            if size == 0 {
+                self->alloc->free(line);
+                return 0;
+            }
+
             u64 num = parse::bin::by(line);
             self->alloc->free(line);
             return num;
@@ -159,8 +197,11 @@ namespace ios {
 
         pub bool uint_s(IStream* self,u64* ptr){
             i8* line = self->line();
-            u64 size = cstr::len(line)-1;
-            line[size] = 0;
+            u64 size = self->trim_line(line);
+            if size == 0 {
+                self->alloc->free(line);
+                return false;
+            }
 
             bool ret = parse::uint::by_s(line,ptr);
             self->alloc->free(line);
@@ -168,17 +209,23 @@ namespace ios {
         }
         pub bool int_s(IStream* self,i64* ptr){
             i8* line = self->line();
-            u64 size = cstr::len(line)-1;
-            line[size] = 0;
-        
+            u64 size = self->trim_line(line);
+            if size == 0 {
+                self->alloc->free(line);
+                return false;
+            }
+
             bool ret = parse::int::by_s(line,ptr);
             self->alloc->free(line);
             return ret;
         }
         pub bool boolean_s(IStream* self,bool* ptr){
             i8* line = self->line();
-            u64 size = cstr::len(line)-1;
-            line[size] = 0;
+            u64 size = self->trim_line(line);
+            if size == 0 {
+                self->alloc->free(line);
+                return false;
+            }
 
             bool ret = parse::boolean::by_s(line,ptr);
             self->alloc->free(line);
@@ -196,27 +243,36 @@ namespace ios {
     
         pub bool hex_s(IStream* self,u64* ptr){
             i8* line = self->line();
-            u64 size = cstr::len(line)-1;
-            line[size] = 0;
-        
+            u64 size = self->trim_line(line);
+            if size == 0 {
+                self->alloc->free(line);
+                return false;
+            }
+
             bool ret = parse::hex::by_s(line,ptr);
             self->alloc->free(line);
             return ret;
         }
         pub bool oct_s(IStream* self,u64* ptr){
             i8* line = self->line();
-            u64 size = cstr::len(line)-1;
-            line[size] = 0;
-        
+            u64 size = self->trim_line(line);
+            if size == 0 {
+                self->alloc->free(line);
+                return false;
+            }
+
             bool ret = parse::oct::by_s(line,ptr);
             self->alloc->free(line);
             return ret;
         }
         pub bool bin_s(IStream* self,u64* ptr){
             i8* line = self->line();
-            u64 size = cstr::len(line)-1;
-            line[size] = 0;
-        
+            u64 size = self->trim_line(line);
+            if size == 0 {
+                self->alloc->free(line);
+                return false;
+            }
+
             bool ret = parse::bin::by_s(line,ptr);
             self->alloc->free(line);
             return ret;

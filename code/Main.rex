@@ -7,7 +7,7 @@ import IO;
 import Time;
 import Memory;
 import OStream;
-//import IStream;
+import IStream;
 import Vector;
 import List;
 
@@ -20,10 +20,13 @@ global i32 main(){
     cout.cstr("Hello World: ")->uint(69)->cstr("\n")->flush();
     cout.delete();
 
-    //ios::IStream cin = ios::IStream::new(&alloc,0);
-    //u64 input = cin.uint();
-    //cin.delete();
+    ios::IStream cin = ios::IStream::new(&alloc,stdin());
+    u64 input = cin.uint();
+    cin.delete();
+
+    alloc.print();
+    io::print("\n");
 
     alloc.delete();
-    return 69;
+    return input;
 }

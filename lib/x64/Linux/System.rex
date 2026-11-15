@@ -116,7 +116,7 @@ namespace sys {
     void stat(i8* path,Stat* ptr){
         syscall(4,(u64)path,(u64)ptr,0,0,0);
     }
-    void fstat(u64 fd,Stat* ptr){
+    void fstat(u64 fd,void* ptr){
         syscall(5,fd,(u64)ptr,0,0,0);
     }
     void lseek(u64 fd,u64 offset,u64 flags){
@@ -124,7 +124,11 @@ namespace sys {
     }
 
     void* alloc(u64 len){
-        return (void*)syscall(9,0,len,3,34,-1);
+        i64 result = (i64)syscall(9,0,len,3,34,-1);
+        if result < 0 {
+            return null;
+        }
+        return (void*)result;
     }
     void free(void* addr,u64 len){
         syscall(11,(u64)addr,len,0,0,0);

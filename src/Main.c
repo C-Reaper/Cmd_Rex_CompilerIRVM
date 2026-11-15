@@ -17,7 +17,7 @@ int main(int argc,char** argv){
     //}
 
     // "./lib/x64/Linux" | "./lib/x64/Win"
-    RexLang ll = RexLang_New("./lib/x64/Win","./lib/x64/generic",PATH_SRC,PATH_IRVM);
+    RexLang ll = RexLang_New("./lib/x64/Linux","./lib/x64/generic",PATH_SRC,PATH_IRVM);
     RexLang_Build(&ll);
     
     if(!ll.ev.error){

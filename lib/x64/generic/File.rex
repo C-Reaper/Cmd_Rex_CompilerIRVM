@@ -1,6 +1,31 @@
 
 
+import System;
+
 namespace fsys {
+    struct FileStat [
+        pub u64 st_dev,
+        pub u64 st_ino,
+        pub u64 st_nlink,
+        pub u32 st_mode,
+        pub u32 st_uid,
+        pub u32 st_gid,
+        pub u32 padding1,
+        pub u64 st_rdev,
+        pub u64 st_size,
+        pub u64 st_blksize,
+        pub u64 st_blocks,
+        pub u64 st_atime,
+        pub u64 st_atime_nsec,
+        pub u64 st_mtime,
+        pub u64 st_mtime_nsec,
+        pub u64 st_ctime,
+        pub u64 st_ctime_nsec,
+        pub u64 padding2,
+        pub u64 padding3,
+        pub u64 padding4
+    ];
+
     struct File[
         pub u64 fd
     ];
@@ -18,29 +43,30 @@ namespace fsys {
             u64 fd = sys::open(filepath,flags,0b110100100);
             return fsys::File::new(fd);
         }
+        pub i8 isopen(File* self){
+            return (self->fd >> 63) == 0;
+        }
         pub void close(File* self){
-            if self->fd > 2 {
+            if self->fd > 2 && self->isopen() {
                 sys::close(self->fd);
             }
-            self->fd = 0;
-        }
-        pub i8 isopen(File* self){
-            return self->fd < 10000000;
+            i64 invalid = -1;
+            self->fd = (u64)invalid;
         }
 
         pub u64 size(File* self){
-            sys::Stat filestate;
-            sys::fstat(self->fd,&filestate);
+            FileStat filestate;
+            sys::fstat(self->fd,(void*)&filestate);
             return filestate.st_size;
         }
         pub void set_pos_start(File* self,u64 pos){
-            sys::lseek(self->fd,pos,SEEK_SET);
+            sys::lseek(self->fd,pos,0);
         }
         pub void set_pos_rel(File* self,u64 pos){
-            sys::lseek(self->fd,pos,SEEK_CUR);
+            sys::lseek(self->fd,pos,1);
         }
         pub void set_pos_end(File* self,u64 pos){
-            sys::lseek(self->fd,pos,SEEK_END);
+            sys::lseek(self->fd,pos,2);
         }
         pub i32 get_flags(File* self){
             return sys::fcntl(self->fd,3,0);

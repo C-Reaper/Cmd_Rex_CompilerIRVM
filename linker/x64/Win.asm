@@ -16,7 +16,7 @@ global f.stdin
 ; IRVM: RSI, RDI, R8, R9, R10, R11, stack
 ; Windows: RCX, RDX, R8, R9, stack
 
-%macro WIN_WRAPPER 3
+%macro WIN_WRAPPER 13
 global %1
 extern %2
 
@@ -39,14 +39,51 @@ extern %2
     mov [rsp + 0x28], r11
 %endif
 
-    ; IRVM places stack arguments in reverse order after the return address.
-%if %3 > 6
-%assign __arg 7
-%rep %3 - 6
-    mov rax, [rbp + 16 + 8 * (%3 - __arg)]
-    mov [rsp + 0x20 + 8 * (__arg - 5)], rax
-%assign __arg __arg + 1
-%endrep
+    ; IRVM packs stack arguments in reverse order using their declared sizes.
+%if %3 >= 7
+%if %9 == 1
+    mov eax, DWORD[rbp + %4]
+    mov [rsp + 0x30], rax
+%else
+    mov rax, [rbp + %4]
+    mov [rsp + 0x30], rax
+%endif
+%endif
+%if %3 >= 8
+%if %10 == 1
+    mov eax, DWORD[rbp + %5]
+    mov [rsp + 0x38], rax
+%else
+    mov rax, [rbp + %5]
+    mov [rsp + 0x38], rax
+%endif
+%endif
+%if %3 >= 9
+%if %11 == 1
+    mov eax, DWORD[rbp + %6]
+    mov [rsp + 0x40], rax
+%else
+    mov rax, [rbp + %6]
+    mov [rsp + 0x40], rax
+%endif
+%endif
+%if %3 >= 10
+%if %12 == 1
+    mov eax, DWORD[rbp + %7]
+    mov [rsp + 0x48], rax
+%else
+    mov rax, [rbp + %7]
+    mov [rsp + 0x48], rax
+%endif
+%endif
+%if %3 >= 11
+%if %13 == 1
+    mov eax, DWORD[rbp + %8]
+    mov [rsp + 0x50], rax
+%else
+    mov rax, [rbp + %8]
+    mov [rsp + 0x50], rax
+%endif
 %endif
 
     call %2
@@ -61,19 +98,24 @@ extern %2
 
 section .text
 
-WIN_WRAPPER f.NtReadFile, NtReadFile, 9
-WIN_WRAPPER f.NtWriteFile, NtWriteFile, 9
-WIN_WRAPPER f.NtCreateFile, NtCreateFile, 11
-WIN_WRAPPER f.NtClose, NtClose, 1
-WIN_WRAPPER f.NtDeviceIoControlFile, NtDeviceIoControlFile, 10
-WIN_WRAPPER f.NtAllocateVirtualMemory, NtAllocateVirtualMemory, 6
-WIN_WRAPPER f.NtProtectVirtualMemory, NtProtectVirtualMemory, 5
-WIN_WRAPPER f.NtFreeVirtualMemory, NtFreeVirtualMemory, 4
-WIN_WRAPPER f.NtQueryInformationProcess, NtQueryInformationProcess, 5
-WIN_WRAPPER f.NtTerminateProcess, NtTerminateProcess, 2
-WIN_WRAPPER f.NtWaitForSingleObject, NtWaitForSingleObject, 3
-WIN_WRAPPER f.NtDelayExecution, NtDelayExecution, 2
-WIN_WRAPPER f.NtQueryPerformanceCounter, NtQueryPerformanceCounter, 2
+WIN_WRAPPER f.NtReadFile, NtReadFile, 9, 32, 24, 16, 0, 0, 1, 0, 0, 0, 0
+WIN_WRAPPER f.NtWriteFile, NtWriteFile, 9, 32, 24, 16, 0, 0, 1, 0, 0, 0, 0
+WIN_WRAPPER f.NtCreateFile, NtCreateFile, 11, 36, 32, 28, 20, 16, 1, 1, 1, 0, 1
+WIN_WRAPPER f.NtClose, NtClose, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.NtDeviceIoControlFile, NtDeviceIoControlFile, 10, 32, 28, 20, 16, 0, 0, 1, 0, 1, 0
+WIN_WRAPPER f.NtAllocateVirtualMemory, NtAllocateVirtualMemory, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.NtProtectVirtualMemory, NtProtectVirtualMemory, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.NtFreeVirtualMemory, NtFreeVirtualMemory, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.NtQueryInformationProcess, NtQueryInformationProcess, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.NtQueryInformationFile, NtQueryInformationFile, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.NtSetInformationFile, NtSetInformationFile, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.NtTerminateProcess, NtTerminateProcess, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.NtWaitForSingleObject, NtWaitForSingleObject, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.NtDelayExecution, NtDelayExecution, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.NtQueryPerformanceCounter, NtQueryPerformanceCounter, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.RtlUTF8ToUnicodeN, RtlUTF8ToUnicodeN, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.RtlDosPathNameToNtPathName_U, RtlDosPathNameToNtPathName_U, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+WIN_WRAPPER f.RtlFreeUnicodeString, RtlFreeUnicodeString, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 f.stdout:
     mov rax, gs:[0x60]       ; PEB

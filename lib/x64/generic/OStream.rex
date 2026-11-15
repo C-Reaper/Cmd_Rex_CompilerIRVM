@@ -21,7 +21,13 @@ namespace ios {
         }
         pub void delete(OStream* self){
             if self->file > 2 {
-                sys::close(self->file);
+                if self->file != (i64)stdin() {
+                    if self->file != (i64)stdout() {
+                        if self->file != (i64)stderr() {
+                            sys::close(self->file);
+                        }
+                    }
+                }
             }
 
             void* mem = self->memory;

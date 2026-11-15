@@ -32,6 +32,7 @@ data i8 &cstr.30 10 0
 data i8 &cstr.31 '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' '-' 10 0
 data i8 &cstr.32 'H' 'e' 'l' 'l' 'o' ' ' 'W' 'o' 'r' 'l' 'd' ':' ' ' 0
 data i8 &cstr.33 10 0
+data i8 &cstr.34 10 0
 
 define i64 @f.cstr.len ptr
     alloca i64 %size 
@@ -726,31 +727,7 @@ define i64 @f.math.int.max i64 i64
     ret %3 
     ret 
 
-extern i32 @f.NtReadFile u64 u64 u64 u64 ptr ptr u32 ptr ptr
-
-extern i32 @f.NtWriteFile u64 u64 u64 u64 ptr ptr u32 ptr ptr
-
-extern i32 @f.NtCreateFile ptr u32 ptr ptr ptr u32 u32 u32 u32 ptr u32
-
-extern i32 @f.NtClose u64
-
-extern i32 @f.NtDeviceIoControlFile u64 u64 u64 u64 ptr u32 ptr u32 ptr u32
-
-extern i32 @f.NtAllocateVirtualMemory u64 ptr u64 ptr u32 u32
-
-extern i32 @f.NtProtectVirtualMemory u64 ptr ptr u32 ptr
-
-extern i32 @f.NtFreeVirtualMemory u64 ptr ptr u32
-
-extern i32 @f.NtQueryInformationProcess u64 u32 ptr u32 ptr
-
-extern i32 @f.NtTerminateProcess u64 i32
-
-extern i32 @f.NtWaitForSingleObject u64 u32 ptr
-
-extern i32 @f.NtDelayExecution u32 ptr
-
-extern i32 @f.NtQueryPerformanceCounter ptr ptr
+extern u64 @f.syscall i64 i64 i64 i64 i64 i64
 
 extern u64 @f.stdin
 
@@ -758,458 +735,257 @@ extern u64 @f.stdout
 
 extern u64 @f.stderr
 
-define u32 @f.sys.page_protection u64
-    and u64 %1 &1 4 
-    ass u8 %0 %1 
-    brc %0 l.0_IF34_0 l.1_IF34_0 
-    tar l.0_IF34_0 
-    and u64 %3 &1 2 
-    ass u8 %2 %3 
-    brc %2 l.0_IF35_0 l.1_IF35_0 
-    tar l.0_IF35_0 
-    ass u32 %4 64 
-    ret %4 
-    tar l.1_LOG35_0 
-    tar l.1_IF35_0 
-    and u64 %6 &1 1 
-    ass u8 %5 %6 
-    brc %5 l.0_IF35_1 l.1_IF35_1 
-    tar l.0_IF35_1 
-    ass u32 %7 32 
-    ret %7 
-    tar l.1_LOG35_1 
-    tar l.1_IF35_1 
-    ass u32 %8 16 
-    ret %8 
-    tar l.1_LOG34_0 
-    tar l.1_IF34_0 
-    and u64 %10 &1 3 
-    ass u8 %9 %10 
-    brc %9 l.0_IF34_1 l.1_IF34_1 
-    tar l.0_IF34_1 
-    ass u32 %11 4 
-    ret %11 
-    tar l.1_LOG34_1 
-    tar l.1_IF34_1 
-    ass u32 %12 1 
-    ret %12 
+define u64 @f.sys.read u64 ptr u64
+    ass i64 %1 0 
+    ass i64 %2 &1 
+    ass u64 %4 &2 
+    ass i64 %3 %4 
+    ass i64 %5 &3 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %3 %5 %6 %7 
+    ass u64 %8 %0 
+    ass u64 %9 %8 
+    ret %9 
     ret 
 
-define i32 @f.sys.read u64 ptr u64
-    allocs 16 %iosb 
-    alloca i32 %status 
-    ass u64 %1 &1 
-    ass u64 %2 0 
-    ass u64 %3 0 
-    ass u64 %4 0 
-    ass ptr %6 %iosb 
-    ass ptr %5 %6 
-    ass ptr %7 &2 
-    ass u32 %9 &3 
-    ass u32 %8 %9 
-    ass ptr %10 0 
-    ass ptr %11 0 
-    call @f.NtReadFile %0 %1 %2 %3 %4 %5 %7 %8 %10 %11 
-    store i32 %status %0 
-    load i32 %13 %status 
-    gq i32 %14 %13 0 
-    ass u8 %12 %14 
-    brc %12 l.0_IF2_22 l.1_IF2_22 
-    tar l.0_IF2_22 
-    add ptr %15 %iosb 8 
-    load u64 %16 %15 
-    ass i32 %17 %16 
-    ass i32 %18 %17 
-    destroy %status 
-    destroy %iosb 
-    ret %18 
-    tar l.1_LOG2_22 
-    tar l.1_IF2_22 
-    load i32 %20 %status 
-    ass i32 %19 %20 
-    destroy %status 
-    destroy %iosb 
-    ret %19 
-    destroy %status 
-    destroy %iosb 
+define u64 @f.sys.write u64 ptr u64
+    ass i64 %1 1 
+    ass i64 %2 &1 
+    ass u64 %4 &2 
+    ass i64 %3 %4 
+    ass i64 %5 &3 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %3 %5 %6 %7 
+    ass u64 %8 %0 
+    ass u64 %9 %8 
+    ret %9 
     ret 
 
-define i32 @f.sys.write u64 ptr u64
-    allocs 16 %iosb 
-    alloca i32 %status 
-    ass u64 %1 &1 
-    ass u64 %2 0 
-    ass u64 %3 0 
-    ass u64 %4 0 
-    ass ptr %6 %iosb 
-    ass ptr %5 %6 
-    ass ptr %7 &2 
-    ass u32 %9 &3 
-    ass u32 %8 %9 
-    ass ptr %10 0 
-    ass ptr %11 0 
-    call @f.NtWriteFile %0 %1 %2 %3 %4 %5 %7 %8 %10 %11 
-    store i32 %status %0 
-    load i32 %13 %status 
-    gq i32 %14 %13 0 
-    ass u8 %12 %14 
-    brc %12 l.0_IF2_23 l.1_IF2_23 
-    tar l.0_IF2_23 
-    add ptr %15 %iosb 8 
-    load u64 %16 %15 
-    ass i32 %17 %16 
-    ass i32 %18 %17 
-    destroy %status 
-    destroy %iosb 
-    ret %18 
-    tar l.1_LOG2_23 
-    tar l.1_IF2_23 
-    load i32 %20 %status 
-    ass i32 %19 %20 
-    destroy %status 
-    destroy %iosb 
-    ret %19 
-    destroy %status 
-    destroy %iosb 
+define u64 @f.sys.open ptr u64 u64
+    ass i64 %1 2 
+    ass u64 %3 &1 
+    ass i64 %2 %3 
+    ass i64 %4 &2 
+    ass i64 %5 &3 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %4 %5 %6 %7 
+    ass u64 %8 %0 
+    ass u64 %9 %8 
+    ret %9 
     ret 
 
-define i32 @f.sys.open ptr u16 u32 u32 u32 u32 ptr
-    allocs 16 %name 
-    allocs 48 %oa 
-    allocs 16 %iosb 
-    alloca u64 %handle 
-    store u64 %handle 0 
-    add ptr %0 %name 0 
-    store u16 %0 &2 
-    add ptr %1 %name 2 
-    store u16 %1 &2 
-    add ptr %2 %name 4 
-    store u32 %2 0 
-    add ptr %3 %name 8 
+define @f.sys.close u64
+    ass i64 %1 3 
+    ass i64 %2 &0 
+    ass i64 %3 0 
+    ass i64 %4 0 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ret 
+
+define @f.sys.stat ptr ptr
+    ass i64 %1 4 
+    ass u64 %3 &0 
+    ass i64 %2 %3 
+    ass u64 %5 &1 
+    ass i64 %4 %5 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    ass i64 %8 0 
+    call @f.syscall %0 %1 %2 %4 %6 %7 %8 
+    ret 
+
+define @f.sys.fstat u64 ptr
+    ass i64 %1 5 
+    ass i64 %2 &0 
     ass u64 %4 &1 
-    store u64 %3 %4 
-    add ptr %5 %oa 0 
-    store u32 %5 48 
-    add ptr %6 %oa 4 
-    store u32 %6 0 
-    add ptr %7 %oa 8 
-    store u64 %7 0 
-    add ptr %8 %oa 16 
-    ass ptr %9 %name 
-    ass u64 %10 %9 
-    store u64 %8 %10 
-    add ptr %11 %oa 24 
-    store u32 %11 64 
-    add ptr %12 %oa 28 
-    store u32 %12 0 
-    add ptr %13 %oa 32 
-    store u64 %13 0 
-    add ptr %14 %oa 40 
-    store u64 %14 0 
-    alloca i32 %status 
-    ass ptr %17 %handle 
-    ass ptr %16 %17 
-    ass u32 %18 &3 
-    ass ptr %20 %oa 
-    ass ptr %19 %20 
-    ass ptr %22 %iosb 
-    ass ptr %21 %22 
-    ass ptr %23 0 
-    ass u32 %24 0 
-    ass u32 %25 &4 
-    ass u32 %26 &5 
-    ass u32 %27 &6 
-    ass ptr %28 0 
-    ass u32 %29 0 
-    call @f.NtCreateFile %15 %16 %18 %19 %21 %23 %24 %25 %26 %27 %28 %29 
-    store i32 %status %15 
-    load i32 %31 %status 
-    gq i32 %32 %31 0 
-    nq ptr %33 &7 0 
-    and u8 %34 %32 %33 
-    ass u8 %30 %34 
-    brc %30 l.0_IF2_24 l.1_IF2_24 
-    tar l.0_IF2_24 
-    ass ptr %35 &7 
-    load u64 %36 %handle 
-    store u64 %35 %36 
-    tar l.1_LOG2_24 
-    tar l.1_IF2_24 
-    load i32 %38 %status 
-    ass i32 %37 %38 
-    destroy %status 
-    destroy %handle 
-    destroy %iosb 
-    destroy %oa 
-    destroy %name 
-    ret %37 
-    destroy %status 
-    destroy %handle 
-    destroy %iosb 
-    destroy %oa 
-    destroy %name 
+    ass i64 %3 %4 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %3 %5 %6 %7 
     ret 
 
-define i32 @f.sys.close u64
-    ass u64 %1 &1 
-    call @f.NtClose %0 %1 
-    ass i32 %2 %0 
-    ret %2 
-    ret 
-
-define i32 @f.sys.ioctrl u64 u32 ptr u32 ptr u32 ptr
-    ass u64 %1 &1 
-    ass u64 %2 0 
-    ass u64 %3 0 
-    ass u64 %4 0 
-    ass ptr %5 &7 
-    ass u32 %6 &2 
-    ass ptr %7 &3 
-    ass u32 %8 &4 
-    ass ptr %9 &5 
-    ass u32 %10 &6 
-    call @f.NtDeviceIoControlFile %0 %1 %2 %3 %4 %5 %6 %7 %8 %9 %10 
-    ass i32 %11 %0 
-    ret %11 
+define @f.sys.lseek u64 u64 u64
+    ass i64 %1 8 
+    ass i64 %2 &0 
+    ass i64 %3 &1 
+    ass i64 %4 &2 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
     ret 
 
 define ptr @f.sys.alloc u64
-    alloca ptr %base 
-    store ptr %base 0 
-    alloca u64 %size 
-    store u64 %size &1 
-    alloca i32 %status 
-    neg i64 %2 1 
-    ass u64 %1 %2 
-    ass ptr %4 %base 
-    ass ptr %3 %4 
-    ass u64 %5 0 
-    ass ptr %7 %size 
-    ass ptr %6 %7 
-    ass u32 %8 12288 
-    ass u32 %9 4 
-    call @f.NtAllocateVirtualMemory %0 %1 %3 %5 %6 %8 %9 
-    store i32 %status %0 
-    load i32 %11 %status 
-    lt i32 %12 %11 0 
-    ass u8 %10 %12 
-    brc %10 l.0_IF2_25 l.1_IF2_25 
-    tar l.0_IF2_25 
-    ass ptr %13 0 
-    destroy %status 
-    destroy %size 
-    destroy %base 
-    ret %13 
-    tar l.1_LOG2_25 
-    tar l.1_IF2_25 
-    load ptr %15 %base 
-    ass ptr %14 %15 
-    destroy %status 
-    destroy %size 
-    destroy %base 
-    ret %14 
-    destroy %status 
-    destroy %size 
-    destroy %base 
-    ret 
-
-define i32 @f.sys.protect ptr u64 u64
-    alloca ptr %base 
-    store ptr %base &1 
-    alloca u64 %size 
-    store u64 %size &2 
-    alloca u32 %old_protection 
-    neg i64 %2 1 
-    ass u64 %1 %2 
-    ass ptr %4 %base 
-    ass ptr %3 %4 
-    ass ptr %6 %size 
-    ass ptr %5 %6 
-    ass u64 %9 &3 
-    call @f.sys.page_protection %8 %9 
-    ass u32 %7 %8 
-    ass ptr %11 %old_protection 
-    ass ptr %10 %11 
-    call @f.NtProtectVirtualMemory %0 %1 %3 %5 %7 %10 
-    ass i32 %12 %0 
-    destroy %old_protection 
-    destroy %size 
-    destroy %base 
+    alloca i64 %result 
+    ass i64 %1 9 
+    ass i64 %2 0 
+    ass i64 %3 &1 
+    ass i64 %4 3 
+    ass i64 %5 34 
+    neg i64 %7 1 
+    ass i64 %6 %7 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ass i64 %8 %0 
+    store i64 %result %8 
+    load i64 %10 %result 
+    lt i64 %11 %10 0 
+    ass u8 %9 %11 
+    brc %9 l.0_IF2_22 l.1_IF2_22 
+    tar l.0_IF2_22 
+    ass ptr %12 0 
+    destroy %result 
     ret %12 
-    destroy %old_protection 
-    destroy %size 
-    destroy %base 
+    tar l.1_LOG2_22 
+    tar l.1_IF2_22 
+    load i64 %13 %result 
+    ass ptr %14 %13 
+    ass ptr %15 %14 
+    destroy %result 
+    ret %15 
+    destroy %result 
     ret 
 
-define i32 @f.sys.free ptr u64
-    alloca ptr %base 
-    store ptr %base &1 
-    alloca u64 %size 
-    store u64 %size 0 
-    neg i64 %2 1 
-    ass u64 %1 %2 
-    ass ptr %4 %base 
-    ass ptr %3 %4 
-    ass ptr %6 %size 
-    ass ptr %5 %6 
-    ass u32 %7 32768 
-    call @f.NtFreeVirtualMemory %0 %1 %3 %5 %7 
-    ass i32 %8 %0 
-    destroy %size 
-    destroy %base 
+define @f.sys.free ptr u64
+    ass i64 %1 11 
+    ass u64 %3 &0 
+    ass i64 %2 %3 
+    ass i64 %4 &1 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %4 %5 %6 %7 
+    ret 
+
+define u64 @f.sys.ioctrl u64 u64 ptr u64
+    ass i64 %1 16 
+    ass i64 %2 &1 
+    ass i64 %3 &2 
+    ass u64 %5 &3 
+    ass i64 %4 %5 
+    ass i64 %6 &4 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %3 %4 %6 %7 
+    ass u64 %8 %0 
     ret %8 
-    destroy %size 
-    destroy %base 
+    ret 
+
+define @f.sys.pause
+    ass i64 %1 34 
+    ass i64 %2 0 
+    ass i64 %3 0 
+    ass i64 %4 0 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ret 
+
+define @f.sys.nanosleep u64
+    allocs 16 %rqtp 
+    add ptr %0 %rqtp 0 
+    div u64 %1 &0 1000000000 
+    store u64 %0 %1 
+    add ptr %2 %rqtp 8 
+    mod u64 %3 &0 1000000000 
+    store u64 %2 %3 
+    ass i64 %5 35 
+    ass ptr %7 %rqtp 
+    ass u64 %8 %7 
+    ass i64 %6 %8 
+    ass i64 %9 0 
+    ass i64 %10 0 
+    ass i64 %11 0 
+    ass i64 %12 0 
+    call @f.syscall %4 %5 %6 %9 %10 %11 %12 
+    destroy %rqtp 
     ret 
 
 define u64 @f.sys.getpid
-    allocs 48 %pbi 
-    alloca u32 %returned_length 
-    alloca i32 %status 
-    neg i64 %2 1 
-    ass u64 %1 %2 
-    ass u32 %3 0 
-    ass ptr %5 %pbi 
-    ass ptr %4 %5 
-    ass u32 %6 48 
-    ass ptr %8 %returned_length 
-    ass ptr %7 %8 
-    call @f.NtQueryInformationProcess %0 %1 %3 %4 %6 %7 
-    store i32 %status %0 
-    load i32 %10 %status 
-    lt i32 %11 %10 0 
-    ass u8 %9 %11 
-    brc %9 l.0_IF2_26 l.1_IF2_26 
-    tar l.0_IF2_26 
-    ass u64 %12 0 
-    destroy %status 
-    destroy %returned_length 
-    destroy %pbi 
-    ret %12 
-    tar l.1_LOG2_26 
-    tar l.1_IF2_26 
-    add ptr %13 %pbi 32 
-    load u64 %15 %13 
-    ass u64 %14 %15 
-    destroy %status 
-    destroy %returned_length 
-    destroy %pbi 
-    ret %14 
-    destroy %status 
-    destroy %returned_length 
-    destroy %pbi 
+    ass i64 %1 39 
+    ass i64 %2 0 
+    ass i64 %3 0 
+    ass i64 %4 0 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ass u64 %7 %0 
+    ret %7 
     ret 
 
-define @f.sys.term u64 i32
-    ass u64 %1 &0 
-    ass i32 %2 &1 
-    call @f.NtTerminateProcess %0 %1 %2 
+global @f.sys.exit u64
+    ass i64 %1 60 
+    ass i64 %2 &0 
+    ass i64 %3 0 
+    ass i64 %4 0 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
     ret 
 
-global @f.sys.exit i32
-    neg i64 %2 1 
-    ass u64 %1 %2 
-    ass i32 %3 &0 
-    call @f.NtTerminateProcess %0 %1 %3 
+define u64 @f.sys.waitpid u64 ptr u64
+    ass i64 %1 61 
+    ass i64 %2 &1 
+    ass u64 %4 &2 
+    ass i64 %3 %4 
+    ass i64 %5 &3 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %3 %5 %6 %7 
+    ass u64 %8 %0 
+    ret %8 
     ret 
 
-define i32 @f.sys.wait_handle u64 u64 ptr
-    ass u64 %1 &1 
-    ass u32 %3 &2 
-    ass u32 %2 %3 
-    ass ptr %4 &3 
-    call @f.NtWaitForSingleObject %0 %1 %2 %4 
-    ass i32 %5 %0 
-    ret %5 
+define u64 @f.sys.kill u64 u64
+    ass i64 %1 62 
+    ass i64 %2 &1 
+    ass i64 %3 &2 
+    ass i64 %4 0 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ass u64 %7 %0 
+    ret %7 
     ret 
 
-define i32 @f.sys.nanosleep u64
-    eq u64 %1 &1 0 
-    ass u8 %0 %1 
-    brc %0 l.0_IF2_27 l.1_IF2_27 
-    tar l.0_IF2_27 
-    ass i32 %2 0 
-    ret %2 
-    tar l.1_LOG2_27 
-    tar l.1_IF2_27 
-    allocs 8 %interval 
-    add ptr %3 %interval 0 
-    div u64 %4 &1 100 
-    mod u64 %5 &1 100 
-    nq u64 %6 %5 0 
-    add u64 %7 %4 %6 
-    ass i64 %8 %7 
-    neg i64 %9 %8 
-    store i64 %3 %9 
-    ass u32 %11 0 
-    ass ptr %13 %interval 
-    ass ptr %12 %13 
-    call @f.NtDelayExecution %10 %11 %12 
-    ass i32 %14 %10 
-    destroy %interval 
-    ret %14 
-    destroy %interval 
+define u64 @f.sys.fcntl u64 u64 u64
+    ass i64 %1 72 
+    ass i64 %2 &1 
+    ass i64 %3 &2 
+    ass i64 %4 &3 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ass u64 %7 %0 
+    ret %7 
     ret 
 
 define u64 @f.sys.time_nano
-    allocs 8 %counter 
-    allocs 8 %frequency 
-    alloca i32 %status 
-    ass ptr %2 %counter 
-    ass ptr %1 %2 
-    ass ptr %4 %frequency 
-    ass ptr %3 %4 
-    call @f.NtQueryPerformanceCounter %0 %1 %3 
-    store i32 %status %0 
-    load i32 %6 %status 
-    lt i32 %7 %6 0 
-    add ptr %8 %frequency 0 
-    load i64 %9 %8 
-    lq i64 %10 %9 0 
-    or u8 %11 %7 %10 
-    ass u8 %5 %11 
-    brc %5 l.0_IF2_28 l.1_IF2_28 
-    tar l.0_IF2_28 
-    ass u64 %12 0 
-    destroy %status 
-    destroy %frequency 
-    destroy %counter 
-    ret %12 
-    tar l.1_LOG2_28 
-    tar l.1_IF2_28 
-    alloca u64 %ticks 
-    add ptr %13 %counter 0 
-    load i64 %14 %13 
+    allocs 16 %sp 
+    ass i64 %1 228 
+    ass i64 %2 1 
+    ass ptr %4 %sp 
+    ass u64 %5 %4 
+    ass i64 %3 %5 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    ass i64 %8 0 
+    call @f.syscall %0 %1 %2 %3 %6 %7 %8 
+    add ptr %9 %sp 0 
+    load u64 %10 %9 
+    ass u64 %11 %10 
+    mul u64 %12 %11 1000000000 
+    add ptr %13 %sp 8 
+    load u64 %14 %13 
     ass u64 %15 %14 
-    store u64 %ticks %15 
-    alloca u64 %freq 
-    add ptr %16 %frequency 0 
-    load i64 %17 %16 
-    ass u64 %18 %17 
-    store u64 %freq %18 
-    load u64 %19 %ticks 
-    load u64 %20 %freq 
-    div u64 %21 %19 %20 
-    mul u64 %22 %21 1000000000 
-    load u64 %23 %ticks 
-    load u64 %24 %freq 
-    mod u64 %25 %23 %24 
-    load u64 %26 %freq 
-    div i64 %27 1000000000 %26 
-    mul u64 %28 %25 %27 
-    add u64 %29 %22 %28 
-    ass u64 %30 %29 
-    destroy %freq 
-    destroy %ticks 
-    destroy %status 
-    destroy %frequency 
-    destroy %counter 
-    ret %30 
-    destroy %freq 
-    destroy %ticks 
-    destroy %status 
-    destroy %frequency 
-    destroy %counter 
+    add u64 %16 %12 %15 
+    ass u64 %17 %16 
+    destroy %sp 
+    ret %17 
+    destroy %sp 
     ret 
 
 define u64 @f.sys.time_micro
@@ -1644,30 +1420,30 @@ define @f.io.print_hex u64
 define @f.parse.boolean.get ptr u8
     eq u8 %1 &1 false 
     ass u8 %0 %1 
-    brc %0 l.0_IF2_29 l.1_IF2_29 
-    tar l.0_IF2_29 
+    brc %0 l.0_IF2_23 l.1_IF2_23 
+    tar l.0_IF2_23 
     ass ptr %3 &0 
     ass ptr %4 &cstr.0 
     ass i64 %5 5 
     call @f.cstr.cpy %3 %4 %5 
-    jmp l.1_LOG2_29 
-    tar l.1_IF2_29 
+    jmp l.1_LOG2_23 
+    tar l.1_IF2_23 
     eq u8 %7 &1 true 
     ass u8 %6 %7 
-    brc %6 l.0_ELIF2_29_2 l.1_ELIF2_29_2 
-    tar l.0_ELIF2_29_2 
+    brc %6 l.0_ELIF2_23_2 l.1_ELIF2_23_2 
+    tar l.0_ELIF2_23_2 
     ass ptr %9 &0 
     ass ptr %10 &cstr.1 
     ass i64 %11 4 
     call @f.cstr.cpy %9 %10 %11 
-    jmp l.1_LOG2_29 
-    tar l.1_ELIF2_29_2 
-    tar l.0_ELSE2_29 
+    jmp l.1_LOG2_23 
+    tar l.1_ELIF2_23_2 
+    tar l.0_ELSE2_23 
     ass ptr %13 &0 
     ass ptr %14 &cstr.2 
     ass i64 %15 4 
     call @f.cstr.cpy %13 %14 %15 
-    tar l.1_LOG2_29 
+    tar l.1_LOG2_23 
     ret 
 
 define u8 @f.parse.boolean.by ptr
@@ -1679,12 +1455,12 @@ define u8 @f.parse.boolean.by ptr
     call @f.cstr.cmp %4 %5 %6 
     or i8 %7 %1 %4 
     ass u8 %0 %7 
-    brc %0 l.0_IF2_30 l.1_IF2_30 
-    tar l.0_IF2_30 
+    brc %0 l.0_IF2_24 l.1_IF2_24 
+    tar l.0_IF2_24 
     ass u8 %8 false 
     ret %8 
-    tar l.1_LOG2_30 
-    tar l.1_IF2_30 
+    tar l.1_LOG2_24 
+    tar l.1_IF2_24 
     ass ptr %11 &1 
     ass ptr %12 &cstr.5 
     call @f.cstr.cmp %10 %11 %12 
@@ -1693,12 +1469,12 @@ define u8 @f.parse.boolean.by ptr
     call @f.cstr.cmp %13 %14 %15 
     or i8 %16 %10 %13 
     ass u8 %9 %16 
-    brc %9 l.0_IF2_31 l.1_IF2_31 
-    tar l.0_IF2_31 
+    brc %9 l.0_IF2_25 l.1_IF2_25 
+    tar l.0_IF2_25 
     ass u8 %17 true 
     ret %17 
-    tar l.1_LOG2_31 
-    tar l.1_IF2_31 
+    tar l.1_LOG2_25 
+    tar l.1_IF2_25 
     ass u8 %18 false 
     ret %18 
     ret 
@@ -1706,12 +1482,12 @@ define u8 @f.parse.boolean.by ptr
 define u8 @f.parse.boolean.by_s ptr ptr
     eq ptr %1 &2 0 
     ass u8 %0 %1 
-    brc %0 l.0_IF2_32 l.1_IF2_32 
-    tar l.0_IF2_32 
+    brc %0 l.0_IF2_26 l.1_IF2_26 
+    tar l.0_IF2_26 
     ass u8 %2 false 
     ret %2 
-    tar l.1_LOG2_32 
-    tar l.1_IF2_32 
+    tar l.1_LOG2_26 
+    tar l.1_IF2_26 
     ass ptr %5 &1 
     ass ptr %6 &cstr.7 
     call @f.cstr.cmp %4 %5 %6 
@@ -1720,14 +1496,14 @@ define u8 @f.parse.boolean.by_s ptr ptr
     call @f.cstr.cmp %7 %8 %9 
     or i8 %10 %4 %7 
     ass u8 %3 %10 
-    brc %3 l.0_IF2_33 l.1_IF2_33 
-    tar l.0_IF2_33 
+    brc %3 l.0_IF2_27 l.1_IF2_27 
+    tar l.0_IF2_27 
     ass ptr %11 &2 
     store u8 %11 false 
     ass u8 %12 true 
     ret %12 
-    tar l.1_LOG2_33 
-    tar l.1_IF2_33 
+    tar l.1_LOG2_27 
+    tar l.1_IF2_27 
     ass ptr %15 &1 
     ass ptr %16 &cstr.9 
     call @f.cstr.cmp %14 %15 %16 
@@ -1736,14 +1512,14 @@ define u8 @f.parse.boolean.by_s ptr ptr
     call @f.cstr.cmp %17 %18 %19 
     or i8 %20 %14 %17 
     ass u8 %13 %20 
-    brc %13 l.0_IF2_34 l.1_IF2_34 
-    tar l.0_IF2_34 
+    brc %13 l.0_IF2_28 l.1_IF2_28 
+    tar l.0_IF2_28 
     ass ptr %21 &2 
     store u8 %21 true 
     ass u8 %22 true 
     ret %22 
-    tar l.1_LOG2_34 
-    tar l.1_IF2_34 
+    tar l.1_LOG2_28 
+    tar l.1_IF2_28 
     ass u8 %23 false 
     ret %23 
     ret 
@@ -1751,13 +1527,13 @@ define u8 @f.parse.boolean.by_s ptr ptr
 define @f.parse.uint.get ptr u64
     eq u64 %1 &1 0 
     ass u8 %0 %1 
-    brc %0 l.0_IF2_35 l.1_IF2_35 
-    tar l.0_IF2_35 
+    brc %0 l.0_IF2_29 l.1_IF2_29 
+    tar l.0_IF2_29 
     ass ptr %2 &0 
     store i8 %2 48 
-    jmp l.1_LOG2_35 
-    tar l.1_IF2_35 
-    tar l.0_ELSE2_35 
+    jmp l.1_LOG2_29 
+    tar l.1_IF2_29 
+    tar l.0_ELSE2_29 
     alloca u64 %size 
     ass u64 %4 &1 
     call @f.math.uint.log10 %3 %4 
@@ -1795,7 +1571,7 @@ define @f.parse.uint.get ptr u64
     destroy %i 
     destroy %value 
     destroy %size 
-    tar l.1_LOG2_35 
+    tar l.1_LOG2_29 
     ret 
 
 define u64 @f.parse.uint.by ptr
@@ -1813,12 +1589,12 @@ define u64 @f.parse.uint.by ptr
     load i64 %2 %size 
     sub i64 %3 %2 1 
     store i64 %i %3 
-    tar l.0_WHILE2_36 
+    tar l.0_WHILE2_30 
     load i64 %5 %i 
     gq i64 %6 %5 0 
     ass u8 %4 %6 
-    brc %4 l.2_WHILE2_36 l.1_WHILE2_36 
-    tar l.2_WHILE2_36 
+    brc %4 l.2_WHILE2_30 l.1_WHILE2_30 
+    tar l.2_WHILE2_30 
     alloca i8 %c 
     load i64 %7 %i 
     add ptr %8 &1 %7 
@@ -1862,8 +1638,8 @@ define u64 @f.parse.uint.by ptr
     ret %30 
     tar l.1_LOG3_13 
     destroy %c 
-    jmp l.0_WHILE2_36 
-    tar l.1_WHILE2_36 
+    jmp l.0_WHILE2_30 
+    tar l.1_WHILE2_30 
     load u64 %32 %out 
     ass u64 %31 %32 
     destroy %i 
@@ -1882,12 +1658,12 @@ define u64 @f.parse.uint.by ptr
 define u8 @f.parse.uint.by_s ptr ptr
     eq ptr %1 &2 0 
     ass u8 %0 %1 
-    brc %0 l.0_IF2_37 l.1_IF2_37 
-    tar l.0_IF2_37 
+    brc %0 l.0_IF2_31 l.1_IF2_31 
+    tar l.0_IF2_31 
     ass u8 %2 false 
     ret %2 
-    tar l.1_LOG2_37 
-    tar l.1_IF2_37 
+    tar l.1_LOG2_31 
+    tar l.1_IF2_31 
     alloca i64 %size 
     ass ptr %4 &1 
     call @f.cstr.len %3 %4 
@@ -1902,12 +1678,12 @@ define u8 @f.parse.uint.by_s ptr ptr
     load i64 %5 %size 
     sub i64 %6 %5 1 
     store i64 %i %6 
-    tar l.0_WHILE2_38 
+    tar l.0_WHILE2_32 
     load i64 %8 %i 
     gq i64 %9 %8 0 
     ass u8 %7 %9 
-    brc %7 l.2_WHILE2_38 l.1_WHILE2_38 
-    tar l.2_WHILE2_38 
+    brc %7 l.2_WHILE2_32 l.1_WHILE2_32 
+    tar l.2_WHILE2_32 
     alloca i8 %c 
     load i64 %10 %i 
     add ptr %11 &1 %10 
@@ -1951,8 +1727,8 @@ define u8 @f.parse.uint.by_s ptr ptr
     ret %33 
     tar l.1_LOG3_14 
     destroy %c 
-    jmp l.0_WHILE2_38 
-    tar l.1_WHILE2_38 
+    jmp l.0_WHILE2_32 
+    tar l.1_WHILE2_32 
     ass ptr %34 &2 
     load u64 %35 %out 
     store u64 %34 %35 
@@ -1973,13 +1749,13 @@ define u8 @f.parse.uint.by_s ptr ptr
 define @f.parse.int.get ptr i64
     eq i64 %1 &1 0 
     ass u8 %0 %1 
-    brc %0 l.0_IF2_39 l.1_IF2_39 
-    tar l.0_IF2_39 
+    brc %0 l.0_IF2_33 l.1_IF2_33 
+    tar l.0_IF2_33 
     ass ptr %2 &0 
     store i8 %2 48 
-    jmp l.1_LOG2_39 
-    tar l.1_IF2_39 
-    tar l.0_ELSE2_39 
+    jmp l.1_LOG2_33 
+    tar l.1_IF2_33 
+    tar l.0_ELSE2_33 
     alloca i64 %minus 
     store i64 %minus 0 
     alloca i64 %value 
@@ -2037,7 +1813,7 @@ define @f.parse.int.get ptr i64
     destroy %size 
     destroy %value 
     destroy %minus 
-    tar l.1_LOG2_39 
+    tar l.1_LOG2_33 
     ret 
 
 define i64 @f.parse.int.by ptr
@@ -2058,22 +1834,22 @@ define i64 @f.parse.int.by ptr
     load i8 %5 %4 
     eq i8 %6 %5 45 
     ass u8 %2 %6 
-    brc %2 l.0_IF2_40 l.1_IF2_40 
-    tar l.0_IF2_40 
+    brc %2 l.0_IF2_34 l.1_IF2_34 
+    tar l.0_IF2_34 
     store i64 %sign 1 
-    tar l.1_LOG2_40 
-    tar l.1_IF2_40 
+    tar l.1_LOG2_34 
+    tar l.1_IF2_34 
     alloca i64 %i 
     load i64 %7 %size 
     sub i64 %8 %7 1 
     store i64 %i %8 
-    tar l.0_WHILE2_41 
+    tar l.0_WHILE2_35 
     load i64 %10 %i 
     load i64 %11 %sign 
     gq i64 %12 %10 %11 
     ass u8 %9 %12 
-    brc %9 l.2_WHILE2_41 l.1_WHILE2_41 
-    tar l.2_WHILE2_41 
+    brc %9 l.2_WHILE2_35 l.1_WHILE2_35 
+    tar l.2_WHILE2_35 
     alloca i8 %c 
     load i64 %13 %i 
     add ptr %14 &1 %13 
@@ -2118,18 +1894,18 @@ define i64 @f.parse.int.by ptr
     ret %36 
     tar l.1_LOG3_16 
     destroy %c 
-    jmp l.0_WHILE2_41 
-    tar l.1_WHILE2_41 
+    jmp l.0_WHILE2_35 
+    tar l.1_WHILE2_35 
     load i64 %38 %sign 
     gt i64 %39 %38 0 
     ass u8 %37 %39 
-    brc %37 l.0_IF2_42 l.1_IF2_42 
-    tar l.0_IF2_42 
+    brc %37 l.0_IF2_36 l.1_IF2_36 
+    tar l.0_IF2_36 
     load i64 %40 %out 
     neg i64 %41 %40 
     store i64 %out %41 
-    tar l.1_LOG2_42 
-    tar l.1_IF2_42 
+    tar l.1_LOG2_36 
+    tar l.1_IF2_36 
     load i64 %43 %out 
     ass i64 %42 %43 
     destroy %i 
@@ -2150,12 +1926,12 @@ define i64 @f.parse.int.by ptr
 define u8 @f.parse.int.by_s ptr ptr
     eq ptr %1 &2 0 
     ass u8 %0 %1 
-    brc %0 l.0_IF2_43 l.1_IF2_43 
-    tar l.0_IF2_43 
+    brc %0 l.0_IF2_37 l.1_IF2_37 
+    tar l.0_IF2_37 
     ass u8 %2 false 
     ret %2 
-    tar l.1_LOG2_43 
-    tar l.1_IF2_43 
+    tar l.1_LOG2_37 
+    tar l.1_IF2_37 
     alloca i64 %size 
     ass ptr %4 &1 
     call @f.cstr.len %3 %4 
@@ -2173,22 +1949,22 @@ define u8 @f.parse.int.by_s ptr ptr
     load i8 %8 %7 
     eq i8 %9 %8 45 
     ass u8 %5 %9 
-    brc %5 l.0_IF2_44 l.1_IF2_44 
-    tar l.0_IF2_44 
+    brc %5 l.0_IF2_38 l.1_IF2_38 
+    tar l.0_IF2_38 
     store i64 %sign 1 
-    tar l.1_LOG2_44 
-    tar l.1_IF2_44 
+    tar l.1_LOG2_38 
+    tar l.1_IF2_38 
     alloca i64 %i 
     load i64 %10 %size 
     sub i64 %11 %10 1 
     store i64 %i %11 
-    tar l.0_WHILE2_45 
+    tar l.0_WHILE2_39 
     load i64 %13 %i 
     load i64 %14 %sign 
     gq i64 %15 %13 %14 
     ass u8 %12 %15 
-    brc %12 l.2_WHILE2_45 l.1_WHILE2_45 
-    tar l.2_WHILE2_45 
+    brc %12 l.2_WHILE2_39 l.1_WHILE2_39 
+    tar l.2_WHILE2_39 
     alloca i8 %c 
     load i64 %16 %i 
     add ptr %17 &1 %16 
@@ -2233,18 +2009,18 @@ define u8 @f.parse.int.by_s ptr ptr
     ret %39 
     tar l.1_LOG3_17 
     destroy %c 
-    jmp l.0_WHILE2_45 
-    tar l.1_WHILE2_45 
+    jmp l.0_WHILE2_39 
+    tar l.1_WHILE2_39 
     load i64 %41 %sign 
     gt i64 %42 %41 0 
     ass u8 %40 %42 
-    brc %40 l.0_IF2_46 l.1_IF2_46 
-    tar l.0_IF2_46 
+    brc %40 l.0_IF2_40 l.1_IF2_40 
+    tar l.0_IF2_40 
     load i64 %43 %out 
     neg i64 %44 %43 
     store i64 %out %44 
-    tar l.1_LOG2_46 
-    tar l.1_IF2_46 
+    tar l.1_LOG2_40 
+    tar l.1_IF2_40 
     ass ptr %45 &2 
     load i64 %46 %out 
     store i64 %45 %46 
@@ -2272,14 +2048,14 @@ define @f.parse.hex.get ptr u64
     store i8 %2 120 
     eq u64 %4 &1 0 
     ass u8 %3 %4 
-    brc %3 l.0_IF2_47 l.1_IF2_47 
-    tar l.0_IF2_47 
+    brc %3 l.0_IF2_41 l.1_IF2_41 
+    tar l.0_IF2_41 
     add ptr %5 &0 2 
     ass ptr %6 %5 
     store i8 %6 48 
-    jmp l.1_LOG2_47 
-    tar l.1_IF2_47 
-    tar l.0_ELSE2_47 
+    jmp l.1_LOG2_41 
+    tar l.1_IF2_41 
+    tar l.0_ELSE2_41 
     alloca u64 %size 
     ass u64 %8 16 
     ass u64 %9 &1 
@@ -2320,7 +2096,7 @@ define @f.parse.hex.get ptr u64
     destroy %i 
     destroy %value 
     destroy %size 
-    tar l.1_LOG2_47 
+    tar l.1_LOG2_41 
     ret 
 
 define u64 @f.parse.hex.by ptr
@@ -2333,12 +2109,12 @@ define u64 @f.parse.hex.by ptr
     nq i8 %7 %6 120 
     or u8 %8 %3 %7 
     ass u8 %0 %8 
-    brc %0 l.0_IF2_48 l.1_IF2_48 
-    tar l.0_IF2_48 
+    brc %0 l.0_IF2_42 l.1_IF2_42 
+    tar l.0_IF2_42 
     ass u64 %9 0 
     ret %9 
-    tar l.1_LOG2_48 
-    tar l.1_IF2_48 
+    tar l.1_LOG2_42 
+    tar l.1_IF2_42 
     alloca i64 %size 
     ass ptr %11 &1 
     call @f.cstr.len %10 %11 
@@ -2353,12 +2129,12 @@ define u64 @f.parse.hex.by ptr
     load i64 %12 %size 
     sub i64 %13 %12 1 
     store i64 %i %13 
-    tar l.0_WHILE2_49 
+    tar l.0_WHILE2_43 
     load i64 %15 %i 
     gq i64 %16 %15 2 
     ass u8 %14 %16 
-    brc %14 l.2_WHILE2_49 l.1_WHILE2_49 
-    tar l.2_WHILE2_49 
+    brc %14 l.2_WHILE2_43 l.1_WHILE2_43 
+    tar l.2_WHILE2_43 
     alloca i8 %c 
     load i64 %17 %i 
     add ptr %18 &1 %17 
@@ -2405,8 +2181,8 @@ define u64 @f.parse.hex.by ptr
     tar l.1_LOG3_18 
     destroy %num 
     destroy %c 
-    jmp l.0_WHILE2_49 
-    tar l.1_WHILE2_49 
+    jmp l.0_WHILE2_43 
+    tar l.1_WHILE2_43 
     load u64 %41 %out 
     ass u64 %40 %41 
     destroy %i 
@@ -2425,12 +2201,12 @@ define u64 @f.parse.hex.by ptr
 define u8 @f.parse.hex.by_s ptr ptr
     eq ptr %1 &2 0 
     ass u8 %0 %1 
-    brc %0 l.0_IF2_50 l.1_IF2_50 
-    tar l.0_IF2_50 
+    brc %0 l.0_IF2_44 l.1_IF2_44 
+    tar l.0_IF2_44 
     ass u8 %2 false 
     ret %2 
-    tar l.1_LOG2_50 
-    tar l.1_IF2_50 
+    tar l.1_LOG2_44 
+    tar l.1_IF2_44 
     ass ptr %4 &1 
     load i8 %5 %4 
     nq i8 %6 %5 48 
@@ -2440,12 +2216,12 @@ define u8 @f.parse.hex.by_s ptr ptr
     nq i8 %10 %9 120 
     or u8 %11 %6 %10 
     ass u8 %3 %11 
-    brc %3 l.0_IF2_51 l.1_IF2_51 
-    tar l.0_IF2_51 
+    brc %3 l.0_IF2_45 l.1_IF2_45 
+    tar l.0_IF2_45 
     ass u8 %12 false 
     ret %12 
-    tar l.1_LOG2_51 
-    tar l.1_IF2_51 
+    tar l.1_LOG2_45 
+    tar l.1_IF2_45 
     alloca i64 %size 
     ass ptr %14 &1 
     call @f.cstr.len %13 %14 
@@ -2460,12 +2236,12 @@ define u8 @f.parse.hex.by_s ptr ptr
     load i64 %15 %size 
     sub i64 %16 %15 1 
     store i64 %i %16 
-    tar l.0_WHILE2_52 
+    tar l.0_WHILE2_46 
     load i64 %18 %i 
     gq i64 %19 %18 2 
     ass u8 %17 %19 
-    brc %17 l.2_WHILE2_52 l.1_WHILE2_52 
-    tar l.2_WHILE2_52 
+    brc %17 l.2_WHILE2_46 l.1_WHILE2_46 
+    tar l.2_WHILE2_46 
     alloca i8 %c 
     load i64 %20 %i 
     add ptr %21 &1 %20 
@@ -2512,8 +2288,8 @@ define u8 @f.parse.hex.by_s ptr ptr
     tar l.1_LOG3_19 
     destroy %num 
     destroy %c 
-    jmp l.0_WHILE2_52 
-    tar l.1_WHILE2_52 
+    jmp l.0_WHILE2_46 
+    tar l.1_WHILE2_46 
     ass ptr %43 &2 
     load u64 %44 %out 
     store u64 %43 %44 
@@ -2539,14 +2315,14 @@ define @f.parse.oct.get ptr u64
     store i8 %2 111 
     eq u64 %4 &1 0 
     ass u8 %3 %4 
-    brc %3 l.0_IF2_53 l.1_IF2_53 
-    tar l.0_IF2_53 
+    brc %3 l.0_IF2_47 l.1_IF2_47 
+    tar l.0_IF2_47 
     add ptr %5 &0 2 
     ass ptr %6 %5 
     store i8 %6 48 
-    jmp l.1_LOG2_53 
-    tar l.1_IF2_53 
-    tar l.0_ELSE2_53 
+    jmp l.1_LOG2_47 
+    tar l.1_IF2_47 
+    tar l.0_ELSE2_47 
     alloca u64 %size 
     ass u64 %8 8 
     ass u64 %9 &1 
@@ -2587,7 +2363,7 @@ define @f.parse.oct.get ptr u64
     destroy %i 
     destroy %value 
     destroy %size 
-    tar l.1_LOG2_53 
+    tar l.1_LOG2_47 
     ret 
 
 define u64 @f.parse.oct.by ptr
@@ -2600,12 +2376,12 @@ define u64 @f.parse.oct.by ptr
     nq i8 %7 %6 111 
     or u8 %8 %3 %7 
     ass u8 %0 %8 
-    brc %0 l.0_IF2_54 l.1_IF2_54 
-    tar l.0_IF2_54 
+    brc %0 l.0_IF2_48 l.1_IF2_48 
+    tar l.0_IF2_48 
     ass u64 %9 0 
     ret %9 
-    tar l.1_LOG2_54 
-    tar l.1_IF2_54 
+    tar l.1_LOG2_48 
+    tar l.1_IF2_48 
     alloca i64 %size 
     ass ptr %11 &1 
     call @f.cstr.len %10 %11 
@@ -2620,12 +2396,12 @@ define u64 @f.parse.oct.by ptr
     load i64 %12 %size 
     sub i64 %13 %12 1 
     store i64 %i %13 
-    tar l.0_WHILE2_55 
+    tar l.0_WHILE2_49 
     load i64 %15 %i 
     gq i64 %16 %15 2 
     ass u8 %14 %16 
-    brc %14 l.2_WHILE2_55 l.1_WHILE2_55 
-    tar l.2_WHILE2_55 
+    brc %14 l.2_WHILE2_49 l.1_WHILE2_49 
+    tar l.2_WHILE2_49 
     alloca i8 %c 
     load i64 %17 %i 
     add ptr %18 &1 %17 
@@ -2672,8 +2448,8 @@ define u64 @f.parse.oct.by ptr
     tar l.1_LOG3_20 
     destroy %num 
     destroy %c 
-    jmp l.0_WHILE2_55 
-    tar l.1_WHILE2_55 
+    jmp l.0_WHILE2_49 
+    tar l.1_WHILE2_49 
     load u64 %41 %out 
     ass u64 %40 %41 
     destroy %i 
@@ -2692,12 +2468,12 @@ define u64 @f.parse.oct.by ptr
 define u8 @f.parse.oct.by_s ptr ptr
     eq ptr %1 &2 0 
     ass u8 %0 %1 
-    brc %0 l.0_IF2_56 l.1_IF2_56 
-    tar l.0_IF2_56 
+    brc %0 l.0_IF2_50 l.1_IF2_50 
+    tar l.0_IF2_50 
     ass u8 %2 false 
     ret %2 
-    tar l.1_LOG2_56 
-    tar l.1_IF2_56 
+    tar l.1_LOG2_50 
+    tar l.1_IF2_50 
     ass ptr %4 &1 
     load i8 %5 %4 
     nq i8 %6 %5 48 
@@ -2707,12 +2483,12 @@ define u8 @f.parse.oct.by_s ptr ptr
     nq i8 %10 %9 111 
     or u8 %11 %6 %10 
     ass u8 %3 %11 
-    brc %3 l.0_IF2_57 l.1_IF2_57 
-    tar l.0_IF2_57 
+    brc %3 l.0_IF2_51 l.1_IF2_51 
+    tar l.0_IF2_51 
     ass u8 %12 false 
     ret %12 
-    tar l.1_LOG2_57 
-    tar l.1_IF2_57 
+    tar l.1_LOG2_51 
+    tar l.1_IF2_51 
     alloca i64 %size 
     ass ptr %14 &1 
     call @f.cstr.len %13 %14 
@@ -2727,12 +2503,12 @@ define u8 @f.parse.oct.by_s ptr ptr
     load i64 %15 %size 
     sub i64 %16 %15 1 
     store i64 %i %16 
-    tar l.0_WHILE2_58 
+    tar l.0_WHILE2_52 
     load i64 %18 %i 
     gq i64 %19 %18 2 
     ass u8 %17 %19 
-    brc %17 l.2_WHILE2_58 l.1_WHILE2_58 
-    tar l.2_WHILE2_58 
+    brc %17 l.2_WHILE2_52 l.1_WHILE2_52 
+    tar l.2_WHILE2_52 
     alloca i8 %c 
     load i64 %20 %i 
     add ptr %21 &1 %20 
@@ -2779,8 +2555,8 @@ define u8 @f.parse.oct.by_s ptr ptr
     tar l.1_LOG3_21 
     destroy %num 
     destroy %c 
-    jmp l.0_WHILE2_58 
-    tar l.1_WHILE2_58 
+    jmp l.0_WHILE2_52 
+    tar l.1_WHILE2_52 
     ass ptr %43 &2 
     load u64 %44 %out 
     store u64 %43 %44 
@@ -2806,14 +2582,14 @@ define @f.parse.bin.get ptr u64
     store i8 %2 98 
     eq u64 %4 &1 0 
     ass u8 %3 %4 
-    brc %3 l.0_IF2_59 l.1_IF2_59 
-    tar l.0_IF2_59 
+    brc %3 l.0_IF2_53 l.1_IF2_53 
+    tar l.0_IF2_53 
     add ptr %5 &0 2 
     ass ptr %6 %5 
     store i8 %6 48 
-    jmp l.1_LOG2_59 
-    tar l.1_IF2_59 
-    tar l.0_ELSE2_59 
+    jmp l.1_LOG2_53 
+    tar l.1_IF2_53 
+    tar l.0_ELSE2_53 
     alloca u64 %size 
     ass u64 %8 2 
     ass u64 %9 &1 
@@ -2854,7 +2630,7 @@ define @f.parse.bin.get ptr u64
     destroy %i 
     destroy %value 
     destroy %size 
-    tar l.1_LOG2_59 
+    tar l.1_LOG2_53 
     ret 
 
 define u64 @f.parse.bin.by ptr
@@ -2867,12 +2643,12 @@ define u64 @f.parse.bin.by ptr
     nq i8 %7 %6 98 
     or u8 %8 %3 %7 
     ass u8 %0 %8 
-    brc %0 l.0_IF2_60 l.1_IF2_60 
-    tar l.0_IF2_60 
+    brc %0 l.0_IF2_54 l.1_IF2_54 
+    tar l.0_IF2_54 
     ass u64 %9 0 
     ret %9 
-    tar l.1_LOG2_60 
-    tar l.1_IF2_60 
+    tar l.1_LOG2_54 
+    tar l.1_IF2_54 
     alloca i64 %size 
     ass ptr %11 &1 
     call @f.cstr.len %10 %11 
@@ -2887,12 +2663,12 @@ define u64 @f.parse.bin.by ptr
     load i64 %12 %size 
     sub i64 %13 %12 1 
     store i64 %i %13 
-    tar l.0_WHILE2_61 
+    tar l.0_WHILE2_55 
     load i64 %15 %i 
     gq i64 %16 %15 2 
     ass u8 %14 %16 
-    brc %14 l.2_WHILE2_61 l.1_WHILE2_61 
-    tar l.2_WHILE2_61 
+    brc %14 l.2_WHILE2_55 l.1_WHILE2_55 
+    tar l.2_WHILE2_55 
     alloca i8 %c 
     load i64 %17 %i 
     add ptr %18 &1 %17 
@@ -2939,8 +2715,8 @@ define u64 @f.parse.bin.by ptr
     tar l.1_LOG3_22 
     destroy %num 
     destroy %c 
-    jmp l.0_WHILE2_61 
-    tar l.1_WHILE2_61 
+    jmp l.0_WHILE2_55 
+    tar l.1_WHILE2_55 
     load u64 %41 %out 
     ass u64 %40 %41 
     destroy %i 
@@ -2959,12 +2735,12 @@ define u64 @f.parse.bin.by ptr
 define u8 @f.parse.bin.by_s ptr ptr
     eq ptr %1 &2 0 
     ass u8 %0 %1 
-    brc %0 l.0_IF2_62 l.1_IF2_62 
-    tar l.0_IF2_62 
+    brc %0 l.0_IF2_56 l.1_IF2_56 
+    tar l.0_IF2_56 
     ass u8 %2 false 
     ret %2 
-    tar l.1_LOG2_62 
-    tar l.1_IF2_62 
+    tar l.1_LOG2_56 
+    tar l.1_IF2_56 
     ass ptr %4 &1 
     load i8 %5 %4 
     nq i8 %6 %5 48 
@@ -2974,12 +2750,12 @@ define u8 @f.parse.bin.by_s ptr ptr
     nq i8 %10 %9 98 
     or u8 %11 %6 %10 
     ass u8 %3 %11 
-    brc %3 l.0_IF2_63 l.1_IF2_63 
-    tar l.0_IF2_63 
+    brc %3 l.0_IF2_57 l.1_IF2_57 
+    tar l.0_IF2_57 
     ass u8 %12 false 
     ret %12 
-    tar l.1_LOG2_63 
-    tar l.1_IF2_63 
+    tar l.1_LOG2_57 
+    tar l.1_IF2_57 
     alloca i64 %size 
     ass ptr %14 &1 
     call @f.cstr.len %13 %14 
@@ -2994,12 +2770,12 @@ define u8 @f.parse.bin.by_s ptr ptr
     load i64 %15 %size 
     sub i64 %16 %15 1 
     store i64 %i %16 
-    tar l.0_WHILE2_64 
+    tar l.0_WHILE2_58 
     load i64 %18 %i 
     gq i64 %19 %18 2 
     ass u8 %17 %19 
-    brc %17 l.2_WHILE2_64 l.1_WHILE2_64 
-    tar l.2_WHILE2_64 
+    brc %17 l.2_WHILE2_58 l.1_WHILE2_58 
+    tar l.2_WHILE2_58 
     alloca i8 %c 
     load i64 %20 %i 
     add ptr %21 &1 %20 
@@ -3046,8 +2822,8 @@ define u8 @f.parse.bin.by_s ptr ptr
     tar l.1_LOG3_23 
     destroy %num 
     destroy %c 
-    jmp l.0_WHILE2_64 
-    tar l.1_WHILE2_64 
+    jmp l.0_WHILE2_58 
+    tar l.1_WHILE2_58 
     ass ptr %43 &2 
     load u64 %44 %out 
     store u64 %43 %44 
@@ -3066,50 +2842,90 @@ define u8 @f.parse.bin.by_s ptr ptr
     ret 
 
 define @f.mem.Allocator.init ptr ptr u64
-    eq ptr %1 &1 0 
-    ass u8 %0 %1 
-    brc %0 l.0_IF2_65 l.1_IF2_65 
-    tar l.0_IF2_65 
-    ass ptr %2 &0 
-    add ptr %3 %2 0 
-    ass u64 %5 &2 
-    call @f.sys.alloc %4 %5 
-    store ptr %3 %4 
-    ass ptr %6 &0 
-    add ptr %7 %6 12 
-    store u32 %7 0 
-    jmp l.1_LOG2_65 
-    tar l.1_IF2_65 
-    tar l.0_ELSE2_65 
-    ass ptr %8 &0 
-    add ptr %9 %8 0 
-    store ptr %9 &1 
-    ass ptr %10 &0 
-    add ptr %11 %10 12 
-    store u32 %11 1 
-    tar l.1_LOG2_65 
-    ass ptr %12 &0 
-    add ptr %13 %12 8 
-    store u32 %13 &2 
-    ass ptr %16 &0 
-    add ptr %17 %16 0 
-    load ptr %18 %17 
-    ass ptr %15 %18 
-    ass i8 %19 0 
-    ass i64 %20 &2 
-    call @f.ptr.set %15 %19 %20 
-    alloca ptr %first 
+    eq ptr %1 &0 0 
+    lt u64 %2 &2 8 
+    or u8 %3 %1 %2 
+    ass u32 %4 &2 
+    nq u64 %5 &2 %4 
+    or u8 %6 %3 %5 
+    ass u8 %0 %6 
+    brc %0 l.0_IF2_59 l.1_IF2_59 
+    tar l.0_IF2_59 
+    nq ptr %8 &0 0 
+    ass u8 %7 %8 
+    brc %7 l.0_IF3_24 l.1_IF3_24 
+    tar l.0_IF3_24 
+    ass ptr %9 &0 
+    add ptr %10 %9 0 
+    store ptr %10 0 
+    ass ptr %11 &0 
+    add ptr %12 %11 8 
+    store u32 %12 0 
+    ass ptr %13 &0 
+    add ptr %14 %13 12 
+    store u32 %14 0 
+    tar l.1_LOG3_24 
+    tar l.1_IF3_24 
+    ret 
+    tar l.1_LOG2_59 
+    tar l.1_IF2_59 
+    eq ptr %16 &1 0 
+    ass u8 %15 %16 
+    brc %15 l.0_IF2_60 l.1_IF2_60 
+    tar l.0_IF2_60 
+    ass ptr %17 &0 
+    add ptr %18 %17 0 
+    ass u64 %20 &2 
+    call @f.sys.alloc %19 %20 
+    store ptr %18 %19 
     ass ptr %21 &0 
-    add ptr %22 %21 0 
-    load ptr %23 %22 
-    store ptr %first %23 
-    load ptr %24 %first 
-    add ptr %25 %24 0 
-    sub u64 %26 &2 8 
-    store u32 %25 %26 
-    load ptr %27 %first 
-    add ptr %28 %27 4 
-    store u32 %28 0 
+    add ptr %22 %21 12 
+    store u32 %22 0 
+    jmp l.1_LOG2_60 
+    tar l.1_IF2_60 
+    tar l.0_ELSE2_60 
+    ass ptr %23 &0 
+    add ptr %24 %23 0 
+    store ptr %24 &1 
+    ass ptr %25 &0 
+    add ptr %26 %25 12 
+    store u32 %26 1 
+    tar l.1_LOG2_60 
+    ass ptr %28 &0 
+    add ptr %29 %28 0 
+    load ptr %30 %29 
+    eq ptr %31 %30 0 
+    ass u8 %27 %31 
+    brc %27 l.0_IF2_61 l.1_IF2_61 
+    tar l.0_IF2_61 
+    ass ptr %32 &0 
+    add ptr %33 %32 8 
+    store u32 %33 0 
+    ret 
+    tar l.1_LOG2_61 
+    tar l.1_IF2_61 
+    ass ptr %34 &0 
+    add ptr %35 %34 8 
+    store u32 %35 &2 
+    ass ptr %38 &0 
+    add ptr %39 %38 0 
+    load ptr %40 %39 
+    ass ptr %37 %40 
+    ass i8 %41 0 
+    ass i64 %42 &2 
+    call @f.ptr.set %37 %41 %42 
+    alloca ptr %first 
+    ass ptr %43 &0 
+    add ptr %44 %43 0 
+    load ptr %45 %44 
+    store ptr %first %45 
+    load ptr %46 %first 
+    add ptr %47 %46 0 
+    sub u64 %48 &2 8 
+    store u32 %47 %48 
+    load ptr %49 %first 
+    add ptr %50 %49 4 
+    store u32 %50 0 
     destroy %first 
     ret 
 
@@ -3124,8 +2940,8 @@ define @f.mem.Allocator.delete ptr
     eq u32 %8 %7 0 
     and u8 %9 %4 %8 
     ass u8 %0 %9 
-    brc %0 l.0_IF2_66 l.1_IF2_66 
-    tar l.0_IF2_66 
+    brc %0 l.0_IF2_62 l.1_IF2_62 
+    tar l.0_IF2_62 
     ass ptr %12 &0 
     add ptr %13 %12 0 
     load ptr %14 %13 
@@ -3134,9 +2950,9 @@ define @f.mem.Allocator.delete ptr
     add ptr %17 %16 8 
     load u32 %18 %17 
     ass u64 %15 %18 
-    call @f.sys.free %10 %11 %15 
-    tar l.1_LOG2_66 
-    tar l.1_IF2_66 
+    call @f.sys.free %11 %15 
+    tar l.1_LOG2_62 
+    tar l.1_IF2_62 
     ass ptr %19 &0 
     add ptr %20 %19 0 
     store ptr %20 0 
@@ -3206,158 +3022,180 @@ define ptr u32 u32 @f.mem.Allocator.by ptr u64
     ret 
 
 define ptr @f.mem.Allocator.alloc ptr u64
-    alloca ptr %addr 
-    store ptr %addr 0 
+    eq ptr %1 &1 0 
+    ass ptr %2 &1 
+    add ptr %3 %2 0 
+    load ptr %4 %3 
+    eq ptr %5 %4 0 
+    or u8 %6 %1 %5 
+    eq u64 %7 &2 0 
+    or u8 %8 %6 %7 
+    ass u8 %0 %8 
+    brc %0 l.0_IF2_63 l.1_IF2_63 
+    tar l.0_IF2_63 
+    ass ptr %9 0 
+    ret %9 
+    tar l.1_LOG2_63 
+    tar l.1_IF2_63 
     alloca ptr %first 
-    ass ptr %0 &1 
-    add ptr %1 %0 0 
-    load ptr %2 %1 
-    store ptr %first %2 
-    tar l.0_WHILE2_67 
-    ass u8 %3 true 
-    brc %3 l.2_WHILE2_67 l.1_WHILE2_67 
-    tar l.2_WHILE2_67 
-    load ptr %5 %first 
-    add ptr %6 %5 8 
-    add ptr %7 %6 &2 
-    ass ptr %8 &1 
-    add ptr %9 %8 0 
     ass ptr %10 &1 
-    add ptr %11 %10 8 
-    load ptr %12 %9 
-    load u32 %13 %11 
-    add ptr %14 %12 %13 
-    gt ptr %15 %7 %14 
-    ass u8 %4 %15 
-    brc %4 l.0_IF3_24 l.1_IF3_24 
-    tar l.0_IF3_24 
-    ass ptr %16 0 
+    add ptr %11 %10 0 
+    load ptr %12 %11 
+    store ptr %first %12 
+    alloca ptr %end 
+    ass ptr %13 &1 
+    add ptr %14 %13 0 
+    ass ptr %15 &1 
+    add ptr %16 %15 8 
+    load ptr %17 %14 
+    load u32 %18 %16 
+    add ptr %19 %17 %18 
+    store ptr %end %19 
+    tar l.0_WHILE2_64 
+    load ptr %21 %first 
+    load ptr %22 %end 
+    lt ptr %23 %21 %22 
+    ass u8 %20 %23 
+    brc %20 l.2_WHILE2_64 l.1_WHILE2_64 
+    tar l.2_WHILE2_64 
+    load ptr %25 %first 
+    add ptr %26 %25 8 
+    load ptr %27 %end 
+    gt ptr %28 %26 %27 
+    ass u8 %24 %28 
+    brc %24 l.0_IF3_25 l.1_IF3_25 
+    tar l.0_IF3_25 
+    ass ptr %29 0 
+    destroy %end 
     destroy %first 
-    destroy %addr 
-    ret %16 
-    jmp l.1_LOG3_24 
-    tar l.1_IF3_24 
-    load ptr %18 %first 
-    add ptr %19 %18 4 
-    load u32 %20 %19 
-    eq u32 %21 %20 0 
-    load ptr %22 %first 
-    add ptr %23 %22 0 
-    load u32 %24 %23 
-    gq u32 %25 %24 &2 
-    and u8 %26 %21 %25 
-    ass u8 %17 %26 
-    brc %17 l.0_ELIF3_24_1 l.1_ELIF3_24_1 
-    tar l.0_ELIF3_24_1 
-    alloca u64 %rem 
-    load ptr %27 %first 
-    add ptr %28 %27 0 
-    load u32 %29 %28 
-    sub u32 %30 %29 &2 
-    store u64 %rem %30 
-    alloca u64 %rsize 
-    store u64 %rsize &2 
-    load u64 %32 %rem 
-    lq u64 %33 %32 8 
-    ass u8 %31 %33 
-    brc %31 l.0_IF4_7 l.1_IF4_7 
+    ret %29 
+    tar l.1_LOG3_25 
+    tar l.1_IF3_25 
+    alloca ptr %next 
+    load ptr %30 %first 
+    add ptr %31 %30 8 
+    load ptr %32 %first 
+    add ptr %33 %32 0 
+    load u32 %34 %33 
+    ass u64 %35 %34 
+    add ptr %36 %31 %35 
+    store ptr %next %36 
+    load ptr %38 %next 
+    load ptr %39 %end 
+    gt ptr %40 %38 %39 
+    ass u8 %37 %40 
+    brc %37 l.0_IF3_26 l.1_IF3_26 
+    tar l.0_IF3_26 
+    ass ptr %41 0 
+    destroy %next 
+    destroy %end 
+    destroy %first 
+    ret %41 
+    tar l.1_LOG3_26 
+    tar l.1_IF3_26 
+    load ptr %43 %first 
+    add ptr %44 %43 4 
+    load u32 %45 %44 
+    eq u32 %46 %45 0 
+    load ptr %47 %first 
+    add ptr %48 %47 0 
+    load u32 %49 %48 
+    gq u32 %50 %49 &2 
+    and u8 %51 %46 %50 
+    ass u8 %42 %51 
+    brc %42 l.0_IF3_27 l.1_IF3_27 
+    tar l.0_IF3_27 
+    alloca u64 %remaining 
+    load ptr %52 %first 
+    add ptr %53 %52 0 
+    load u32 %54 %53 
+    ass u64 %55 %54 
+    sub u64 %56 %55 &2 
+    store u64 %remaining %56 
+    alloca u64 %used 
+    store u64 %used &2 
+    load u64 %58 %remaining 
+    lq u64 %59 %58 8 
+    ass u8 %57 %59 
+    brc %57 l.0_IF4_7 l.1_IF4_7 
     tar l.0_IF4_7 
-    load ptr %34 %first 
-    add ptr %35 %34 0 
-    load u32 %36 %35 
-    store u64 %rsize %36 
+    load ptr %60 %first 
+    add ptr %61 %60 0 
+    load u32 %62 %61 
+    store u64 %used %62 
     tar l.1_LOG4_7 
     tar l.1_IF4_7 
-    load ptr %37 %first 
-    add ptr %38 %37 4 
-    store u32 %38 1 
-    load ptr %39 %first 
-    add ptr %40 %39 0 
-    load u64 %41 %rsize 
-    store u32 %40 %41 
-    load ptr %42 %first 
-    add ptr %43 %42 8 
-    store ptr %addr %43 
-    alloca ptr %next 
-    load ptr %44 %addr 
-    load u64 %45 %rsize 
-    add ptr %46 %44 %45 
-    store ptr %next %46 
-    load u64 %48 %rem 
-    gt u64 %49 %48 8 
-    load ptr %50 %next 
-    load u64 %51 %rem 
-    add ptr %52 %50 %51 
-    ass ptr %53 &1 
-    add ptr %54 %53 0 
-    ass ptr %55 &1 
-    add ptr %56 %55 8 
-    load ptr %57 %54 
-    load u32 %58 %56 
-    add ptr %59 %57 %58 
-    lq ptr %60 %52 %59 
-    and u8 %61 %49 %60 
-    ass u8 %47 %61 
-    brc %47 l.0_IF4_8 l.1_IF4_8 
+    load ptr %63 %first 
+    add ptr %64 %63 4 
+    store u32 %64 1 
+    load ptr %65 %first 
+    add ptr %66 %65 0 
+    load u64 %67 %used 
+    store u32 %66 %67 
+    load u64 %69 %remaining 
+    gt u64 %70 %69 8 
+    ass u8 %68 %70 
+    brc %68 l.0_IF4_8 l.1_IF4_8 
     tar l.0_IF4_8 
-    load ptr %62 %next 
-    add ptr %63 %62 0 
-    load u64 %64 %rem 
-    sub u64 %65 %64 8 
-    store u32 %63 %65 
-    load ptr %66 %next 
-    add ptr %67 %66 4 
-    store u32 %67 0 
+    alloca ptr %remainder 
+    load ptr %71 %first 
+    add ptr %72 %71 8 
+    load u64 %73 %used 
+    add ptr %74 %72 %73 
+    store ptr %remainder %74 
+    load ptr %75 %remainder 
+    add ptr %76 %75 0 
+    load u64 %77 %remaining 
+    sub u64 %78 %77 8 
+    store u32 %76 %78 
+    load ptr %79 %remainder 
+    add ptr %80 %79 4 
+    store u32 %80 0 
+    destroy %remainder 
     tar l.1_LOG4_8 
     tar l.1_IF4_8 
-    load ptr %69 %addr 
-    ass ptr %68 %69 
+    load ptr %81 %first 
+    add ptr %82 %81 8 
+    ass ptr %83 %82 
+    destroy %used 
+    destroy %remaining 
     destroy %next 
-    destroy %rsize 
-    destroy %rem 
+    destroy %end 
     destroy %first 
-    destroy %addr 
-    ret %68 
+    ret %83 
+    destroy %used 
+    destroy %remaining 
+    tar l.1_LOG3_27 
+    tar l.1_IF3_27 
+    load ptr %84 %next 
+    store ptr %first %84 
     destroy %next 
-    destroy %rsize 
-    destroy %rem 
-    jmp l.1_LOG3_24 
-    tar l.1_ELIF3_24_1 
-    tar l.0_ELSE3_24 
-    load ptr %70 %first 
-    add ptr %71 %70 8 
-    load ptr %72 %first 
-    add ptr %73 %72 0 
-    load u32 %74 %73 
-    ass u64 %75 %74 
-    add ptr %76 %71 %75 
-    store ptr %first %76 
-    tar l.1_LOG3_24 
-    jmp l.0_WHILE2_67 
-    tar l.1_WHILE2_67 
-    load ptr %78 %addr 
-    ass ptr %77 %78 
+    jmp l.0_WHILE2_64 
+    tar l.1_WHILE2_64 
+    ass ptr %85 0 
+    destroy %end 
     destroy %first 
-    destroy %addr 
-    ret %77 
+    ret %85 
+    destroy %end 
     destroy %first 
-    destroy %addr 
     ret 
 
 define @f.mem.Allocator.free ptr ptr
     eq ptr %1 &0 0 
-    eq ptr %2 &1 0 
-    or u8 %3 %1 %2 
-    ass u8 %0 %3 
-    brc %0 l.0_IF2_68 l.1_IF2_68 
-    tar l.0_IF2_68 
+    ass ptr %2 &0 
+    add ptr %3 %2 0 
+    load ptr %4 %3 
+    eq ptr %5 %4 0 
+    or u8 %6 %1 %5 
+    eq ptr %7 &1 0 
+    or u8 %8 %6 %7 
+    ass u8 %0 %8 
+    brc %0 l.0_IF2_65 l.1_IF2_65 
+    tar l.0_IF2_65 
     ret 
-    tar l.1_LOG2_68 
-    tar l.1_IF2_68 
-    ass ptr %5 &0 
-    add ptr %6 %5 0 
-    load ptr %7 %6 
-    lt ptr %8 &1 %7 
+    tar l.1_LOG2_65 
+    tar l.1_IF2_65 
+    alloca ptr %end 
     ass ptr %9 &0 
     add ptr %10 %9 0 
     ass ptr %11 &0 
@@ -3365,425 +3203,573 @@ define @f.mem.Allocator.free ptr ptr
     load ptr %13 %10 
     load u32 %14 %12 
     add ptr %15 %13 %14 
-    gt ptr %16 &1 %15 
-    or u8 %17 %8 %16 
-    ass u8 %4 %17 
-    brc %4 l.0_IF2_69 l.1_IF2_69 
-    tar l.0_IF2_69 
+    store ptr %end %15 
+    ass ptr %17 &0 
+    add ptr %18 %17 0 
+    load ptr %19 %18 
+    lt ptr %20 &1 %19 
+    load ptr %21 %end 
+    gq ptr %22 &1 %21 
+    or u8 %23 %20 %22 
+    ass u8 %16 %23 
+    brc %16 l.0_IF2_66 l.1_IF2_66 
+    tar l.0_IF2_66 
+    destroy %end 
     ret 
-    tar l.1_LOG2_69 
-    tar l.1_IF2_69 
+    tar l.1_LOG2_66 
+    tar l.1_IF2_66 
     alloca ptr %prev 
     store ptr %prev 0 
     alloca ptr %first 
-    ass ptr %18 &0 
-    add ptr %19 %18 0 
-    load ptr %20 %19 
-    store ptr %first %20 
-    tar l.0_WHILE2_70 
-    ass u8 %21 true 
-    brc %21 l.2_WHILE2_70 l.1_WHILE2_70 
-    tar l.2_WHILE2_70 
-    load ptr %23 %first 
-    add ptr %24 %23 8 
-    load ptr %25 %first 
-    add ptr %26 %25 0 
-    load u32 %27 %26 
-    ass u64 %28 %27 
-    add ptr %29 %24 %28 
-    ass ptr %30 &0 
-    add ptr %31 %30 0 
-    ass ptr %32 &0 
+    ass ptr %24 &0 
+    add ptr %25 %24 0 
+    load ptr %26 %25 
+    store ptr %first %26 
+    tar l.0_WHILE2_67 
+    load ptr %28 %first 
+    load ptr %29 %end 
+    lt ptr %30 %28 %29 
+    ass u8 %27 %30 
+    brc %27 l.2_WHILE2_67 l.1_WHILE2_67 
+    tar l.2_WHILE2_67 
+    load ptr %32 %first 
     add ptr %33 %32 8 
-    load ptr %34 %31 
-    load u32 %35 %33 
-    add ptr %36 %34 %35 
-    gt ptr %37 %29 %36 
-    ass u8 %22 %37 
-    brc %22 l.0_IF3_25 l.1_IF3_25 
-    tar l.0_IF3_25 
+    load ptr %34 %end 
+    gt ptr %35 %33 %34 
+    ass u8 %31 %35 
+    brc %31 l.0_IF3_28 l.1_IF3_28 
+    tar l.0_IF3_28 
     destroy %first 
     destroy %prev 
+    destroy %end 
     ret 
-    jmp l.1_LOG3_25 
-    tar l.1_IF3_25 
-    load ptr %39 %first 
-    gq ptr %40 &1 %39 
-    load ptr %41 %first 
-    add ptr %42 %41 8 
-    load ptr %43 %first 
-    add ptr %44 %43 0 
-    load u32 %45 %44 
-    ass u64 %46 %45 
-    add ptr %47 %42 %46 
-    lt ptr %48 &1 %47 
-    and u8 %49 %40 %48 
-    ass u8 %38 %49 
-    brc %38 l.0_ELIF3_25_2 l.1_ELIF3_25_2 
-    tar l.0_ELIF3_25_2 
-    load ptr %50 %first 
-    add ptr %51 %50 4 
-    store u32 %51 0 
+    tar l.1_LOG3_28 
+    tar l.1_IF3_28 
     alloca ptr %next 
+    load ptr %36 %first 
+    add ptr %37 %36 8 
+    load ptr %38 %first 
+    add ptr %39 %38 0 
+    load u32 %40 %39 
+    ass u64 %41 %40 
+    add ptr %42 %37 %41 
+    store ptr %next %42 
+    load ptr %44 %next 
+    load ptr %45 %end 
+    gt ptr %46 %44 %45 
+    ass u8 %43 %46 
+    brc %43 l.0_IF3_29 l.1_IF3_29 
+    tar l.0_IF3_29 
+    destroy %next 
+    destroy %first 
+    destroy %prev 
+    destroy %end 
+    ret 
+    tar l.1_LOG3_29 
+    tar l.1_IF3_29 
+    load ptr %48 %first 
+    add ptr %49 %48 8 
+    eq ptr %50 &1 %49 
+    ass u8 %47 %50 
+    brc %47 l.0_IF3_30 l.1_IF3_30 
+    tar l.0_IF3_30 
     load ptr %52 %first 
-    add ptr %53 %52 8 
-    load ptr %54 %first 
-    add ptr %55 %54 0 
-    load u32 %56 %55 
-    ass u64 %57 %56 
-    add ptr %58 %53 %57 
-    store ptr %next %58 
-    ass ptr %60 &0 
-    add ptr %61 %60 0 
-    ass ptr %62 &0 
-    add ptr %63 %62 8 
-    load ptr %64 %61 
-    load u32 %65 %63 
-    add ptr %66 %64 %65 
-    load ptr %67 %next 
-    lq ptr %68 %67 %66 
-    ass u8 %59 %68 
-    brc %59 l.0_IF4_9 l.1_IF4_9 
+    add ptr %53 %52 4 
+    load u32 %54 %53 
+    eq u32 %55 %54 0 
+    ass u8 %51 %55 
+    brc %51 l.0_IF4_9 l.1_IF4_9 
     tar l.0_IF4_9 
-    load ptr %70 %next 
-    add ptr %71 %70 4 
-    load u32 %72 %71 
-    eq u32 %73 %72 0 
-    ass u8 %69 %73 
-    brc %69 l.0_IF5_2 l.1_IF5_2 
-    tar l.0_IF5_2 
-    load ptr %74 %first 
-    add ptr %75 %74 0 
-    load ptr %76 %next 
-    add ptr %77 %76 0 
-    load u32 %78 %77 
-    add i64 %79 8 %78 
-    load u32 %80 %75 
-    add u32 %81 %80 %79 
-    store u32 %75 %81 
-    tar l.1_LOG5_2 
-    tar l.1_IF5_2 
+    destroy %next 
+    destroy %first 
+    destroy %prev 
+    destroy %end 
+    ret 
     tar l.1_LOG4_9 
     tar l.1_IF4_9 
-    ass ptr %83 &0 
-    add ptr %84 %83 0 
-    load ptr %85 %prev 
-    load ptr %86 %84 
-    gq ptr %87 %85 %86 
-    ass u8 %82 %87 
-    brc %82 l.0_IF4_10 l.1_IF4_10 
+    load ptr %56 %first 
+    add ptr %57 %56 4 
+    store u32 %57 0 
+    load ptr %59 %next 
+    add ptr %60 %59 8 
+    load ptr %61 %end 
+    lq ptr %62 %60 %61 
+    ass u8 %58 %62 
+    brc %58 l.0_IF4_10 l.1_IF4_10 
     tar l.0_IF4_10 
-    load ptr %89 %prev 
-    add ptr %90 %89 4 
-    load u32 %91 %90 
-    eq u32 %92 %91 0 
-    ass u8 %88 %92 
-    brc %88 l.0_IF5_3 l.1_IF5_3 
-    tar l.0_IF5_3 
-    load ptr %93 %prev 
-    add ptr %94 %93 0 
-    load ptr %95 %first 
-    add ptr %96 %95 0 
-    load u32 %97 %96 
-    add i64 %98 8 %97 
-    load u32 %99 %94 
-    add u32 %100 %99 %98 
-    store u32 %94 %100 
-    tar l.1_LOG5_3 
-    tar l.1_IF5_3 
+    load ptr %64 %next 
+    add ptr %65 %64 4 
+    load u32 %66 %65 
+    eq u32 %67 %66 0 
+    ass u8 %63 %67 
+    brc %63 l.0_IF5_2 l.1_IF5_2 
+    tar l.0_IF5_2 
+    load ptr %68 %first 
+    add ptr %69 %68 0 
+    load ptr %70 %next 
+    add ptr %71 %70 0 
+    load u32 %72 %71 
+    add i64 %73 8 %72 
+    load u32 %74 %69 
+    add u32 %75 %74 %73 
+    store u32 %69 %75 
+    tar l.1_LOG5_2 
+    tar l.1_IF5_2 
     tar l.1_LOG4_10 
     tar l.1_IF4_10 
+    load ptr %77 %prev 
+    nq ptr %78 %77 0 
+    ass u8 %76 %78 
+    brc %76 l.0_IF4_11 l.1_IF4_11 
+    tar l.0_IF4_11 
+    load ptr %80 %prev 
+    add ptr %81 %80 4 
+    load u32 %82 %81 
+    eq u32 %83 %82 0 
+    ass u8 %79 %83 
+    brc %79 l.0_IF5_3 l.1_IF5_3 
+    tar l.0_IF5_3 
+    load ptr %84 %prev 
+    add ptr %85 %84 0 
+    load ptr %86 %first 
+    add ptr %87 %86 0 
+    load u32 %88 %87 
+    add i64 %89 8 %88 
+    load u32 %90 %85 
+    add u32 %91 %90 %89 
+    store u32 %85 %91 
+    tar l.1_LOG5_3 
+    tar l.1_IF5_3 
+    tar l.1_LOG4_11 
+    tar l.1_IF4_11 
     destroy %next 
     destroy %first 
     destroy %prev 
+    destroy %end 
     ret 
+    tar l.1_LOG3_30 
+    tar l.1_IF3_30 
+    load ptr %92 %first 
+    store ptr %prev %92 
+    load ptr %93 %next 
+    store ptr %first %93 
     destroy %next 
-    jmp l.1_LOG3_25 
-    tar l.1_ELIF3_25_2 
-    tar l.0_ELSE3_25 
-    load ptr %101 %first 
-    store ptr %prev %101 
-    load ptr %102 %first 
-    add ptr %103 %102 8 
-    load ptr %104 %first 
-    add ptr %105 %104 0 
-    load u32 %106 %105 
-    ass u64 %107 %106 
-    add ptr %108 %103 %107 
-    store ptr %first %108 
-    tar l.1_LOG3_25 
-    jmp l.0_WHILE2_70 
-    tar l.1_WHILE2_70 
+    jmp l.0_WHILE2_67 
+    tar l.1_WHILE2_67 
     destroy %first 
     destroy %prev 
+    destroy %end 
     ret 
 
 define ptr @f.mem.Allocator.realloc ptr ptr u64
-    ass ptr %1 &1 
-    add ptr %2 %1 0 
-    load ptr %3 %2 
-    lt ptr %4 &2 %3 
-    ass ptr %5 &1 
-    add ptr %6 %5 0 
-    ass ptr %7 &1 
-    add ptr %8 %7 8 
-    load ptr %9 %6 
-    load u32 %10 %8 
-    add ptr %11 %9 %10 
-    gt ptr %12 &2 %11 
-    or u8 %13 %4 %12 
-    ass u8 %0 %13 
-    brc %0 l.0_IF2_71 l.1_IF2_71 
+    eq ptr %1 &1 0 
+    ass ptr %2 &1 
+    add ptr %3 %2 0 
+    load ptr %4 %3 
+    eq ptr %5 %4 0 
+    or u8 %6 %1 %5 
+    ass u8 %0 %6 
+    brc %0 l.0_IF2_68 l.1_IF2_68 
+    tar l.0_IF2_68 
+    ass ptr %7 0 
+    ret %7 
+    tar l.1_LOG2_68 
+    tar l.1_IF2_68 
+    eq ptr %9 &2 0 
+    ass u8 %8 %9 
+    brc %8 l.0_IF2_69 l.1_IF2_69 
+    tar l.0_IF2_69 
+    ass ptr %11 &1 
+    ass u64 %12 &3 
+    call @f.mem.Allocator.alloc %10 %11 %12 
+    ass ptr %13 %10 
+    ret %13 
+    tar l.1_LOG2_69 
+    tar l.1_IF2_69 
+    eq u64 %15 &3 0 
+    ass u8 %14 %15 
+    brc %14 l.0_IF2_70 l.1_IF2_70 
+    tar l.0_IF2_70 
+    ass ptr %17 &1 
+    ass ptr %18 &2 
+    call @f.mem.Allocator.free %17 %18 
+    ass ptr %19 0 
+    ret %19 
+    tar l.1_LOG2_70 
+    tar l.1_IF2_70 
+    alloca ptr %end 
+    ass ptr %20 &1 
+    add ptr %21 %20 0 
+    ass ptr %22 &1 
+    add ptr %23 %22 8 
+    load ptr %24 %21 
+    load u32 %25 %23 
+    add ptr %26 %24 %25 
+    store ptr %end %26 
+    ass ptr %28 &1 
+    add ptr %29 %28 0 
+    load ptr %30 %29 
+    lt ptr %31 &2 %30 
+    load ptr %32 %end 
+    gq ptr %33 &2 %32 
+    or u8 %34 %31 %33 
+    ass u8 %27 %34 
+    brc %27 l.0_IF2_71 l.1_IF2_71 
     tar l.0_IF2_71 
-    ass ptr %14 0 
-    ret %14 
+    ass ptr %35 0 
+    destroy %end 
+    ret %35 
     tar l.1_LOG2_71 
     tar l.1_IF2_71 
     alloca ptr %first 
-    ass ptr %15 &1 
-    add ptr %16 %15 0 
-    load ptr %17 %16 
-    store ptr %first %17 
+    ass ptr %36 &1 
+    add ptr %37 %36 0 
+    load ptr %38 %37 
+    store ptr %first %38 
     tar l.0_WHILE2_72 
-    ass u8 %18 true 
-    brc %18 l.2_WHILE2_72 l.1_WHILE2_72 
+    load ptr %40 %first 
+    load ptr %41 %end 
+    lt ptr %42 %40 %41 
+    ass u8 %39 %42 
+    brc %39 l.2_WHILE2_72 l.1_WHILE2_72 
     tar l.2_WHILE2_72 
-    load ptr %20 %first 
-    add ptr %21 %20 8 
-    load ptr %22 %first 
-    add ptr %23 %22 0 
-    load u32 %24 %23 
-    ass u64 %25 %24 
-    add ptr %26 %21 %25 
-    ass ptr %27 &1 
-    add ptr %28 %27 0 
-    ass ptr %29 &1 
-    add ptr %30 %29 8 
-    load ptr %31 %28 
-    load u32 %32 %30 
-    add ptr %33 %31 %32 
-    gt ptr %34 %26 %33 
-    ass u8 %19 %34 
-    brc %19 l.0_IF3_26 l.1_IF3_26 
-    tar l.0_IF3_26 
-    ass ptr %35 0 
+    load ptr %44 %first 
+    add ptr %45 %44 8 
+    load ptr %46 %end 
+    gt ptr %47 %45 %46 
+    ass u8 %43 %47 
+    brc %43 l.0_IF3_31 l.1_IF3_31 
+    tar l.0_IF3_31 
+    ass ptr %48 0 
     destroy %first 
-    ret %35 
-    jmp l.1_LOG3_26 
-    tar l.1_IF3_26 
-    load ptr %37 %first 
-    gq ptr %38 &2 %37 
-    load ptr %39 %first 
-    add ptr %40 %39 8 
-    load ptr %41 %first 
-    add ptr %42 %41 0 
-    load u32 %43 %42 
-    add ptr %44 %40 %43 
-    lt ptr %45 &2 %44 
-    and u8 %46 %38 %45 
-    ass u8 %36 %46 
-    brc %36 l.0_ELIF3_26_3 l.1_ELIF3_26_3 
-    tar l.0_ELIF3_26_3 
+    destroy %end 
+    ret %48 
+    tar l.1_LOG3_31 
+    tar l.1_IF3_31 
     alloca ptr %next 
-    load ptr %47 %first 
-    add ptr %48 %47 8 
     load ptr %49 %first 
-    add ptr %50 %49 0 
-    load u32 %51 %50 
-    ass u64 %52 %51 
-    add ptr %53 %48 %52 
-    store ptr %next %53 
-    load ptr %55 %first 
-    add ptr %56 %55 0 
-    load u32 %57 %56 
-    gt u32 %58 %57 &3 
-    ass u8 %54 %58 
-    brc %54 l.0_IF4_11 l.1_IF4_11 
-    tar l.0_IF4_11 
-    alloca u64 %diff 
-    load ptr %59 %first 
-    add ptr %60 %59 0 
-    load u32 %61 %60 
-    ass u64 %62 %61 
-    sub u64 %63 %62 &3 
-    sub u64 %64 %63 8 
-    store u64 %diff %64 
-    load u64 %66 %diff 
-    gt u64 %67 %66 0 
-    ass u8 %65 %67 
-    brc %65 l.0_IF5_4 l.1_IF5_4 
-    tar l.0_IF5_4 
-    load ptr %68 %first 
-    add ptr %69 %68 0 
-    store u32 %69 &3 
-    alloca ptr %renext 
+    add ptr %50 %49 8 
+    load ptr %51 %first 
+    add ptr %52 %51 0 
+    load u32 %53 %52 
+    ass u64 %54 %53 
+    add ptr %55 %50 %54 
+    store ptr %next %55 
+    load ptr %57 %next 
+    load ptr %58 %end 
+    gt ptr %59 %57 %58 
+    ass u8 %56 %59 
+    brc %56 l.0_IF3_32 l.1_IF3_32 
+    tar l.0_IF3_32 
+    ass ptr %60 0 
+    destroy %next 
+    destroy %first 
+    destroy %end 
+    ret %60 
+    tar l.1_LOG3_32 
+    tar l.1_IF3_32 
+    load ptr %62 %first 
+    add ptr %63 %62 8 
+    eq ptr %64 &2 %63 
+    ass u8 %61 %64 
+    brc %61 l.0_IF3_33 l.1_IF3_33 
+    tar l.0_IF3_33 
+    load ptr %66 %first 
+    add ptr %67 %66 0 
+    load u32 %68 %67 
+    gq u32 %69 %68 &3 
+    ass u8 %65 %69 
+    brc %65 l.0_IF4_12 l.1_IF4_12 
+    tar l.0_IF4_12 
+    alloca u64 %remaining 
     load ptr %70 %first 
-    add ptr %71 %70 8 
-    load ptr %72 %first 
-    add ptr %73 %72 0 
-    load u32 %74 %73 
-    ass u64 %75 %74 
-    add ptr %76 %71 %75 
-    store ptr %renext %76 
-    load ptr %77 %renext 
-    add ptr %78 %77 4 
-    store u32 %78 0 
-    load ptr %79 %renext 
-    add ptr %80 %79 0 
-    load u64 %81 %diff 
-    store u32 %80 %81 
-    destroy %renext 
+    add ptr %71 %70 0 
+    load u32 %72 %71 
+    ass u64 %73 %72 
+    sub u64 %74 %73 &3 
+    store u64 %remaining %74 
+    load u64 %76 %remaining 
+    gt u64 %77 %76 8 
+    ass u8 %75 %77 
+    brc %75 l.0_IF5_4 l.1_IF5_4 
+    tar l.0_IF5_4 
+    load ptr %78 %first 
+    add ptr %79 %78 0 
+    store u32 %79 &3 
+    alloca ptr %remainder 
+    load ptr %80 %first 
+    add ptr %81 %80 8 
+    add ptr %82 %81 &3 
+    store ptr %remainder %82 
+    load ptr %83 %remainder 
+    add ptr %84 %83 4 
+    store u32 %84 0 
+    load ptr %85 %remainder 
+    add ptr %86 %85 0 
+    load u64 %87 %remaining 
+    sub u64 %88 %87 8 
+    store u32 %86 %88 
+    alloca ptr %after_remainder 
+    load ptr %89 %remainder 
+    add ptr %90 %89 8 
+    load ptr %91 %remainder 
+    add ptr %92 %91 0 
+    load u32 %93 %92 
+    ass u64 %94 %93 
+    add ptr %95 %90 %94 
+    store ptr %after_remainder %95 
+    load ptr %97 %after_remainder 
+    add ptr %98 %97 8 
+    load ptr %99 %end 
+    lq ptr %100 %98 %99 
+    ass u8 %96 %100 
+    brc %96 l.0_IF6_3 l.1_IF6_3 
+    tar l.0_IF6_3 
+    load ptr %102 %after_remainder 
+    add ptr %103 %102 4 
+    load u32 %104 %103 
+    eq u32 %105 %104 0 
+    ass u8 %101 %105 
+    brc %101 l.0_IF7_0 l.1_IF7_0 
+    tar l.0_IF7_0 
+    load ptr %106 %remainder 
+    add ptr %107 %106 0 
+    load ptr %108 %after_remainder 
+    add ptr %109 %108 0 
+    load u32 %110 %109 
+    add i64 %111 8 %110 
+    load u32 %112 %107 
+    add u32 %113 %112 %111 
+    store u32 %107 %113 
+    tar l.1_LOG7_0 
+    tar l.1_IF7_0 
+    tar l.1_LOG6_3 
+    tar l.1_IF6_3 
+    destroy %after_remainder 
+    destroy %remainder 
     tar l.1_LOG5_4 
     tar l.1_IF5_4 
-    ass ptr %82 &2 
-    destroy %diff 
+    ass ptr %114 &2 
+    destroy %remaining 
     destroy %next 
     destroy %first 
-    ret %82 
-    destroy %diff 
-    jmp l.1_LOG4_11 
-    tar l.1_IF4_11 
-    load ptr %84 %next 
-    add ptr %85 %84 4 
-    load u32 %86 %85 
-    eq u32 %87 %86 0 
-    ass u8 %83 %87 
-    brc %83 l.0_ELIF4_11_1 l.1_ELIF4_11_1 
-    tar l.0_ELIF4_11_1 
-    load ptr %89 %first 
-    add ptr %90 %89 0 
-    load u32 %91 %90 
-    add u32 %92 %91 8 
-    load ptr %93 %next 
-    add ptr %94 %93 0 
-    load u32 %95 %94 
-    add u32 %96 %92 %95 
-    gt u32 %97 %96 &3 
-    ass u8 %88 %97 
-    brc %88 l.0_IF5_5 l.1_IF5_5 
+    destroy %end 
+    ret %114 
+    destroy %remaining 
+    tar l.1_LOG4_12 
+    tar l.1_IF4_12 
+    load ptr %116 %next 
+    add ptr %117 %116 8 
+    load ptr %118 %end 
+    lq ptr %119 %117 %118 
+    ass u8 %115 %119 
+    brc %115 l.0_IF4_13 l.1_IF4_13 
+    tar l.0_IF4_13 
+    load ptr %121 %next 
+    add ptr %122 %121 4 
+    load u32 %123 %122 
+    eq u32 %124 %123 0 
+    ass u8 %120 %124 
+    brc %120 l.0_IF5_5 l.1_IF5_5 
     tar l.0_IF5_5 
-    alloca u64 %diff 
-    load ptr %98 %first 
-    add ptr %99 %98 0 
-    load u32 %100 %99 
-    ass u64 %101 %100 
-    load ptr %102 %next 
-    add ptr %103 %102 0 
-    load u32 %104 %103 
-    ass u64 %105 %104 
-    add u64 %106 %101 %105 
-    sub u64 %107 %106 &3 
-    store u64 %diff %107 
-    load u64 %109 %diff 
-    gt u64 %110 %109 0 
-    ass u8 %108 %110 
-    brc %108 l.0_IF6_3 l.1_IF6_3 
-    tar l.0_IF6_3 
-    load ptr %111 %first 
-    add ptr %112 %111 0 
-    store u32 %112 &3 
-    alloca ptr %renext 
-    load ptr %113 %first 
-    add ptr %114 %113 8 
-    load ptr %115 %first 
-    add ptr %116 %115 0 
-    load u32 %117 %116 
-    ass u64 %118 %117 
-    add ptr %119 %114 %118 
-    store ptr %renext %119 
-    load ptr %120 %renext 
-    add ptr %121 %120 4 
-    store u32 %121 0 
-    load ptr %122 %renext 
-    add ptr %123 %122 0 
-    load u64 %124 %diff 
-    store u32 %123 %124 
-    destroy %renext 
-    jmp l.1_LOG6_3 
-    tar l.1_IF6_3 
-    tar l.0_ELSE6_3 
+    alloca u64 %available 
     load ptr %125 %first 
     add ptr %126 %125 0 
-    load ptr %127 %next 
-    add ptr %128 %127 0 
-    load u32 %129 %128 
-    add i64 %130 8 %129 
-    load u32 %131 %126 
-    add u32 %132 %131 %130 
-    store u32 %126 %132 
-    tar l.1_LOG6_3 
-    ass ptr %133 &2 
-    destroy %diff 
+    load u32 %127 %126 
+    ass u64 %128 %127 
+    add u64 %129 %128 8 
+    load ptr %130 %next 
+    add ptr %131 %130 0 
+    load u32 %132 %131 
+    ass u64 %133 %132 
+    add u64 %134 %129 %133 
+    store u64 %available %134 
+    load u64 %136 %available 
+    gq u64 %137 %136 &3 
+    ass u8 %135 %137 
+    brc %135 l.0_IF6_4 l.1_IF6_4 
+    tar l.0_IF6_4 
+    alloca u64 %remaining 
+    load u64 %138 %available 
+    sub u64 %139 %138 &3 
+    store u64 %remaining %139 
+    load u64 %141 %remaining 
+    gt u64 %142 %141 8 
+    ass u8 %140 %142 
+    brc %140 l.0_IF7_1 l.1_IF7_1 
+    tar l.0_IF7_1 
+    load ptr %143 %first 
+    add ptr %144 %143 0 
+    store u32 %144 &3 
+    alloca ptr %remainder 
+    load ptr %145 %first 
+    add ptr %146 %145 8 
+    add ptr %147 %146 &3 
+    store ptr %remainder %147 
+    load ptr %148 %remainder 
+    add ptr %149 %148 4 
+    store u32 %149 0 
+    load ptr %150 %remainder 
+    add ptr %151 %150 0 
+    load u64 %152 %remaining 
+    sub u64 %153 %152 8 
+    store u32 %151 %153 
+    alloca ptr %after_remainder 
+    load ptr %154 %remainder 
+    add ptr %155 %154 8 
+    load ptr %156 %remainder 
+    add ptr %157 %156 0 
+    load u32 %158 %157 
+    ass u64 %159 %158 
+    add ptr %160 %155 %159 
+    store ptr %after_remainder %160 
+    load ptr %162 %after_remainder 
+    add ptr %163 %162 8 
+    load ptr %164 %end 
+    lq ptr %165 %163 %164 
+    ass u8 %161 %165 
+    brc %161 l.0_IF8_0 l.1_IF8_0 
+    tar l.0_IF8_0 
+    load ptr %167 %after_remainder 
+    add ptr %168 %167 4 
+    load u32 %169 %168 
+    eq u32 %170 %169 0 
+    ass u8 %166 %170 
+    brc %166 l.0_IF9_0 l.1_IF9_0 
+    tar l.0_IF9_0 
+    load ptr %171 %remainder 
+    add ptr %172 %171 0 
+    load ptr %173 %after_remainder 
+    add ptr %174 %173 0 
+    load u32 %175 %174 
+    add i64 %176 8 %175 
+    load u32 %177 %172 
+    add u32 %178 %177 %176 
+    store u32 %172 %178 
+    tar l.1_LOG9_0 
+    tar l.1_IF9_0 
+    tar l.1_LOG8_0 
+    tar l.1_IF8_0 
+    destroy %after_remainder 
+    destroy %remainder 
+    jmp l.1_LOG7_1 
+    tar l.1_IF7_1 
+    tar l.0_ELSE7_1 
+    load ptr %179 %first 
+    add ptr %180 %179 0 
+    load u64 %181 %available 
+    store u32 %180 %181 
+    tar l.1_LOG7_1 
+    ass ptr %182 &2 
+    destroy %remaining 
+    destroy %available 
     destroy %next 
     destroy %first 
-    ret %133 
-    destroy %diff 
+    destroy %end 
+    ret %182 
+    destroy %remaining 
+    tar l.1_LOG6_4 
+    tar l.1_IF6_4 
+    destroy %available 
     tar l.1_LOG5_5 
     tar l.1_IF5_5 
-    tar l.1_LOG4_11 
-    tar l.1_ELIF4_11_1 
+    tar l.1_LOG4_13 
+    tar l.1_IF4_13 
     alloca ptr %newptr 
-    ass ptr %135 &1 
-    ass u64 %136 &3 
-    call @f.mem.Allocator.alloc %134 %135 %136 
-    store ptr %newptr %134 
-    load ptr %139 %newptr 
-    ass ptr %138 %139 
-    ass ptr %140 &2 
-    load ptr %142 %first 
-    add ptr %143 %142 0 
-    load u32 %144 %143 
-    ass i64 %141 %144 
-    call @f.ptr.cpy %138 %140 %141 
-    ass ptr %146 &1 
-    ass ptr %147 &2 
-    call @f.mem.Allocator.free %146 %147 
-    load ptr %149 %newptr 
-    ass ptr %148 %149 
+    ass ptr %184 &1 
+    ass u64 %185 &3 
+    call @f.mem.Allocator.alloc %183 %184 %185 
+    store ptr %newptr %183 
+    load ptr %187 %newptr 
+    eq ptr %188 %187 0 
+    ass u8 %186 %188 
+    brc %186 l.0_IF4_14 l.1_IF4_14 
+    tar l.0_IF4_14 
+    ass ptr %189 0 
     destroy %newptr 
     destroy %next 
     destroy %first 
-    ret %148 
+    destroy %end 
+    ret %189 
+    tar l.1_LOG4_14 
+    tar l.1_IF4_14 
+    load ptr %192 %newptr 
+    ass ptr %191 %192 
+    ass ptr %193 &2 
+    load ptr %195 %first 
+    add ptr %196 %195 0 
+    load u32 %197 %196 
+    ass i64 %194 %197 
+    call @f.ptr.cpy %191 %193 %194 
+    ass ptr %199 &1 
+    ass ptr %200 &2 
+    call @f.mem.Allocator.free %199 %200 
+    load ptr %202 %newptr 
+    ass ptr %201 %202 
     destroy %newptr 
     destroy %next 
-    jmp l.1_LOG3_26 
-    tar l.1_ELIF3_26_3 
-    tar l.0_ELSE3_26 
-    load ptr %150 %first 
-    add ptr %151 %150 8 
-    load ptr %152 %first 
-    add ptr %153 %152 0 
-    load u32 %154 %153 
-    ass u64 %155 %154 
-    add ptr %156 %151 %155 
-    store ptr %first %156 
-    tar l.1_LOG3_26 
+    destroy %first 
+    destroy %end 
+    ret %201 
+    destroy %newptr 
+    tar l.1_LOG3_33 
+    tar l.1_IF3_33 
+    load ptr %203 %next 
+    store ptr %first %203 
+    destroy %next 
     jmp l.0_WHILE2_72 
     tar l.1_WHILE2_72 
-    ass ptr %157 &2 
+    ass ptr %204 0 
     destroy %first 
-    ret %157 
+    destroy %end 
+    ret %204 
     destroy %first 
+    destroy %end 
     ret 
 
 define ptr @f.mem.Allocator.calloc ptr u64 u64
+    alloca u64 %size 
+    mul u64 %0 &2 &3 
+    store u64 %size %0 
+    nq u64 %2 &2 0 
+    load u64 %3 %size 
+    div u64 %4 %3 &2 
+    nq u64 %5 %4 &3 
+    and u8 %6 %2 %5 
+    ass u8 %1 %6 
+    brc %1 l.0_IF2_73 l.1_IF2_73 
+    tar l.0_IF2_73 
+    ass ptr %7 0 
+    destroy %size 
+    ret %7 
+    tar l.1_LOG2_73 
+    tar l.1_IF2_73 
     alloca ptr %addr 
-    ass ptr %1 &1 
-    mul u64 %3 &2 &3 
-    ass u64 %2 %3 
-    call @f.mem.Allocator.alloc %0 %1 %2 
-    store ptr %addr %0 
-    load ptr %6 %addr 
-    ass ptr %5 %6 
-    ass i8 %7 0 
-    mul u64 %9 &2 &3 
-    ass i64 %8 %9 
-    call @f.ptr.set %5 %7 %8 
-    load ptr %11 %addr 
-    ass ptr %10 %11 
+    ass ptr %9 &1 
+    load u64 %11 %size 
+    ass u64 %10 %11 
+    call @f.mem.Allocator.alloc %8 %9 %10 
+    store ptr %addr %8 
+    load ptr %13 %addr 
+    nq ptr %14 %13 0 
+    ass u8 %12 %14 
+    brc %12 l.0_IF2_74 l.1_IF2_74 
+    tar l.0_IF2_74 
+    load ptr %17 %addr 
+    ass ptr %16 %17 
+    ass i8 %18 0 
+    load u64 %20 %size 
+    ass i64 %19 %20 
+    call @f.ptr.set %16 %18 %19 
+    tar l.1_LOG2_74 
+    tar l.1_IF2_74 
+    load ptr %22 %addr 
+    ass ptr %21 %22 
     destroy %addr 
-    ret %10 
+    destroy %size 
+    ret %21 
     destroy %addr 
+    destroy %size 
     ret 
 
 define @f.mem.Allocator.print ptr
@@ -3858,7 +3844,7 @@ define @f.mem.Allocator.print ptr
     add ptr %64 %63 0 
     load ptr %65 %64 
     store ptr %first %65 
-    tar l.0_WHILE2_73 
+    tar l.0_WHILE2_75 
     ass ptr %67 &0 
     add ptr %68 %67 0 
     load ptr %69 %first 
@@ -3875,8 +3861,8 @@ define @f.mem.Allocator.print ptr
     lt ptr %80 %79 %78 
     and u8 %81 %71 %80 
     ass u8 %66 %81 
-    brc %66 l.2_WHILE2_73 l.1_WHILE2_73 
-    tar l.2_WHILE2_73 
+    brc %66 l.2_WHILE2_75 l.1_WHILE2_75 
+    tar l.2_WHILE2_75 
     ass ptr %84 %cstr 
     ass ptr %83 %84 
     ass i8 %85 32 
@@ -3933,8 +3919,8 @@ define @f.mem.Allocator.print ptr
     ass u64 %134 %133 
     add ptr %135 %130 %134 
     store ptr %first %135 
-    jmp l.0_WHILE2_73 
-    tar l.1_WHILE2_73 
+    jmp l.0_WHILE2_75 
+    tar l.1_WHILE2_75 
     ass ptr %137 &cstr.18 
     call @f.io.print %137 
     destroy %first 
@@ -3968,39 +3954,72 @@ define @f.ios.OStream.delete ptr
     load i64 %3 %2 
     gt i64 %4 %3 2 
     ass u8 %0 %4 
-    brc %0 l.0_IF2_74 l.1_IF2_74 
-    tar l.0_IF2_74 
-    ass ptr %7 &0 
-    add ptr %8 %7 0 
-    load i64 %9 %8 
-    ass u64 %6 %9 
-    call @f.sys.close %5 %6 
-    tar l.1_LOG2_74 
-    tar l.1_IF2_74 
-    alloca ptr %mem 
-    ass ptr %10 &0 
-    add ptr %11 %10 24 
-    load ptr %12 %11 
-    store ptr %mem %12 
+    brc %0 l.0_IF2_76 l.1_IF2_76 
+    tar l.0_IF2_76 
+    ass ptr %6 &0 
+    add ptr %7 %6 0 
+    call @f.stdin %8 
+    ass i64 %9 %8 
+    load i64 %10 %7 
+    nq i64 %11 %10 %9 
+    ass u8 %5 %11 
+    brc %5 l.0_IF3_34 l.1_IF3_34 
+    tar l.0_IF3_34 
     ass ptr %13 &0 
-    add ptr %14 %13 32 
-    load ptr %17 %14 
-    ass ptr %16 %17 
-    load ptr %19 %mem 
-    ass ptr %18 %19 
-    call @f.mem.Allocator.free %16 %18 
+    add ptr %14 %13 0 
+    call @f.stdout %15 
+    ass i64 %16 %15 
+    load i64 %17 %14 
+    nq i64 %18 %17 %16 
+    ass u8 %12 %18 
+    brc %12 l.0_IF4_15 l.1_IF4_15 
+    tar l.0_IF4_15 
     ass ptr %20 &0 
-    add ptr %21 %20 32 
-    store ptr %21 0 
-    ass ptr %22 &0 
-    add ptr %23 %22 8 
-    store u64 %23 0 
-    ass ptr %24 &0 
-    add ptr %25 %24 16 
-    store u64 %25 0 
-    ass ptr %26 &0 
-    add ptr %27 %26 24 
-    store ptr %27 0 
+    add ptr %21 %20 0 
+    call @f.stderr %22 
+    ass i64 %23 %22 
+    load i64 %24 %21 
+    nq i64 %25 %24 %23 
+    ass u8 %19 %25 
+    brc %19 l.0_IF5_6 l.1_IF5_6 
+    tar l.0_IF5_6 
+    ass ptr %28 &0 
+    add ptr %29 %28 0 
+    load i64 %30 %29 
+    ass u64 %27 %30 
+    call @f.sys.close %27 
+    tar l.1_LOG5_6 
+    tar l.1_IF5_6 
+    tar l.1_LOG4_15 
+    tar l.1_IF4_15 
+    tar l.1_LOG3_34 
+    tar l.1_IF3_34 
+    tar l.1_LOG2_76 
+    tar l.1_IF2_76 
+    alloca ptr %mem 
+    ass ptr %31 &0 
+    add ptr %32 %31 24 
+    load ptr %33 %32 
+    store ptr %mem %33 
+    ass ptr %34 &0 
+    add ptr %35 %34 32 
+    load ptr %38 %35 
+    ass ptr %37 %38 
+    load ptr %40 %mem 
+    ass ptr %39 %40 
+    call @f.mem.Allocator.free %37 %39 
+    ass ptr %41 &0 
+    add ptr %42 %41 32 
+    store ptr %42 0 
+    ass ptr %43 &0 
+    add ptr %44 %43 8 
+    store u64 %44 0 
+    ass ptr %45 &0 
+    add ptr %46 %45 16 
+    store u64 %46 0 
+    ass ptr %47 &0 
+    add ptr %48 %47 24 
+    store ptr %48 0 
     destroy %mem 
     ret 
 
@@ -4033,12 +4052,12 @@ define i8 @f.ios.OStream.get ptr u64
     load u64 %3 %2 
     gq u64 %4 &2 %3 
     ass u8 %0 %4 
-    brc %0 l.0_IF2_75 l.1_IF2_75 
-    tar l.0_IF2_75 
+    brc %0 l.0_IF2_77 l.1_IF2_77 
+    tar l.0_IF2_77 
     ass i8 %5 0 
     ret %5 
-    tar l.1_LOG2_75 
-    tar l.1_IF2_75 
+    tar l.1_LOG2_77 
+    tar l.1_IF2_77 
     ass ptr %6 &1 
     add ptr %7 %6 24 
     load ptr %8 %7 
@@ -4060,8 +4079,8 @@ define @f.ios.OStream.set_c ptr u64 ptr u64
     lq u64 %8 %4 %7 
     and u8 %9 %3 %8 
     ass u8 %0 %9 
-    brc %0 l.0_IF2_76 l.1_IF2_76 
-    tar l.0_IF2_76 
+    brc %0 l.0_IF2_78 l.1_IF2_78 
+    tar l.0_IF2_78 
     ass ptr %12 &0 
     add ptr %13 %12 24 
     load ptr %14 %13 
@@ -4070,8 +4089,8 @@ define @f.ios.OStream.set_c ptr u64 ptr u64
     ass ptr %16 &2 
     ass i64 %17 &3 
     call @f.ptr.cpy %11 %16 %17 
-    tar l.1_LOG2_76 
-    tar l.1_IF2_76 
+    tar l.1_LOG2_78 
+    tar l.1_IF2_78 
     ret 
 
 define @f.ios.OStream.expand ptr u64
@@ -4087,25 +4106,25 @@ define @f.ios.OStream.expand ptr u64
     load u64 %8 %6 
     gt u64 %9 %7 %8 
     ass u8 %4 %9 
-    brc %4 l.0_IF2_77 l.1_IF2_77 
-    tar l.0_IF2_77 
+    brc %4 l.0_IF2_79 l.1_IF2_79 
+    tar l.0_IF2_79 
     alloca u64 %newsize 
     ass ptr %10 &0 
     add ptr %11 %10 16 
     load u64 %12 %11 
     store u64 %newsize %12 
-    tar l.0_WHILE3_27 
+    tar l.0_WHILE3_35 
     load u64 %14 %length 
     load u64 %15 %newsize 
     gt u64 %16 %14 %15 
     ass u8 %13 %16 
-    brc %13 l.2_WHILE3_27 l.1_WHILE3_27 
-    tar l.2_WHILE3_27 
+    brc %13 l.2_WHILE3_35 l.1_WHILE3_35 
+    tar l.2_WHILE3_35 
     load u64 %17 %newsize 
     mul u64 %18 %17 2 
     store u64 %newsize %18 
-    jmp l.0_WHILE3_27 
-    tar l.1_WHILE3_27 
+    jmp l.0_WHILE3_35 
+    tar l.1_WHILE3_35 
     alloca ptr %block 
     ass ptr %19 &0 
     add ptr %20 %19 32 
@@ -4145,8 +4164,8 @@ define @f.ios.OStream.expand ptr u64
     store u64 %50 %51 
     destroy %block 
     destroy %newsize 
-    tar l.1_LOG2_77 
-    tar l.1_IF2_77 
+    tar l.1_LOG2_79 
+    tar l.1_IF2_79 
     destroy %length 
     ret 
 
@@ -4166,8 +4185,8 @@ define @f.ios.OStream.shrink ptr u64
     gt u64 %11 %10 5 
     and u8 %12 %9 %11 
     ass u8 %4 %12 
-    brc %4 l.0_IF2_78 l.1_IF2_78 
-    tar l.0_IF2_78 
+    brc %4 l.0_IF2_80 l.1_IF2_80 
+    tar l.0_IF2_80 
     alloca ptr %block 
     ass ptr %13 &0 
     add ptr %14 %13 32 
@@ -4206,8 +4225,8 @@ define @f.ios.OStream.shrink ptr u64
     load u64 %45 %newsize 
     store u64 %44 %45 
     destroy %block 
-    tar l.1_LOG2_78 
-    tar l.1_IF2_78 
+    tar l.1_LOG2_80 
+    tar l.1_IF2_80 
     destroy %newsize 
     ret 
 
@@ -4486,12 +4505,12 @@ define ptr @f.ios.OStream.address ptr ptr
     store ptr %ptr %5 
     alloca i32 %j 
     store i32 %j 0 
-    tar l.0_FOR3_28 
+    tar l.0_FOR3_36 
     load i32 %7 %j 
     lt i32 %8 %7 8 
     ass u8 %6 %8 
-    brc %6 l.2_FOR3_28 l.1_FOR3_28 
-    tar l.2_FOR3_28 
+    brc %6 l.2_FOR3_36 l.1_FOR3_36 
+    tar l.2_FOR3_36 
     alloca u8 %ch 
     load ptr %9 %ptr 
     load i32 %10 %j 
@@ -4527,8 +4546,8 @@ define ptr @f.ios.OStream.address ptr ptr
     add i32 %37 %36 1 
     store i32 %j %37 
     destroy %ch 
-    jmp l.0_FOR3_28 
-    tar l.1_FOR3_28 
+    jmp l.0_FOR3_36 
+    tar l.1_FOR3_36 
     destroy %j 
     alloca u64 %len 
     ass ptr %40 %block 
@@ -4576,12 +4595,12 @@ define ptr @f.ios.OStream.mem ptr ptr u64
     call @f.ptr.set %10 %12 %13 
     alloca i32 %j 
     store i32 %j 0 
-    tar l.0_FOR3_29 
+    tar l.0_FOR3_37 
     load i32 %17 %j 
     lt i32 %18 %17 &3 
     ass u8 %16 %18 
-    brc %16 l.2_FOR3_29 l.1_FOR3_29 
-    tar l.2_FOR3_29 
+    brc %16 l.2_FOR3_37 l.1_FOR3_37 
+    tar l.2_FOR3_37 
     alloca u8 %ch 
     load i32 %19 %j 
     add ptr %20 &2 %19 
@@ -4616,8 +4635,8 @@ define ptr @f.ios.OStream.mem ptr ptr u64
     add i32 %46 %45 1 
     store i32 %j %46 
     destroy %ch 
-    jmp l.0_FOR3_29 
-    tar l.1_FOR3_29 
+    jmp l.0_FOR3_37 
+    tar l.1_FOR3_37 
     destroy %j 
     ass ptr %48 &1 
     load ptr %50 %block 
@@ -4649,8 +4668,8 @@ define ptr @f.ios.OStream.flush ptr
     load u64 %4 %size 
     gt u64 %5 %4 0 
     ass u8 %3 %5 
-    brc %3 l.0_IF2_79 l.1_IF2_79 
-    tar l.0_IF2_79 
+    brc %3 l.0_IF2_81 l.1_IF2_81 
+    tar l.0_IF2_81 
     ass ptr %8 &1 
     add ptr %9 %8 0 
     load i64 %10 %9 
@@ -4664,8 +4683,8 @@ define ptr @f.ios.OStream.flush ptr
     call @f.sys.write %6 %7 %11 %15 
     ass ptr %18 &1 
     call @f.ios.OStream.clear %18 
-    tar l.1_LOG2_79 
-    tar l.1_IF2_79 
+    tar l.1_LOG2_81 
+    tar l.1_IF2_81 
     ass ptr %19 &1 
     destroy %size 
     ret %19 
@@ -4781,12 +4800,12 @@ define ptr @f.con.Vector.get ptr u64
     gq u64 %5 &2 %4 
     or u8 %6 %1 %5 
     ass u8 %0 %6 
-    brc %0 l.0_IF2_80 l.1_IF2_80 
-    tar l.0_IF2_80 
+    brc %0 l.0_IF2_82 l.1_IF2_82 
+    tar l.0_IF2_82 
     ass ptr %7 0 
     ret %7 
-    tar l.1_LOG2_80 
-    tar l.1_IF2_80 
+    tar l.1_LOG2_82 
+    tar l.1_IF2_82 
     ass ptr %8 &1 
     add ptr %9 %8 24 
     ass ptr %10 &1 
@@ -4807,8 +4826,8 @@ define @f.con.Vector.set ptr u64 ptr
     lt u64 %5 &1 %4 
     and u8 %6 %1 %5 
     ass u8 %0 %6 
-    brc %0 l.0_IF2_81 l.1_IF2_81 
-    tar l.0_IF2_81 
+    brc %0 l.0_IF2_83 l.1_IF2_83 
+    tar l.0_IF2_83 
     ass ptr %9 &0 
     add ptr %10 %9 24 
     ass ptr %11 &0 
@@ -4824,8 +4843,8 @@ define @f.con.Vector.set ptr u64 ptr
     load u64 %21 %20 
     ass i64 %18 %21 
     call @f.ptr.cpy %8 %17 %18 
-    tar l.1_LOG2_81 
-    tar l.1_IF2_81 
+    tar l.1_LOG2_83 
+    tar l.1_IF2_83 
     ret 
 
 define @f.con.Vector.set_c ptr u64 ptr u64
@@ -4839,8 +4858,8 @@ define @f.con.Vector.set_c ptr u64 ptr u64
     lq u64 %8 %4 %7 
     and u8 %9 %3 %8 
     ass u8 %0 %9 
-    brc %0 l.0_IF2_82 l.1_IF2_82 
-    tar l.0_IF2_82 
+    brc %0 l.0_IF2_84 l.1_IF2_84 
+    tar l.0_IF2_84 
     ass ptr %12 &0 
     add ptr %13 %12 24 
     ass ptr %14 &0 
@@ -4857,8 +4876,8 @@ define @f.con.Vector.set_c ptr u64 ptr u64
     mul u64 %25 %24 &3 
     ass i64 %21 %25 
     call @f.ptr.cpy %11 %20 %21 
-    tar l.1_LOG2_82 
-    tar l.1_IF2_82 
+    tar l.1_LOG2_84 
+    tar l.1_IF2_84 
     ret 
 
 define @f.con.Vector.expand ptr u64
@@ -4874,25 +4893,25 @@ define @f.con.Vector.expand ptr u64
     load u64 %8 %6 
     gt u64 %9 %7 %8 
     ass u8 %4 %9 
-    brc %4 l.0_IF2_83 l.1_IF2_83 
-    tar l.0_IF2_83 
+    brc %4 l.0_IF2_85 l.1_IF2_85 
+    tar l.0_IF2_85 
     alloca u64 %newsize 
     ass ptr %10 &0 
     add ptr %11 %10 16 
     load u64 %12 %11 
     store u64 %newsize %12 
-    tar l.0_WHILE3_30 
+    tar l.0_WHILE3_38 
     load u64 %14 %length 
     load u64 %15 %newsize 
     gt u64 %16 %14 %15 
     ass u8 %13 %16 
-    brc %13 l.2_WHILE3_30 l.1_WHILE3_30 
-    tar l.2_WHILE3_30 
+    brc %13 l.2_WHILE3_38 l.1_WHILE3_38 
+    tar l.2_WHILE3_38 
     load u64 %17 %newsize 
     mul u64 %18 %17 2 
     store u64 %newsize %18 
-    jmp l.0_WHILE3_30 
-    tar l.1_WHILE3_30 
+    jmp l.0_WHILE3_38 
+    tar l.1_WHILE3_38 
     alloca u64 %elementsize 
     ass ptr %19 &0 
     add ptr %20 %19 0 
@@ -4942,8 +4961,8 @@ define @f.con.Vector.expand ptr u64
     destroy %block 
     destroy %elementsize 
     destroy %newsize 
-    tar l.1_LOG2_83 
-    tar l.1_IF2_83 
+    tar l.1_LOG2_85 
+    tar l.1_IF2_85 
     destroy %length 
     ret 
 
@@ -4963,8 +4982,8 @@ define @f.con.Vector.shrink ptr u64
     gt u64 %11 %10 5 
     and u8 %12 %9 %11 
     ass u8 %4 %12 
-    brc %4 l.0_IF2_84 l.1_IF2_84 
-    tar l.0_IF2_84 
+    brc %4 l.0_IF2_86 l.1_IF2_86 
+    tar l.0_IF2_86 
     alloca u64 %elementsize 
     ass ptr %13 &0 
     add ptr %14 %13 0 
@@ -5013,8 +5032,8 @@ define @f.con.Vector.shrink ptr u64
     store u64 %51 %52 
     destroy %block 
     destroy %elementsize 
-    tar l.1_LOG2_84 
-    tar l.1_IF2_84 
+    tar l.1_LOG2_86 
+    tar l.1_IF2_86 
     destroy %newsize 
     ret 
 
@@ -5148,14 +5167,14 @@ define @f.con.Vector.pop_c ptr u64
     load u64 %3 %2 
     lt u64 %4 %3 &1 
     ass u8 %0 %4 
-    brc %0 l.0_IF2_85 l.1_IF2_85 
-    tar l.0_IF2_85 
+    brc %0 l.0_IF2_87 l.1_IF2_87 
+    tar l.0_IF2_87 
     ass ptr %5 &0 
     add ptr %6 %5 8 
     load u64 %7 %6 
     store u64 %rcount %7 
-    tar l.1_LOG2_85 
-    tar l.1_IF2_85 
+    tar l.1_LOG2_87 
+    tar l.1_IF2_87 
     ass ptr %8 &0 
     add ptr %9 %8 8 
     load u64 %10 %9 
@@ -5230,15 +5249,15 @@ define @f.con.Vector.print ptr
     call @f.io.print %55 
     alloca u64 %i 
     store u64 %i 0 
-    tar l.0_FOR3_31 
+    tar l.0_FOR3_39 
     ass ptr %58 &0 
     add ptr %59 %58 8 
     load u64 %60 %i 
     load u64 %61 %59 
     lt u64 %62 %60 %61 
     ass u8 %57 %62 
-    brc %57 l.2_FOR3_31 l.1_FOR3_31 
-    tar l.2_FOR3_31 
+    brc %57 l.2_FOR3_39 l.1_FOR3_39 
+    tar l.2_FOR3_39 
     alloca ptr %element 
     ass ptr %64 &0 
     load u64 %66 %i 
@@ -5269,8 +5288,8 @@ define @f.con.Vector.print ptr
     load u64 %87 %86 
     eq u64 %88 %87 1 
     ass u8 %84 %88 
-    brc %84 l.0_IF4_12 l.1_IF4_12 
-    tar l.0_IF4_12 
+    brc %84 l.0_IF4_16 l.1_IF4_16 
+    tar l.0_IF4_16 
     load ptr %89 %element 
     ass ptr %90 %89 
     ass ptr %91 %90 
@@ -5281,15 +5300,15 @@ define @f.con.Vector.print ptr
     ass ptr %95 %94 
     load u64 %96 %visiual 
     store i8 %95 %96 
-    jmp l.1_LOG4_12 
-    tar l.1_IF4_12 
+    jmp l.1_LOG4_16 
+    tar l.1_IF4_16 
     ass ptr %98 &0 
     add ptr %99 %98 0 
     load u64 %100 %99 
     eq u64 %101 %100 2 
     ass u8 %97 %101 
-    brc %97 l.0_ELIF4_12_2 l.1_ELIF4_12_2 
-    tar l.0_ELIF4_12_2 
+    brc %97 l.0_ELIF4_16_1 l.1_ELIF4_16_1 
+    tar l.0_ELIF4_16_1 
     load ptr %102 %element 
     ass ptr %103 %102 
     ass ptr %104 %103 
@@ -5302,15 +5321,15 @@ define @f.con.Vector.print ptr
     load u64 %112 %visiual 
     ass u64 %111 %112 
     call @f.parse.uint.get %108 %111 
-    jmp l.1_LOG4_12 
-    tar l.1_ELIF4_12_2 
+    jmp l.1_LOG4_16 
+    tar l.1_ELIF4_16_1 
     ass ptr %114 &0 
     add ptr %115 %114 0 
     load u64 %116 %115 
     eq u64 %117 %116 4 
     ass u8 %113 %117 
-    brc %113 l.0_ELIF4_12_3 l.1_ELIF4_12_3 
-    tar l.0_ELIF4_12_3 
+    brc %113 l.0_ELIF4_16_2 l.1_ELIF4_16_2 
+    tar l.0_ELIF4_16_2 
     load ptr %118 %element 
     ass ptr %119 %118 
     ass ptr %120 %119 
@@ -5323,9 +5342,9 @@ define @f.con.Vector.print ptr
     load u64 %128 %visiual 
     ass u64 %127 %128 
     call @f.parse.uint.get %124 %127 
-    jmp l.1_LOG4_12 
-    tar l.1_ELIF4_12_3 
-    tar l.0_ELSE4_12 
+    jmp l.1_LOG4_16 
+    tar l.1_ELIF4_16_2 
+    tar l.0_ELSE4_16 
     load ptr %129 %element 
     ass ptr %130 %129 
     ass ptr %131 %130 
@@ -5338,7 +5357,7 @@ define @f.con.Vector.print ptr
     load u64 %139 %visiual 
     ass u64 %138 %139 
     call @f.parse.uint.get %135 %138 
-    tar l.1_LOG4_12 
+    tar l.1_LOG4_16 
     ass ptr %142 %cstr 
     add ptr %143 %142 48 
     ass ptr %141 %143 
@@ -5353,12 +5372,974 @@ define @f.con.Vector.print ptr
     store u64 %i %150 
     destroy %visiual 
     destroy %element 
-    jmp l.0_FOR3_31 
-    tar l.1_FOR3_31 
+    jmp l.0_FOR3_39 
+    tar l.1_FOR3_39 
     destroy %i 
     ass ptr %152 &cstr.24 
     call @f.io.print %152 
     destroy %cstr 
+    ret 
+
+define @f.ios.IStream.init ptr ptr i64
+    ass ptr %0 &0 
+    add ptr %1 %0 0 
+    store i64 %1 &2 
+    ass ptr %2 &0 
+    add ptr %3 %2 8 
+    store ptr %3 &1 
+    ret 
+
+define i64 ptr @f.ios.IStream.new ptr i64
+    allocs 16 %stream 
+    ass ptr %2 %stream 
+    ass ptr %1 %2 
+    ass ptr %3 &2 
+    ass i64 %4 &3 
+    call @f.ios.IStream.init %1 %3 %4 
+    ass ptr %5 %stream 
+    add ptr %6 %5 0 
+    load i64 %7 %6 
+    add ptr %8 %5 8 
+    load ptr %9 %8 
+    destroy %stream 
+    ret %7 %9 
+    destroy %stream 
+    ret 
+
+define @f.ios.IStream.delete ptr
+    ass ptr %1 &0 
+    add ptr %2 %1 0 
+    load i64 %3 %2 
+    gt i64 %4 %3 2 
+    ass u8 %0 %4 
+    brc %0 l.0_IF2_88 l.1_IF2_88 
+    tar l.0_IF2_88 
+    ass ptr %6 &0 
+    add ptr %7 %6 0 
+    call @f.stdin %8 
+    ass i64 %9 %8 
+    load i64 %10 %7 
+    nq i64 %11 %10 %9 
+    ass u8 %5 %11 
+    brc %5 l.0_IF3_40 l.1_IF3_40 
+    tar l.0_IF3_40 
+    ass ptr %13 &0 
+    add ptr %14 %13 0 
+    call @f.stdout %15 
+    ass i64 %16 %15 
+    load i64 %17 %14 
+    nq i64 %18 %17 %16 
+    ass u8 %12 %18 
+    brc %12 l.0_IF4_17 l.1_IF4_17 
+    tar l.0_IF4_17 
+    ass ptr %20 &0 
+    add ptr %21 %20 0 
+    call @f.stderr %22 
+    ass i64 %23 %22 
+    load i64 %24 %21 
+    nq i64 %25 %24 %23 
+    ass u8 %19 %25 
+    brc %19 l.0_IF5_7 l.1_IF5_7 
+    tar l.0_IF5_7 
+    ass ptr %28 &0 
+    add ptr %29 %28 0 
+    load i64 %30 %29 
+    ass u64 %27 %30 
+    call @f.sys.close %27 
+    tar l.1_LOG5_7 
+    tar l.1_IF5_7 
+    tar l.1_LOG4_17 
+    tar l.1_IF4_17 
+    tar l.1_LOG3_40 
+    tar l.1_IF3_40 
+    tar l.1_LOG2_88 
+    tar l.1_IF2_88 
+    ass ptr %31 &0 
+    add ptr %32 %31 0 
+    neg i64 %33 1 
+    store i64 %32 %33 
+    ret 
+
+define u64 @f.ios.IStream.trim_line ptr ptr
+    alloca u64 %size 
+    ass ptr %1 &2 
+    call @f.cstr.len %0 %1 
+    store u64 %size %0 
+    load u64 %3 %size 
+    gt u64 %4 %3 0 
+    load u64 %5 %size 
+    sub u64 %6 %5 1 
+    add ptr %7 &2 %6 
+    ass ptr %8 %7 
+    load i8 %9 %8 
+    eq i8 %10 %9 10 
+    and u8 %11 %4 %10 
+    ass u8 %2 %11 
+    brc %2 l.0_IF2_89 l.1_IF2_89 
+    tar l.0_IF2_89 
+    load u64 %12 %size 
+    sub u64 %13 %12 1 
+    store u64 %size %13 
+    tar l.1_LOG2_89 
+    tar l.1_IF2_89 
+    load u64 %15 %size 
+    gt u64 %16 %15 0 
+    load u64 %17 %size 
+    sub u64 %18 %17 1 
+    add ptr %19 &2 %18 
+    ass ptr %20 %19 
+    load i8 %21 %20 
+    eq i8 %22 %21 13 
+    and u8 %23 %16 %22 
+    ass u8 %14 %23 
+    brc %14 l.0_IF2_90 l.1_IF2_90 
+    tar l.0_IF2_90 
+    load u64 %24 %size 
+    sub u64 %25 %24 1 
+    store u64 %size %25 
+    tar l.1_LOG2_90 
+    tar l.1_IF2_90 
+    load u64 %26 %size 
+    add ptr %27 &2 %26 
+    ass ptr %28 %27 
+    store i8 %28 0 
+    load u64 %30 %size 
+    ass u64 %29 %30 
+    destroy %size 
+    ret %29 
+    destroy %size 
+    ret 
+
+define ptr @f.ios.IStream.line ptr
+    allocs 1 %buffer 
+    allocs 40 %vline 
+    ass ptr %6 &1 
+    add ptr %7 %6 8 
+    load ptr %8 %7 
+    ass ptr %5 %8 
+    ass u64 %9 1 
+    call @f.con.Vector.new %0 %1 %2 %3 %4 %5 %9 
+    ass ptr %10 %vline 
+    add ptr %11 %10 0 
+    store u64 %11 %0 
+    add ptr %12 %10 8 
+    store u64 %12 %1 
+    add ptr %13 %10 16 
+    store u64 %13 %2 
+    add ptr %14 %10 24 
+    store ptr %14 %3 
+    add ptr %15 %10 32 
+    store ptr %15 %4 
+    alloca u64 %reading 
+    store u64 %reading 1 
+    tar l.0_WHILE2_91 
+    load u64 %17 %reading 
+    ass u8 %16 %17 
+    brc %16 l.2_WHILE2_91 l.1_WHILE2_91 
+    tar l.2_WHILE2_91 
+    alloca u64 %bytes_read 
+    ass ptr %20 &1 
+    add ptr %21 %20 0 
+    load i64 %22 %21 
+    ass u64 %19 %22 
+    ass ptr %24 %buffer 
+    ass ptr %23 %24 
+    ass u64 %25 1 
+    call @f.sys.read %18 %19 %23 %25 
+    store u64 %bytes_read %18 
+    load u64 %27 %bytes_read 
+    shr u64 %28 %27 63 
+    ass u8 %26 %28 
+    brc %26 l.0_IF3_41 l.1_IF3_41 
+    tar l.0_IF3_41 
+    store u64 %reading 0 
+    jmp l.1_LOG3_41 
+    tar l.1_IF3_41 
+    load u64 %30 %bytes_read 
+    eq u64 %31 %30 0 
+    ass u8 %29 %31 
+    brc %29 l.0_ELIF3_41_1 l.1_ELIF3_41_1 
+    tar l.0_ELIF3_41_1 
+    store u64 %reading 0 
+    jmp l.1_LOG3_41 
+    tar l.1_ELIF3_41_1 
+    tar l.0_ELSE3_41 
+    ass ptr %34 %vline 
+    ass ptr %33 %34 
+    ass ptr %36 %buffer 
+    ass ptr %35 %36 
+    ass u64 %37 1 
+    call @f.con.Vector.push_c %33 %35 %37 
+    ass ptr %39 %buffer 
+    add ptr %40 %39 0 
+    ass ptr %41 %40 
+    load i8 %42 %41 
+    eq i8 %43 %42 10 
+    ass u8 %38 %43 
+    brc %38 l.0_IF4_18 l.1_IF4_18 
+    tar l.0_IF4_18 
+    store u64 %reading 0 
+    tar l.1_LOG4_18 
+    tar l.1_IF4_18 
+    tar l.1_LOG3_41 
+    destroy %bytes_read 
+    jmp l.0_WHILE2_91 
+    tar l.1_WHILE2_91 
+    alloca u64 %size 
+    ass ptr %46 %vline 
+    ass ptr %45 %46 
+    call @f.con.Vector.get_size %44 %45 
+    store u64 %size %44 
+    alloca ptr %out 
+    ass ptr %47 &1 
+    add ptr %48 %47 8 
+    load ptr %51 %48 
+    ass ptr %50 %51 
+    load u64 %53 %size 
+    add u64 %54 %53 1 
+    ass u64 %52 %54 
+    call @f.mem.Allocator.alloc %49 %50 %52 
+    store ptr %out %49 
+    load ptr %57 %out 
+    ass ptr %56 %57 
+    ass ptr %61 %vline 
+    ass ptr %60 %61 
+    call @f.con.Vector.get_data %59 %60 
+    ass ptr %58 %59 
+    load u64 %63 %size 
+    ass i64 %62 %63 
+    call @f.ptr.cpy %56 %58 %62 
+    load ptr %64 %out 
+    load u64 %65 %size 
+    add ptr %66 %64 %65 
+    ass ptr %67 %66 
+    store i8 %67 0 
+    ass ptr %70 %vline 
+    ass ptr %69 %70 
+    call @f.con.Vector.delete %69 
+    load ptr %72 %out 
+    ass ptr %71 %72 
+    destroy %out 
+    destroy %size 
+    destroy %reading 
+    destroy %vline 
+    destroy %buffer 
+    ret %71 
+    destroy %out 
+    destroy %size 
+    destroy %reading 
+    destroy %vline 
+    destroy %buffer 
+    ret 
+
+define i8 @f.ios.IStream.char ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca i8 %ch 
+    load ptr %2 %line 
+    add ptr %3 %2 0 
+    ass ptr %4 %3 
+    load i8 %5 %4 
+    store i8 %ch %5 
+    ass ptr %6 &1 
+    add ptr %7 %6 8 
+    load ptr %10 %7 
+    ass ptr %9 %10 
+    load ptr %12 %line 
+    ass ptr %11 %12 
+    call @f.mem.Allocator.free %9 %11 
+    load i8 %14 %ch 
+    ass i8 %13 %14 
+    destroy %ch 
+    destroy %line 
+    ret %13 
+    destroy %ch 
+    destroy %line 
+    ret 
+
+define @f.ios.IStream.buff ptr ptr u64
+    alloca ptr %line 
+    ass ptr %1 &0 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %max 
+    load ptr %4 %line 
+    ass ptr %3 %4 
+    call @f.cstr.len %2 %3 
+    store u64 %max %2 
+    load u64 %6 %max 
+    lt u64 %7 %6 &2 
+    ass u8 %5 %7 
+    brc %5 l.0_IF2_92 l.1_IF2_92 
+    tar l.0_IF2_92 
+    ass ptr %9 &1 
+    load ptr %11 %line 
+    ass ptr %10 %11 
+    load u64 %13 %max 
+    ass i64 %12 %13 
+    call @f.ptr.cpy %9 %10 %12 
+    jmp l.1_LOG2_92 
+    tar l.1_IF2_92 
+    tar l.0_ELSE2_92 
+    ass ptr %15 &1 
+    load ptr %17 %line 
+    ass ptr %16 %17 
+    ass i64 %18 &2 
+    call @f.ptr.cpy %15 %16 %18 
+    tar l.1_LOG2_92 
+    ass ptr %19 &0 
+    add ptr %20 %19 8 
+    load ptr %23 %20 
+    ass ptr %22 %23 
+    load ptr %25 %line 
+    ass ptr %24 %25 
+    call @f.mem.Allocator.free %22 %24 
+    destroy %max 
+    destroy %line 
+    ret 
+
+define ptr @f.ios.IStream.cstr ptr u64
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    load ptr %3 %line 
+    ass ptr %2 %3 
+    destroy %line 
+    ret %2 
+    destroy %line 
+    ret 
+
+define u64 @f.ios.IStream.uint ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    ass ptr %3 &1 
+    load ptr %5 %line 
+    ass ptr %4 %5 
+    call @f.ios.IStream.trim_line %2 %3 %4 
+    store u64 %size %2 
+    load u64 %7 %size 
+    eq u64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.0_IF2_93 l.1_IF2_93 
+    tar l.0_IF2_93 
+    ass ptr %9 &1 
+    add ptr %10 %9 8 
+    load ptr %13 %10 
+    ass ptr %12 %13 
+    load ptr %15 %line 
+    ass ptr %14 %15 
+    call @f.mem.Allocator.free %12 %14 
+    ass u64 %16 0 
+    destroy %size 
+    destroy %line 
+    ret %16 
+    tar l.1_LOG2_93 
+    tar l.1_IF2_93 
+    alloca u64 %num 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    call @f.parse.uint.by %17 %18 
+    store u64 %num %17 
+    ass ptr %20 &1 
+    add ptr %21 %20 8 
+    load ptr %24 %21 
+    ass ptr %23 %24 
+    load ptr %26 %line 
+    ass ptr %25 %26 
+    call @f.mem.Allocator.free %23 %25 
+    load u64 %28 %num 
+    ass u64 %27 %28 
+    destroy %num 
+    destroy %size 
+    destroy %line 
+    ret %27 
+    destroy %num 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define i64 @f.ios.IStream.int ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    ass ptr %3 &1 
+    load ptr %5 %line 
+    ass ptr %4 %5 
+    call @f.ios.IStream.trim_line %2 %3 %4 
+    store u64 %size %2 
+    load u64 %7 %size 
+    eq u64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.0_IF2_94 l.1_IF2_94 
+    tar l.0_IF2_94 
+    ass ptr %9 &1 
+    add ptr %10 %9 8 
+    load ptr %13 %10 
+    ass ptr %12 %13 
+    load ptr %15 %line 
+    ass ptr %14 %15 
+    call @f.mem.Allocator.free %12 %14 
+    ass i64 %16 0 
+    destroy %size 
+    destroy %line 
+    ret %16 
+    tar l.1_LOG2_94 
+    tar l.1_IF2_94 
+    alloca i64 %num 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    call @f.parse.int.by %17 %18 
+    store i64 %num %17 
+    ass ptr %20 &1 
+    add ptr %21 %20 8 
+    load ptr %24 %21 
+    ass ptr %23 %24 
+    load ptr %26 %line 
+    ass ptr %25 %26 
+    call @f.mem.Allocator.free %23 %25 
+    load i64 %28 %num 
+    ass i64 %27 %28 
+    destroy %num 
+    destroy %size 
+    destroy %line 
+    ret %27 
+    destroy %num 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.boolean ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    ass ptr %3 &1 
+    load ptr %5 %line 
+    ass ptr %4 %5 
+    call @f.ios.IStream.trim_line %2 %3 %4 
+    store u64 %size %2 
+    load u64 %7 %size 
+    eq u64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.0_IF2_95 l.1_IF2_95 
+    tar l.0_IF2_95 
+    ass ptr %9 &1 
+    add ptr %10 %9 8 
+    load ptr %13 %10 
+    ass ptr %12 %13 
+    load ptr %15 %line 
+    ass ptr %14 %15 
+    call @f.mem.Allocator.free %12 %14 
+    ass u8 %16 false 
+    destroy %size 
+    destroy %line 
+    ret %16 
+    tar l.1_LOG2_95 
+    tar l.1_IF2_95 
+    alloca u8 %b 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    call @f.parse.boolean.by %17 %18 
+    store u8 %b %17 
+    ass ptr %20 &1 
+    add ptr %21 %20 8 
+    load ptr %24 %21 
+    ass ptr %23 %24 
+    load ptr %26 %line 
+    ass ptr %25 %26 
+    call @f.mem.Allocator.free %23 %25 
+    load u8 %28 %b 
+    ass u8 %27 %28 
+    destroy %b 
+    destroy %size 
+    destroy %line 
+    ret %27 
+    destroy %b 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u64 @f.ios.IStream.hex ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    ass ptr %3 &1 
+    load ptr %5 %line 
+    ass ptr %4 %5 
+    call @f.ios.IStream.trim_line %2 %3 %4 
+    store u64 %size %2 
+    load u64 %7 %size 
+    eq u64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.0_IF2_96 l.1_IF2_96 
+    tar l.0_IF2_96 
+    ass ptr %9 &1 
+    add ptr %10 %9 8 
+    load ptr %13 %10 
+    ass ptr %12 %13 
+    load ptr %15 %line 
+    ass ptr %14 %15 
+    call @f.mem.Allocator.free %12 %14 
+    ass u64 %16 0 
+    destroy %size 
+    destroy %line 
+    ret %16 
+    tar l.1_LOG2_96 
+    tar l.1_IF2_96 
+    alloca u64 %num 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    call @f.parse.hex.by %17 %18 
+    store u64 %num %17 
+    ass ptr %20 &1 
+    add ptr %21 %20 8 
+    load ptr %24 %21 
+    ass ptr %23 %24 
+    load ptr %26 %line 
+    ass ptr %25 %26 
+    call @f.mem.Allocator.free %23 %25 
+    load u64 %28 %num 
+    ass u64 %27 %28 
+    destroy %num 
+    destroy %size 
+    destroy %line 
+    ret %27 
+    destroy %num 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u64 @f.ios.IStream.oct ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    ass ptr %3 &1 
+    load ptr %5 %line 
+    ass ptr %4 %5 
+    call @f.ios.IStream.trim_line %2 %3 %4 
+    store u64 %size %2 
+    load u64 %7 %size 
+    eq u64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.0_IF2_97 l.1_IF2_97 
+    tar l.0_IF2_97 
+    ass ptr %9 &1 
+    add ptr %10 %9 8 
+    load ptr %13 %10 
+    ass ptr %12 %13 
+    load ptr %15 %line 
+    ass ptr %14 %15 
+    call @f.mem.Allocator.free %12 %14 
+    ass u64 %16 0 
+    destroy %size 
+    destroy %line 
+    ret %16 
+    tar l.1_LOG2_97 
+    tar l.1_IF2_97 
+    alloca u64 %num 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    call @f.parse.oct.by %17 %18 
+    store u64 %num %17 
+    ass ptr %20 &1 
+    add ptr %21 %20 8 
+    load ptr %24 %21 
+    ass ptr %23 %24 
+    load ptr %26 %line 
+    ass ptr %25 %26 
+    call @f.mem.Allocator.free %23 %25 
+    load u64 %28 %num 
+    ass u64 %27 %28 
+    destroy %num 
+    destroy %size 
+    destroy %line 
+    ret %27 
+    destroy %num 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u64 @f.ios.IStream.bin ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    ass ptr %3 &1 
+    load ptr %5 %line 
+    ass ptr %4 %5 
+    call @f.ios.IStream.trim_line %2 %3 %4 
+    store u64 %size %2 
+    load u64 %7 %size 
+    eq u64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.0_IF2_98 l.1_IF2_98 
+    tar l.0_IF2_98 
+    ass ptr %9 &1 
+    add ptr %10 %9 8 
+    load ptr %13 %10 
+    ass ptr %12 %13 
+    load ptr %15 %line 
+    ass ptr %14 %15 
+    call @f.mem.Allocator.free %12 %14 
+    ass u64 %16 0 
+    destroy %size 
+    destroy %line 
+    ret %16 
+    tar l.1_LOG2_98 
+    tar l.1_IF2_98 
+    alloca u64 %num 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    call @f.parse.bin.by %17 %18 
+    store u64 %num %17 
+    ass ptr %20 &1 
+    add ptr %21 %20 8 
+    load ptr %24 %21 
+    ass ptr %23 %24 
+    load ptr %26 %line 
+    ass ptr %25 %26 
+    call @f.mem.Allocator.free %23 %25 
+    load u64 %28 %num 
+    ass u64 %27 %28 
+    destroy %num 
+    destroy %size 
+    destroy %line 
+    ret %27 
+    destroy %num 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.uint_s ptr ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    ass ptr %3 &1 
+    load ptr %5 %line 
+    ass ptr %4 %5 
+    call @f.ios.IStream.trim_line %2 %3 %4 
+    store u64 %size %2 
+    load u64 %7 %size 
+    eq u64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.0_IF2_99 l.1_IF2_99 
+    tar l.0_IF2_99 
+    ass ptr %9 &1 
+    add ptr %10 %9 8 
+    load ptr %13 %10 
+    ass ptr %12 %13 
+    load ptr %15 %line 
+    ass ptr %14 %15 
+    call @f.mem.Allocator.free %12 %14 
+    ass u8 %16 false 
+    destroy %size 
+    destroy %line 
+    ret %16 
+    tar l.1_LOG2_99 
+    tar l.1_IF2_99 
+    alloca u8 %ret 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    ass ptr %20 &2 
+    call @f.parse.uint.by_s %17 %18 %20 
+    store u8 %ret %17 
+    ass ptr %21 &1 
+    add ptr %22 %21 8 
+    load ptr %25 %22 
+    ass ptr %24 %25 
+    load ptr %27 %line 
+    ass ptr %26 %27 
+    call @f.mem.Allocator.free %24 %26 
+    load u8 %29 %ret 
+    ass u8 %28 %29 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret %28 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.int_s ptr ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    ass ptr %3 &1 
+    load ptr %5 %line 
+    ass ptr %4 %5 
+    call @f.ios.IStream.trim_line %2 %3 %4 
+    store u64 %size %2 
+    load u64 %7 %size 
+    eq u64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.0_IF2_100 l.1_IF2_100 
+    tar l.0_IF2_100 
+    ass ptr %9 &1 
+    add ptr %10 %9 8 
+    load ptr %13 %10 
+    ass ptr %12 %13 
+    load ptr %15 %line 
+    ass ptr %14 %15 
+    call @f.mem.Allocator.free %12 %14 
+    ass u8 %16 false 
+    destroy %size 
+    destroy %line 
+    ret %16 
+    tar l.1_LOG2_100 
+    tar l.1_IF2_100 
+    alloca u8 %ret 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    ass ptr %20 &2 
+    call @f.parse.int.by_s %17 %18 %20 
+    store u8 %ret %17 
+    ass ptr %21 &1 
+    add ptr %22 %21 8 
+    load ptr %25 %22 
+    ass ptr %24 %25 
+    load ptr %27 %line 
+    ass ptr %26 %27 
+    call @f.mem.Allocator.free %24 %26 
+    load u8 %29 %ret 
+    ass u8 %28 %29 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret %28 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.boolean_s ptr ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    ass ptr %3 &1 
+    load ptr %5 %line 
+    ass ptr %4 %5 
+    call @f.ios.IStream.trim_line %2 %3 %4 
+    store u64 %size %2 
+    load u64 %7 %size 
+    eq u64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.0_IF2_101 l.1_IF2_101 
+    tar l.0_IF2_101 
+    ass ptr %9 &1 
+    add ptr %10 %9 8 
+    load ptr %13 %10 
+    ass ptr %12 %13 
+    load ptr %15 %line 
+    ass ptr %14 %15 
+    call @f.mem.Allocator.free %12 %14 
+    ass u8 %16 false 
+    destroy %size 
+    destroy %line 
+    ret %16 
+    tar l.1_LOG2_101 
+    tar l.1_IF2_101 
+    alloca u8 %ret 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    ass ptr %20 &2 
+    call @f.parse.boolean.by_s %17 %18 %20 
+    store u8 %ret %17 
+    ass ptr %21 &1 
+    add ptr %22 %21 8 
+    load ptr %25 %22 
+    ass ptr %24 %25 
+    load ptr %27 %line 
+    ass ptr %26 %27 
+    call @f.mem.Allocator.free %24 %26 
+    load u8 %29 %ret 
+    ass u8 %28 %29 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret %28 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.hex_s ptr ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    ass ptr %3 &1 
+    load ptr %5 %line 
+    ass ptr %4 %5 
+    call @f.ios.IStream.trim_line %2 %3 %4 
+    store u64 %size %2 
+    load u64 %7 %size 
+    eq u64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.0_IF2_102 l.1_IF2_102 
+    tar l.0_IF2_102 
+    ass ptr %9 &1 
+    add ptr %10 %9 8 
+    load ptr %13 %10 
+    ass ptr %12 %13 
+    load ptr %15 %line 
+    ass ptr %14 %15 
+    call @f.mem.Allocator.free %12 %14 
+    ass u8 %16 false 
+    destroy %size 
+    destroy %line 
+    ret %16 
+    tar l.1_LOG2_102 
+    tar l.1_IF2_102 
+    alloca u8 %ret 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    ass ptr %20 &2 
+    call @f.parse.hex.by_s %17 %18 %20 
+    store u8 %ret %17 
+    ass ptr %21 &1 
+    add ptr %22 %21 8 
+    load ptr %25 %22 
+    ass ptr %24 %25 
+    load ptr %27 %line 
+    ass ptr %26 %27 
+    call @f.mem.Allocator.free %24 %26 
+    load u8 %29 %ret 
+    ass u8 %28 %29 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret %28 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.oct_s ptr ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    ass ptr %3 &1 
+    load ptr %5 %line 
+    ass ptr %4 %5 
+    call @f.ios.IStream.trim_line %2 %3 %4 
+    store u64 %size %2 
+    load u64 %7 %size 
+    eq u64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.0_IF2_103 l.1_IF2_103 
+    tar l.0_IF2_103 
+    ass ptr %9 &1 
+    add ptr %10 %9 8 
+    load ptr %13 %10 
+    ass ptr %12 %13 
+    load ptr %15 %line 
+    ass ptr %14 %15 
+    call @f.mem.Allocator.free %12 %14 
+    ass u8 %16 false 
+    destroy %size 
+    destroy %line 
+    ret %16 
+    tar l.1_LOG2_103 
+    tar l.1_IF2_103 
+    alloca u8 %ret 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    ass ptr %20 &2 
+    call @f.parse.oct.by_s %17 %18 %20 
+    store u8 %ret %17 
+    ass ptr %21 &1 
+    add ptr %22 %21 8 
+    load ptr %25 %22 
+    ass ptr %24 %25 
+    load ptr %27 %line 
+    ass ptr %26 %27 
+    call @f.mem.Allocator.free %24 %26 
+    load u8 %29 %ret 
+    ass u8 %28 %29 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret %28 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret 
+
+define u8 @f.ios.IStream.bin_s ptr ptr
+    alloca ptr %line 
+    ass ptr %1 &1 
+    call @f.ios.IStream.line %0 %1 
+    store ptr %line %0 
+    alloca u64 %size 
+    ass ptr %3 &1 
+    load ptr %5 %line 
+    ass ptr %4 %5 
+    call @f.ios.IStream.trim_line %2 %3 %4 
+    store u64 %size %2 
+    load u64 %7 %size 
+    eq u64 %8 %7 0 
+    ass u8 %6 %8 
+    brc %6 l.0_IF2_104 l.1_IF2_104 
+    tar l.0_IF2_104 
+    ass ptr %9 &1 
+    add ptr %10 %9 8 
+    load ptr %13 %10 
+    ass ptr %12 %13 
+    load ptr %15 %line 
+    ass ptr %14 %15 
+    call @f.mem.Allocator.free %12 %14 
+    ass u8 %16 false 
+    destroy %size 
+    destroy %line 
+    ret %16 
+    tar l.1_LOG2_104 
+    tar l.1_IF2_104 
+    alloca u8 %ret 
+    load ptr %19 %line 
+    ass ptr %18 %19 
+    ass ptr %20 &2 
+    call @f.parse.bin.by_s %17 %18 %20 
+    store u8 %ret %17 
+    ass ptr %21 &1 
+    add ptr %22 %21 8 
+    load ptr %25 %22 
+    ass ptr %24 %25 
+    load ptr %27 %line 
+    ass ptr %26 %27 
+    call @f.mem.Allocator.free %24 %26 
+    load u8 %29 %ret 
+    ass u8 %28 %29 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
+    ret %28 
+    destroy %ret 
+    destroy %size 
+    destroy %line 
     ret 
 
 define @f.con.List.init ptr ptr
@@ -5381,15 +6362,15 @@ define @f.con.List.clear ptr
     store ptr %n %2 
     alloca u64 %i 
     store u64 %i 0 
-    tar l.0_FOR3_32 
+    tar l.0_FOR3_42 
     ass ptr %4 &0 
     add ptr %5 %4 8 
     load u64 %6 %i 
     load u64 %7 %5 
     lt u64 %8 %6 %7 
     ass u8 %3 %8 
-    brc %3 l.2_FOR3_32 l.1_FOR3_32 
-    tar l.2_FOR3_32 
+    brc %3 l.2_FOR3_42 l.1_FOR3_42 
+    tar l.2_FOR3_42 
     ass ptr %9 &0 
     add ptr %10 %9 16 
     load ptr %13 %10 
@@ -5417,8 +6398,8 @@ define @f.con.List.clear ptr
     add u64 %30 %29 1 
     store u64 %i %30 
     destroy %swap 
-    jmp l.0_FOR3_32 
-    tar l.1_FOR3_32 
+    jmp l.0_FOR3_42 
+    tar l.1_FOR3_42 
     destroy %i 
     ass ptr %31 &0 
     add ptr %32 %31 0 
@@ -5463,12 +6444,12 @@ define ptr @f.con.List.find ptr u64
     gq u64 %5 &2 %4 
     or u8 %6 %1 %5 
     ass u8 %0 %6 
-    brc %0 l.0_IF2_86 l.1_IF2_86 
-    tar l.0_IF2_86 
+    brc %0 l.0_IF2_105 l.1_IF2_105 
+    tar l.0_IF2_105 
     ass ptr %7 0 
     ret %7 
-    tar l.1_LOG2_86 
-    tar l.1_IF2_86 
+    tar l.1_LOG2_105 
+    tar l.1_IF2_105 
     alloca ptr %element 
     ass ptr %8 &1 
     add ptr %9 %8 0 
@@ -5476,12 +6457,12 @@ define ptr @f.con.List.find ptr u64
     store ptr %element %10 
     alloca i64 %i 
     store i64 %i &2 
-    tar l.0_FOR3_33 
+    tar l.0_FOR3_43 
     load i64 %12 %i 
     gt i64 %13 %12 0 
     ass u8 %11 %13 
-    brc %11 l.2_FOR3_33 l.1_FOR3_33 
-    tar l.2_FOR3_33 
+    brc %11 l.2_FOR3_43 l.1_FOR3_43 
+    tar l.2_FOR3_43 
     load ptr %14 %element 
     add ptr %15 %14 16 
     load ptr %16 %15 
@@ -5489,8 +6470,8 @@ define ptr @f.con.List.find ptr u64
     load i64 %17 %i 
     sub i64 %18 %17 1 
     store i64 %i %18 
-    jmp l.0_FOR3_33 
-    tar l.1_FOR3_33 
+    jmp l.0_FOR3_43 
+    tar l.1_FOR3_43 
     destroy %i 
     load ptr %20 %element 
     ass ptr %19 %20 
@@ -5512,12 +6493,12 @@ define ptr @f.con.List.get ptr u64
     lq u64 %10 %9 0 
     or u8 %11 %6 %10 
     ass u8 %0 %11 
-    brc %0 l.0_IF2_87 l.1_IF2_87 
-    tar l.0_IF2_87 
+    brc %0 l.0_IF2_106 l.1_IF2_106 
+    tar l.0_IF2_106 
     ass ptr %12 0 
     ret %12 
-    tar l.1_LOG2_87 
-    tar l.1_IF2_87 
+    tar l.1_LOG2_106 
+    tar l.1_IF2_106 
     alloca ptr %element 
     ass ptr %14 &1 
     ass u64 %15 &2 
@@ -5540,8 +6521,8 @@ define @f.con.List.set ptr u64 ptr u64
     lt u64 %5 &1 %4 
     and u8 %6 %1 %5 
     ass u8 %0 %6 
-    brc %0 l.0_IF2_88 l.1_IF2_88 
-    tar l.0_IF2_88 
+    brc %0 l.0_IF2_107 l.1_IF2_107 
+    tar l.0_IF2_107 
     alloca ptr %n 
     ass ptr %8 &0 
     ass u64 %9 &1 
@@ -5577,8 +6558,8 @@ define @f.con.List.set ptr u64 ptr u64
     ass i64 %36 &3 
     call @f.ptr.cpy %30 %34 %36 
     destroy %n 
-    tar l.1_LOG2_88 
-    tar l.1_IF2_88 
+    tar l.1_LOG2_107 
+    tar l.1_IF2_107 
     ret 
 
 define u64 @f.con.List.size ptr
@@ -5647,8 +6628,8 @@ define @f.con.List.pop ptr
     load ptr %6 %5 
     nq ptr %7 %6 0 
     ass u8 %3 %7 
-    brc %3 l.0_IF2_89 l.1_IF2_89 
-    tar l.0_IF2_89 
+    brc %3 l.0_IF2_108 l.1_IF2_108 
+    tar l.0_IF2_108 
     alloca ptr %next 
     load ptr %8 %first 
     add ptr %9 %8 16 
@@ -5680,8 +6661,8 @@ define @f.con.List.pop ptr
     sub u64 %33 %32 1 
     store u64 %31 %33 
     destroy %next 
-    tar l.1_LOG2_89 
-    tar l.1_IF2_89 
+    tar l.1_LOG2_108 
+    tar l.1_IF2_108 
     destroy %first 
     ret 
 
@@ -5719,15 +6700,15 @@ define @f.con.List.print ptr
     call @f.io.print %28 
     alloca u64 %i 
     store u64 %i 0 
-    tar l.0_FOR3_34 
+    tar l.0_FOR3_44 
     ass ptr %31 &0 
     add ptr %32 %31 8 
     load u64 %33 %i 
     load u64 %34 %32 
     lt u64 %35 %33 %34 
     ass u8 %30 %35 
-    brc %30 l.2_FOR3_34 l.1_FOR3_34 
-    tar l.2_FOR3_34 
+    brc %30 l.2_FOR3_44 l.1_FOR3_44 
+    tar l.2_FOR3_44 
     alloca ptr %element 
     ass ptr %37 &0 
     load u64 %39 %i 
@@ -5741,8 +6722,8 @@ define @f.con.List.print ptr
     load u64 %43 %42 
     eq u64 %44 %43 1 
     ass u8 %40 %44 
-    brc %40 l.0_IF4_13 l.1_IF4_13 
-    tar l.0_IF4_13 
+    brc %40 l.0_IF4_19 l.1_IF4_19 
+    tar l.0_IF4_19 
     load ptr %45 %element 
     add ptr %46 %45 0 
     load ptr %47 %46 
@@ -5750,15 +6731,15 @@ define @f.con.List.print ptr
     ass ptr %49 %48 
     load u8 %50 %49 
     store u64 %visual %50 
-    jmp l.1_LOG4_13 
-    tar l.1_IF4_13 
+    jmp l.1_LOG4_19 
+    tar l.1_IF4_19 
     load ptr %52 %element 
     add ptr %53 %52 8 
     load u64 %54 %53 
     eq u64 %55 %54 2 
     ass u8 %51 %55 
-    brc %51 l.0_ELIF4_13_4 l.1_ELIF4_13_4 
-    tar l.0_ELIF4_13_4 
+    brc %51 l.0_ELIF4_19_3 l.1_ELIF4_19_3 
+    tar l.0_ELIF4_19_3 
     load ptr %56 %element 
     add ptr %57 %56 0 
     load ptr %58 %57 
@@ -5766,15 +6747,15 @@ define @f.con.List.print ptr
     ass ptr %60 %59 
     load u16 %61 %60 
     store u64 %visual %61 
-    jmp l.1_LOG4_13 
-    tar l.1_ELIF4_13_4 
+    jmp l.1_LOG4_19 
+    tar l.1_ELIF4_19_3 
     load ptr %63 %element 
     add ptr %64 %63 8 
     load u64 %65 %64 
     eq u64 %66 %65 4 
     ass u8 %62 %66 
-    brc %62 l.0_ELIF4_13_5 l.1_ELIF4_13_5 
-    tar l.0_ELIF4_13_5 
+    brc %62 l.0_ELIF4_19_4 l.1_ELIF4_19_4 
+    tar l.0_ELIF4_19_4 
     load ptr %67 %element 
     add ptr %68 %67 0 
     load ptr %69 %68 
@@ -5782,15 +6763,15 @@ define @f.con.List.print ptr
     ass ptr %71 %70 
     load u32 %72 %71 
     store u64 %visual %72 
-    jmp l.1_LOG4_13 
-    tar l.1_ELIF4_13_5 
+    jmp l.1_LOG4_19 
+    tar l.1_ELIF4_19_4 
     load ptr %74 %element 
     add ptr %75 %74 8 
     load u64 %76 %75 
     eq u64 %77 %76 8 
     ass u8 %73 %77 
-    brc %73 l.0_ELIF4_13_6 l.1_ELIF4_13_6 
-    tar l.0_ELIF4_13_6 
+    brc %73 l.0_ELIF4_19_5 l.1_ELIF4_19_5 
+    tar l.0_ELIF4_19_5 
     load ptr %78 %element 
     add ptr %79 %78 0 
     load ptr %80 %79 
@@ -5798,8 +6779,8 @@ define @f.con.List.print ptr
     ass ptr %82 %81 
     load u64 %83 %82 
     store u64 %visual %83 
-    tar l.1_LOG4_13 
-    tar l.1_ELIF4_13_6 
+    tar l.1_LOG4_19 
+    tar l.1_ELIF4_19_5 
     ass ptr %86 %cstr 
     ass ptr %85 %86 
     ass i8 %87 32 
@@ -5851,8 +6832,8 @@ define @f.con.List.print ptr
     store u64 %i %131 
     destroy %visual 
     destroy %element 
-    jmp l.0_FOR3_34 
-    tar l.1_FOR3_34 
+    jmp l.0_FOR3_44 
+    tar l.1_FOR3_44 
     destroy %i 
     ass ptr %133 &cstr.31 
     call @f.io.print %133 
@@ -5902,13 +6883,42 @@ global i32 @f.main
     ass ptr %37 %cout 
     ass ptr %36 %37 
     call @f.ios.OStream.delete %36 
-    ass ptr %40 %alloc 
-    ass ptr %39 %40 
-    call @f.mem.Allocator.delete %39 
-    ass i32 %41 69 
+    allocs 16 %cin 
+    ass ptr %41 %alloc 
+    ass ptr %40 %41 
+    call @f.stdin %43 
+    ass i64 %42 %43 
+    call @f.ios.IStream.new %38 %39 %40 %42 
+    ass ptr %44 %cin 
+    add ptr %45 %44 0 
+    store i64 %45 %38 
+    add ptr %46 %44 8 
+    store ptr %46 %39 
+    alloca u64 %input 
+    ass ptr %49 %cin 
+    ass ptr %48 %49 
+    call @f.ios.IStream.uint %47 %48 
+    store u64 %input %47 
+    ass ptr %52 %cin 
+    ass ptr %51 %52 
+    call @f.ios.IStream.delete %51 
+    ass ptr %55 %alloc 
+    ass ptr %54 %55 
+    call @f.mem.Allocator.print %54 
+    ass ptr %57 &cstr.34 
+    call @f.io.print %57 
+    ass ptr %60 %alloc 
+    ass ptr %59 %60 
+    call @f.mem.Allocator.delete %59 
+    load u64 %62 %input 
+    ass i32 %61 %62 
+    destroy %input 
+    destroy %cin 
     destroy %cout 
     destroy %alloc 
-    ret %41 
+    ret %61 
+    destroy %input 
+    destroy %cin 
     destroy %cout 
     destroy %alloc 
     ret 
