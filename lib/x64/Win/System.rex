@@ -195,7 +195,7 @@ namespace sys {
         );
     }
 
-    i32 munmap(void* addr, u64 len) {
+    i32 free(void* addr, u64 len) {
         void* base = addr;
         u64 size = 0;
 

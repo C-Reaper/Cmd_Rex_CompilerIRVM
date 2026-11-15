@@ -1901,6 +1901,7 @@ void RexLang_PrintVariable(RexLang* ll,Variable* v) {
     Scope_PrintVariableDirect(&ll->ev.sc,v);
 }
 void RexLang_Build(RexLang* ll) {
+    printf(ANSI_FG_WHITE "[RexLang]: Build using stdlib: " ANSI_FG_GRAY "'%s'\n",ll->libpath);
     printf(ANSI_FG_WHITE "[RexLang]: Build -> " ANSI_FG_GREEN "Starting Compilation of:\n" ANSI_FG_GRAY);
     for(int i = 0;i<ll->filesinc.size;i++){
         CStr name = *(CStr*)CVector_Get(&ll->filesinc,i);
