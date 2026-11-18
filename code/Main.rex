@@ -7,7 +7,15 @@ global i32 main(){
     b = 2;
     
     while a < 10 {
-        a = a + b;
+        while b < 10 {
+            if a < 5 {
+                a = a + b;
+            }elif a < 8 {
+                a = a + b + 1;
+            }else{
+                b = a + 1;
+            }
+        }
     }
 
     return a + 1;

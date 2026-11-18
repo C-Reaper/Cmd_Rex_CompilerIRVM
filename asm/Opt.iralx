@@ -3,13 +3,40 @@ global i32 @f.main
     tar bb.UNNAMED0 
     jmp l.0_WHILE2_0 
     tar l.0_WHILE2_0 
-    phi i32 %1 2 bb.UNNAMED0 %5 l.2_WHILE2_0 
+    phi i32 %33 2 bb.UNNAMED0 %4 l.1_WHILE3_0 
+    phi i32 %1 2 bb.UNNAMED0 %29 l.1_WHILE3_0 
     lt i32 %2 %1 10 
     brc %2 l.2_WHILE2_0 l.1_WHILE2_0 
     tar l.2_WHILE2_0 
-    add i32 %5 %1 2 
+    jmp l.0_WHILE3_0 
+    tar l.0_WHILE3_0 
+    phi i32 %29 %1 l.2_WHILE2_0 %28 l.1_LOG4_0 
+    phi i32 %4 %33 l.2_WHILE2_0 %34 l.1_LOG4_0 
+    lt i32 %5 %4 10 
+    brc %5 l.2_WHILE3_0 l.1_WHILE3_0 
+    tar l.2_WHILE3_0 
+    lt i32 %8 %29 5 
+    brc %8 l.0_IF4_0 l.1_IF4_0 
+    tar l.0_IF4_0 
+    add i32 %11 %29 %4 
+    jmp l.1_LOG4_0 
+    tar l.1_IF4_0 
+    lt i32 %14 %29 8 
+    brc %14 l.0_ELIF4_0_1 l.1_ELIF4_0_1 
+    tar l.0_ELIF4_0_1 
+    add i32 %17 %29 %4 
+    add i32 %18 %17 1 
+    jmp l.1_LOG4_0 
+    tar l.1_ELIF4_0_1 
+    add i32 %20 %29 1 
+    jmp l.1_LOG4_0 
+    tar l.1_LOG4_0 
+    phi i32 %34 %4 l.0_IF4_0 %4 l.0_ELIF4_0_1 %20 l.1_ELIF4_0_1 
+    phi i32 %28 %11 l.0_IF4_0 %18 l.0_ELIF4_0_1 
+    jmp l.0_WHILE3_0 
+    tar l.1_WHILE3_0 
     jmp l.0_WHILE2_0 
     tar l.1_WHILE2_0 
-    add i32 %7 %1 1 
-    ret %7 
+    add i32 %22 %1 1 
+    ret %22 
 

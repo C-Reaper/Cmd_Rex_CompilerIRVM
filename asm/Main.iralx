@@ -13,18 +13,50 @@ global i32 @f.main
     ass u8 %0 %2 
     brc %0 l.2_WHILE2_0 l.1_WHILE2_0 
     tar l.2_WHILE2_0 
-    load i32 %3 %a 
+    tar l.0_WHILE3_0 
     load i32 %4 %b 
-    add i32 %5 %3 %4 
-    store i32 %a %5 
+    lt i32 %5 %4 10 
+    ass u8 %3 %5 
+    brc %3 l.2_WHILE3_0 l.1_WHILE3_0 
+    tar l.2_WHILE3_0 
+    load i32 %7 %a 
+    lt i32 %8 %7 5 
+    ass u8 %6 %8 
+    brc %6 l.0_IF4_0 l.1_IF4_0 
+    tar l.0_IF4_0 
+    load i32 %9 %a 
+    load i32 %10 %b 
+    add i32 %11 %9 %10 
+    store i32 %a %11 
+    jmp l.1_LOG4_0 
+    tar l.1_IF4_0 
+    load i32 %13 %a 
+    lt i32 %14 %13 8 
+    ass u8 %12 %14 
+    brc %12 l.0_ELIF4_0_1 l.1_ELIF4_0_1 
+    tar l.0_ELIF4_0_1 
+    load i32 %15 %a 
+    load i32 %16 %b 
+    add i32 %17 %15 %16 
+    add i32 %18 %17 1 
+    store i32 %a %18 
+    jmp l.1_LOG4_0 
+    tar l.1_ELIF4_0_1 
+    tar l.0_ELSE4_0 
+    load i32 %19 %a 
+    add i32 %20 %19 1 
+    store i32 %b %20 
+    tar l.1_LOG4_0 
+    jmp l.0_WHILE3_0 
+    tar l.1_WHILE3_0 
     jmp l.0_WHILE2_0 
     tar l.1_WHILE2_0 
-    load i32 %6 %a 
-    add i32 %7 %6 1 
-    ass i32 %8 %7 
+    load i32 %21 %a 
+    add i32 %22 %21 1 
+    ass i32 %23 %22 
     destroy %b 
     destroy %a 
-    ret %8 
+    ret %23 
     destroy %b 
     destroy %a 
     ret 
