@@ -1,29 +1,30 @@
 
 global i32 @f.main
+    tar bb.UNNAMED0 
     alloca i32 %a 
-    store i32 %a 0 
+    store i32 %a 1 
     alloca i32 %b 
-    store i32 %b 10 
+    store i32 %b 1 
+    store i32 %a 2 
+    store i32 %b 2 
     tar l.0_WHILE2_0 
     load i32 %1 %a 
-    load i32 %2 %b 
-    lt i32 %3 %1 %2 
-    ass u8 %0 %3 
+    lt i32 %2 %1 10 
+    ass u8 %0 %2 
     brc %0 l.2_WHILE2_0 l.1_WHILE2_0 
     tar l.2_WHILE2_0 
+    load i32 %3 %a 
     load i32 %4 %b 
-    mul i32 %5 %4 1 
-    add i64 %6 0 %5 
-    load i32 %7 %a 
-    add i32 %8 %7 %6 
-    store i32 %a %8 
+    add i32 %5 %3 %4 
+    store i32 %a %5 
     jmp l.0_WHILE2_0 
     tar l.1_WHILE2_0 
-    load i32 %10 %a 
-    ass i32 %9 %10 
+    load i32 %6 %a 
+    add i32 %7 %6 1 
+    ass i32 %8 %7 
     destroy %b 
     destroy %a 
-    ret %9 
+    ret %8 
     destroy %b 
     destroy %a 
     ret 

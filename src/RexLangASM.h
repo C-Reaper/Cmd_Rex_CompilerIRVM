@@ -487,7 +487,7 @@ void RexLang_AppendT(RexLang* ll,Token m_t) {
 
     if(ll->vm.fns.size > 0){
         IRVM_Function* const fn = (IRVM_Function*)Vector_Get(&ll->vm.fns,ll->vm.fns.size - 1);
-        if(fn->bbs.size == 0) PVector_Push(&fn->bbs,(IRVM_BasicBlock[]){ IRVM_BasicBlock_New() },sizeof(IRVM_BasicBlock));
+        if(fn->bbs.size == 0) PVector_Push(&fn->bbs,(IRVM_BasicBlock[]){ IRVM_BasicBlock_New(fn->bbs.size) },sizeof(IRVM_BasicBlock));
         
         IRVM_BasicBlock* const bb = (IRVM_BasicBlock*)PVector_Get(&fn->bbs,fn->bbs.size - 1);
         if(bb->tms.size == 0) Vector_Push(&bb->tms,(TokenMap[]){ TokenMap_New() });
@@ -502,7 +502,7 @@ void RexLang_AppendTM(RexLang* ll,TokenMap m_tm) {
 
     if(ll->vm.fns.size > 0){
         IRVM_Function* const fn = (IRVM_Function*)Vector_Get(&ll->vm.fns,ll->vm.fns.size - 1);
-        if(fn->bbs.size == 0) PVector_Push(&fn->bbs,(IRVM_BasicBlock[]){ IRVM_BasicBlock_New() },sizeof(IRVM_BasicBlock));
+        if(fn->bbs.size == 0) PVector_Push(&fn->bbs,(IRVM_BasicBlock[]){ IRVM_BasicBlock_New(fn->bbs.size) },sizeof(IRVM_BasicBlock));
         
         IRVM_BasicBlock* const bb = (IRVM_BasicBlock*)PVector_Get(&fn->bbs,fn->bbs.size - 1);
         Vector_Push(&bb->tms,&m_tm);
