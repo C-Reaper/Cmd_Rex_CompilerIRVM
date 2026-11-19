@@ -329,7 +329,7 @@ Token RexLang_Struct_Struct_Ass_LSplitSSA(RexLang* ll,CStr type,Token* a,Token* 
 
         if(va_sv->storage == REXLANG_STORAGE_RETURN){
             Token ssa = Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ll->ssas++));
-            Vec_CStr_Push(&ll->return_ssas,CStr_Cpy(ssa.str));
+            Vec_CStr_Push(&ll->return_ssas,ssa.str);
             
             RexLang_AppendTM(ll,TokenMap_Make((Token[]){
                 Token_By(TOKEN_IRVM_LOAD,IRVM_OP_LOAD),
@@ -352,6 +352,7 @@ Token RexLang_Struct_Struct_Ass_LSplitSSA(RexLang* ll,CStr type,Token* a,Token* 
     }
 
     Vec_CStr_Free(&types);
+    Token_Free(&ssa_b);
     return Token_Cpy(a);
 }
 Token RexLang_Struct_Struct_Ass_RSplitSSA(RexLang* ll,CStr type,Token* a,Token* b){
@@ -390,6 +391,7 @@ Token RexLang_Struct_Struct_Ass_RSplitSSA(RexLang* ll,CStr type,Token* a,Token* 
     }
 
     Vec_CStr_Free(&types);
+    Token_Free(&ssa_a);
     return Token_Cpy(a);
 }
 Token RexLang_Struct_Struct_Ass_LRSplitSSA(RexLang* ll,CStr type,Token* a,Token* b){
@@ -411,7 +413,7 @@ Token RexLang_Struct_Struct_Ass_LRSplitSSA(RexLang* ll,CStr type,Token* a,Token*
 
         if(va_sv->storage == REXLANG_STORAGE_RETURN){
             Token ssa = Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ll->ssas++));
-            Vec_CStr_Push(&ll->return_ssas,CStr_Cpy(ssa.str));
+            Vec_CStr_Push(&ll->return_ssas,ssa.str);
             
             RexLang_AppendTM(ll,TokenMap_Make((Token[]){
                 Token_By(TOKEN_IRVM_ASS,IRVM_OP_ASS),

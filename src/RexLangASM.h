@@ -495,6 +495,7 @@ void RexLang_AppendT(RexLang* ll,Token m_t) {
         Vector_Push(&bb->tms,&m_t);
     }else{
         Compiler_ErrorHandler(&ll->ev,"no function for token!");
+        Token_Free(&m_t);
     }
 }
 void RexLang_AppendTM(RexLang* ll,TokenMap m_tm) {
@@ -508,6 +509,7 @@ void RexLang_AppendTM(RexLang* ll,TokenMap m_tm) {
         Vector_Push(&bb->tms,&m_tm);
     }else{
         Compiler_ErrorHandler(&ll->ev,"no function for token!");
+        TokenMap_Free(&m_tm);
     }
 }
 void RexLang_AppendFunc(RexLang* ll,CStr name,CStr rtype,MemberMap* params) {
@@ -532,6 +534,8 @@ void RexLang_AppendFunc(RexLang* ll,CStr name,CStr rtype,MemberMap* params) {
             ptypes.size
         )
     });
+    Vector_Free(&rtypes);
+    Vector_Free(&ptypes);
     CStr_Free(&fname);
 }
 
@@ -967,12 +971,16 @@ void RexLang_FromTo_DestroyOnly(RexLang* ll,Range start,Range end) {
 }
 
 CStr RexLang_GetFloat(RexLang* ll,Double d){
-    CStr cstr = (CStr)Number_Get(*((Number*)&d));
+    Number bits;
+    memcpy(&bits,&d,sizeof(bits));
+    CStr cstr = (CStr)Number_Get(bits);
     return cstr;
 }
 CStr RexLang_GetFloatStr(RexLang* ll,CStr fstr){
     Double d = Double_Parse((i8*)fstr,0);
-    CStr cstr = (CStr)Number_Get(*((Number*)&d));
+    Number bits;
+    memcpy(&bits,&d,sizeof(bits));
+    CStr cstr = (CStr)Number_Get(bits);
     return cstr;
 }
 Token RexLang_GetFloatToken(RexLang* ll,CStr fstr){
@@ -1115,7 +1123,7 @@ Token RexLang_GetIRVMToken(RexLang* ll,Token* a){
                 return Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(v_sv->id));
             else if(v_sv->storage == REXLANG_STORAGE_RETURN){
                 Token ssa = Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ll->ssas++));
-                Vec_CStr_Push(&ll->return_ssas,CStr_Cpy(ssa.str));
+                Vec_CStr_Push(&ll->return_ssas,ssa.str);
                 return ssa;
             }
             else if(v_sv->storage == REXLANG_STORAGE_PARAM){
@@ -1279,7 +1287,7 @@ Token RexLang_GetIRVMTokenSSA(RexLang* ll,Token* a){
                 return Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(v_sv->id));
             }else if(v_sv->storage == REXLANG_STORAGE_RETURN){
                 Token ssa = Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(ll->ssas++));
-                Vec_CStr_Push(&ll->return_ssas,CStr_Cpy(ssa.str));
+                Vec_CStr_Push(&ll->return_ssas,ssa.str);
                 return ssa;
             }else if(v_sv->storage == REXLANG_STORAGE_PARAM){
                 return Token_Move(TOKEN_IRVM_PARAM,(CStr)Number_Get(v_sv->id));

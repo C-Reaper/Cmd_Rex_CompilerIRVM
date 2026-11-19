@@ -30,6 +30,8 @@ Boolean RexLang_Compress_defines(RexLang* ll,TokenMap* tm){
 
                     TokenMap tokm = TokenMap_Cpy(&d->content);
                     Vector_AddCount(tm,tokm.Memory,tokm.size,i);
+                    Vector_Free(&tokm);
+                    break;
                 }
             }
         }
@@ -62,6 +64,7 @@ Boolean RexLang_Compress_pointer(RexLang* ll,TokenMap* tm){
             }else if(next->tt==TOKEN_REXLANG_SUBS){
                 if(!RexLang_CompressStackType(tm,i)) continue;
                 type = (Token*)Vector_Get(tm,i);
+                next = (Token*)Vector_Get(tm,i+1);
 
                 RexLang_Compress(ll,(TokenMap*)Vector_Get(type->args,0));
 
@@ -349,6 +352,7 @@ TokenMap RexLang_ShutingYard_Transform(ShutingYard* sy,TokenMap* toks) {
                 SY_Precedence cpd = 0;
                 while(Operators.size>=0){
                     if(Operators.size==0){
+                        TokenMap_Free(&Operators);
                         return Stack;
                     }
                     
@@ -359,6 +363,7 @@ TokenMap RexLang_ShutingYard_Transform(ShutingYard* sy,TokenMap* toks) {
                         Vector_Push(&Stack,last);
                         Vector_PopTop(&Operators);
                     }else{
+                        Token_Free(last);
                         Vector_PopTop(&Operators);
                         break;
                     }
@@ -401,6 +406,7 @@ FunctionRT RexLang_ShutingYard_Execute(Compiler* ev,ShutingYard* sy,TokenMap* sy
                 
                 if(b){
                     Vector_Free(&args);
+                    TokenMap_Free(&Stack);
                     return b;
                 }else if(back.tt != TOKEN_NONE){
                     TokenMap_Free(&args);
@@ -497,9 +503,17 @@ Boolean RexLang_PP_Struct(RexLang* ll,TokenMap* tm){
 
                     if(type<0){
                         Compiler_ErrorHandler(&ll->ev,"Struct -> Error: couldn't find Type!");
+                        TokenMap_Free(&first);
+                        TokenMap_Free(&after);
+                        TokenMap_Free(&between);
+                        MemberMap_Free(&params);
                         return False;
                     }else if(name<0){
                         Compiler_ErrorHandler(&ll->ev,"Struct -> Error: couldn't find name!");
+                        TokenMap_Free(&first);
+                        TokenMap_Free(&after);
+                        TokenMap_Free(&between);
+                        MemberMap_Free(&params);
                         return False;
                     }else{
                         CStr sname = ((Token*)Vector_Get(&first,name))->str;
@@ -518,6 +532,7 @@ Boolean RexLang_PP_Struct(RexLang* ll,TokenMap* tm){
                 Type* parent = Scope_FindType(&ll->ev.sc,STRUCT_TYPE);
                 if(!parent){
                     Compiler_ErrorHandler(&ll->ev,"Struct -> Error: type %s doesn't exist!",STRUCT_TYPE);
+                    MemberMap_Free(&params);
                     return False;
                 }
                 
@@ -529,6 +544,7 @@ Boolean RexLang_PP_Struct(RexLang* ll,TokenMap* tm){
                 CStr_Free(&realname);
 
                 MemberMap_Set(&t.related,&params);
+                MemberMap_Free(&params);
 
                 TypeMap_Push(&ll->ev.sc.types,&t);
                 return False;
@@ -720,7 +736,7 @@ Boolean RexLang_If(RexLang* ll,TokenMap* tm){
 
                     RexLang_AppendTM(ll,TokenMap_Make((Token[]){
                         Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
-                        Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
+                        Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
                         Token_By(TOKEN_STRING,nextlabel),
                         Token_By(TOKEN_STRING,otherlabel),
                         Token_Null()
@@ -792,7 +808,7 @@ Boolean RexLang_Elif(RexLang* ll,TokenMap* tm){
 
                     RexLang_AppendTM(ll,TokenMap_Make((Token[]){
                         Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
-                        Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
+                        Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
                         Token_By(TOKEN_STRING,nextlabel),
                         Token_By(TOKEN_STRING,otherlabel),
                         Token_Null()
@@ -912,7 +928,7 @@ Boolean RexLang_While(RexLang* ll,TokenMap* tm){
 
                     RexLang_AppendTM(ll,TokenMap_Make((Token[]){
                         Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
-                        Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
+                        Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
                         Token_By(TOKEN_STRING,nextlabelstart),
                         Token_By(TOKEN_STRING,otherlabel),
                         Token_Null()
@@ -1003,7 +1019,7 @@ Boolean RexLang_For(RexLang* ll,TokenMap* tm){
 
                         RexLang_AppendTM(ll,TokenMap_Make((Token[]){
                             Token_By(TOKEN_IRVM_BRC,IRVM_OP_BRC),
-                            Token_By(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
+                            Token_Move(TOKEN_IRVM_SSA,(CStr)Number_Get(b_sv->id)),
                             Token_By(TOKEN_STRING,truelabel),
                             Token_By(TOKEN_STRING,otherlabel),
                             Token_Null()
