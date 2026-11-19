@@ -1912,14 +1912,21 @@ void RexLang_Build(RexLang* ll) {
     printf(ANSI_FG_WHITE "[RexLang]: Build -> " ANSI_FG_GREEN "Starting Compilation...\n" ANSI_FG_WHITE);
     
     Compiler_Begin(&ll->ev);
-    
+
     if(!ll->ev.error){
-        printf(ANSI_FG_WHITE "[RexLang]: Build -> " ANSI_FG_GREEN "Compilation successful! Writing to " ANSI_FG_GRAY "'%s' ..." ANSI_FG_WHITE "\n",ll->output);
-        IRVM_Save(&ll->vm,ll->output);
-        printf(ANSI_FG_WHITE "[RexLang]: Build -> " ANSI_FG_GREEN "Writing successful!" ANSI_FG_WHITE "\n");
+        printf(ANSI_FG_WHITE "[RexLang]: Build -> " ANSI_FG_GREEN "Compilation successful!" ANSI_FG_WHITE "\n");
     }else{
         Compiler_FlushLogs(&ll->ev);
-        printf(ANSI_FG_WHITE "[RexLang]: Build -> " ANSI_FG_RED "aborted because of Errors!" ANSI_FG_WHITE "\n");
+        printf(ANSI_FG_WHITE "[RexLang]: Build -> " ANSI_FG_RED "Aborted because of Errors!" ANSI_FG_WHITE "\n");
+    }
+}
+void RexLang_SaveIRVM(RexLang* ll) {
+    if(!ll->ev.error){
+        printf(ANSI_FG_WHITE "[RexLang]: SaveIRVM -> " ANSI_FG_GREEN "Writing to " ANSI_FG_GRAY "'%s' ..." ANSI_FG_WHITE "\n",ll->output);
+        IRVM_Save(&ll->vm,ll->output);
+        printf(ANSI_FG_WHITE "[RexLang]: SaveIRVM -> " ANSI_FG_GREEN "Writing successful!" ANSI_FG_WHITE "\n");
+    }else{
+        printf(ANSI_FG_WHITE "[RexLang]: SaveIRVM -> " ANSI_FG_RED "Could not write to '%s' because of Errors!" ANSI_FG_WHITE "\n",ll->output);
     }
 }
 void RexLang_Free(RexLang* ll) {

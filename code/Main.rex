@@ -1,22 +1,32 @@
-
+import Parser;
+import System;
+import CStr;
+import Char;
+import Pointer;
+import IO;
+import Time;
+import Memory;
+import OStream;
+import IStream;
+import Vector;
+import List;
 
 global i32 main(){
-    i32 a = 1;
-    i32 b = 1;
-    a = 2;
-    b = 2;
-    
-    while a < 10 {
-        while b < 10 {
-            if a < 5 {
-                a = a + b;
-            }elif a < 8 {
-                a = a + b + 1;
-            }else{
-                b = a + 1;
-            }
-        }
-    }
+    //i8[40000] buffer;
+    //mem::Allocator alloc = mem::Allocator::by(buffer,40000);
+    mem::Allocator alloc = mem::Allocator::make(40000);
 
-    return a + 1;
+    ios::OStream cout = ios::OStream::new(&alloc,stdout());
+    cout.cstr("Hello World: ")->uint(69)->cstr("\n")->flush();
+    cout.delete();
+
+    ios::IStream cin = ios::IStream::new(&alloc,stdin());
+    u64 input = cin.uint();
+    cin.delete();
+
+    alloc.print();
+    io::print("\n");
+
+    alloc.delete();
+    return input;
 }

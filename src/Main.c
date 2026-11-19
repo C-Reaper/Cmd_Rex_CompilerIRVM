@@ -20,10 +20,16 @@ int main(int argc,char** argv){
     // "./lib/x64/Linux" | "./lib/x64/Win"
     RexLang ll = RexLang_New("./lib/x64/Linux","./lib/x64/generic",PATH_SRC,PATH_IRVM);
     RexLang_Build(&ll);
+    RexLang_SaveIRVM(&ll);
     
     if(!ll.ev.error){
-        IRVM vm = IRVM_New();
-        IRVM_AddScript(&vm,PATH_IRVM);
+        IRVM vm = ll.vm;
+        ll.vm = IRVM_Null();
+
+        //IRVM vm = IRVM_New();
+        //IRVM_AddScript(&vm,PATH_IRVM);
+        
+        IRVM_Build_Split(&vm);
         IRVM_Build(&vm);
         IRVM_Optimiser_Exe(&vm,0U,(
             IRVM_OPTIMISATION_AS    |
@@ -36,17 +42,18 @@ int main(int argc,char** argv){
             IRVM_OPTIMISATION_BBS   |
             IRVM_OPTIMISATION_BS    |
             IRVM_OPTIMISATION_UCE   |
-            IRVM_OPTIMISATION_M2R   |
+            //IRVM_OPTIMISATION_M2R   |
+            //IRVM_OPTIMISATION_PR    |
             0
         ));
-        IRVM_Print(&vm);
+        //IRVM_Print(&vm);
         IRVM_Save(&vm,PATH_OPT_IRVM);
-        IRVM_Free(&vm);
+        //IRVM_Free(&vm);
         
-        //IRVM_Comp exe = IRVM_Comp_New(vm,PATH_ASM);
-        //IRVM_Comp_Build(&exe);
-        //IRVM_Comp_CreateOutput(&exe);
-        //IRVM_Comp_Free(&exe);
+        IRVM_Comp exe = IRVM_Comp_New(vm,PATH_ASM);
+        IRVM_Comp_Build(&exe);
+        IRVM_Comp_CreateOutput(&exe);
+        IRVM_Comp_Free(&exe);
     }
 
     RexLang_Free(&ll);
