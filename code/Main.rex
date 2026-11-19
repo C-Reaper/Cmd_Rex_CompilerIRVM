@@ -1,5 +1,5 @@
-import Parser;
 import System;
+import Parser;
 import CStr;
 import Char;
 import Pointer;

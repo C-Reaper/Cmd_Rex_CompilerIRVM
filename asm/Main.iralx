@@ -34,24 +34,319 @@ data i8 &cstr.32 'H' 'e' 'l' 'l' 'o' ' ' 'W' 'o' 'r' 'l' 'd' ':' ' ' 0
 data i8 &cstr.33 10 0
 data i8 &cstr.34 10 0
 
+extern u64 @f.syscall i64 i64 i64 i64 i64 i64
+
+extern u64 @f.stdin
+
+extern u64 @f.stdout
+
+extern u64 @f.stderr
+
+define u64 @f.sys.read u64 ptr u64
+    tar bb.4_UNNAMED0 
+    ass i64 %1 0 
+    ass i64 %2 &1 
+    ass u64 %4 &2 
+    ass i64 %3 %4 
+    ass i64 %5 &3 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %3 %5 %6 %7 
+    ass u64 %8 %0 
+    ass u64 %9 %8 
+    ret %9 
+    ret 
+
+define u64 @f.sys.write u64 ptr u64
+    tar bb.5_UNNAMED0 
+    ass i64 %1 1 
+    ass i64 %2 &1 
+    ass u64 %4 &2 
+    ass i64 %3 %4 
+    ass i64 %5 &3 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %3 %5 %6 %7 
+    ass u64 %8 %0 
+    ass u64 %9 %8 
+    ret %9 
+    ret 
+
+define u64 @f.sys.open ptr u64 u64
+    tar bb.6_UNNAMED0 
+    ass i64 %1 2 
+    ass u64 %3 &1 
+    ass i64 %2 %3 
+    ass i64 %4 &2 
+    ass i64 %5 &3 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %4 %5 %6 %7 
+    ass u64 %8 %0 
+    ass u64 %9 %8 
+    ret %9 
+    ret 
+
+define @f.sys.close u64
+    tar bb.7_UNNAMED0 
+    ass i64 %1 3 
+    ass i64 %2 &0 
+    ass i64 %3 0 
+    ass i64 %4 0 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ret 
+
+define @f.sys.stat ptr ptr
+    tar bb.8_UNNAMED0 
+    ass i64 %1 4 
+    ass u64 %3 &0 
+    ass i64 %2 %3 
+    ass u64 %5 &1 
+    ass i64 %4 %5 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    ass i64 %8 0 
+    call @f.syscall %0 %1 %2 %4 %6 %7 %8 
+    ret 
+
+define @f.sys.fstat u64 ptr
+    tar bb.9_UNNAMED0 
+    ass i64 %1 5 
+    ass i64 %2 &0 
+    ass u64 %4 &1 
+    ass i64 %3 %4 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %3 %5 %6 %7 
+    ret 
+
+define @f.sys.lseek u64 u64 u64
+    tar bb.10_UNNAMED0 
+    ass i64 %1 8 
+    ass i64 %2 &0 
+    ass i64 %3 &1 
+    ass i64 %4 &2 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ret 
+
+define ptr @f.sys.alloc u64
+    tar bb.11_UNNAMED0 
+    alloca i64 %result 
+    ass i64 %1 9 
+    ass i64 %2 0 
+    ass i64 %3 &1 
+    ass i64 %4 3 
+    ass i64 %5 34 
+    neg i64 %7 1 
+    ass i64 %6 %7 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ass i64 %8 %0 
+    store i64 %result %8 
+    load i64 %10 %result 
+    lt i64 %11 %10 0 
+    ass u8 %9 %11 
+    brc %9 l.0_IF2_0 l.1_IF2_0 
+    tar l.0_IF2_0 
+    ass ptr %12 0 
+    destroy %result 
+    ret %12 
+    tar l.1_LOG2_0 
+    tar l.1_IF2_0 
+    load i64 %13 %result 
+    ass ptr %14 %13 
+    ass ptr %15 %14 
+    destroy %result 
+    ret %15 
+    destroy %result 
+    ret 
+
+define @f.sys.free ptr u64
+    tar bb.12_UNNAMED0 
+    ass i64 %1 11 
+    ass u64 %3 &0 
+    ass i64 %2 %3 
+    ass i64 %4 &1 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %4 %5 %6 %7 
+    ret 
+
+define u64 @f.sys.ioctrl u64 u64 ptr u64
+    tar bb.13_UNNAMED0 
+    ass i64 %1 16 
+    ass i64 %2 &1 
+    ass i64 %3 &2 
+    ass u64 %5 &3 
+    ass i64 %4 %5 
+    ass i64 %6 &4 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %3 %4 %6 %7 
+    ass u64 %8 %0 
+    ret %8 
+    ret 
+
+define @f.sys.pause
+    tar bb.14_UNNAMED0 
+    ass i64 %1 34 
+    ass i64 %2 0 
+    ass i64 %3 0 
+    ass i64 %4 0 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ret 
+
+define @f.sys.nanosleep u64
+    tar bb.15_UNNAMED0 
+    allocs 16 %rqtp 
+    add ptr %0 %rqtp 0 
+    div u64 %1 &0 1000000000 
+    store u64 %0 %1 
+    add ptr %2 %rqtp 8 
+    mod u64 %3 &0 1000000000 
+    store u64 %2 %3 
+    ass i64 %5 35 
+    ass ptr %7 %rqtp 
+    ass u64 %8 %7 
+    ass i64 %6 %8 
+    ass i64 %9 0 
+    ass i64 %10 0 
+    ass i64 %11 0 
+    ass i64 %12 0 
+    call @f.syscall %4 %5 %6 %9 %10 %11 %12 
+    destroy %rqtp 
+    ret 
+
+define u64 @f.sys.getpid
+    tar bb.16_UNNAMED0 
+    ass i64 %1 39 
+    ass i64 %2 0 
+    ass i64 %3 0 
+    ass i64 %4 0 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ass u64 %7 %0 
+    ret %7 
+    ret 
+
+global @f.sys.exit u64
+    tar bb.17_UNNAMED0 
+    ass i64 %1 60 
+    ass i64 %2 &0 
+    ass i64 %3 0 
+    ass i64 %4 0 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ret 
+
+define u64 @f.sys.waitpid u64 ptr u64
+    tar bb.18_UNNAMED0 
+    ass i64 %1 61 
+    ass i64 %2 &1 
+    ass u64 %4 &2 
+    ass i64 %3 %4 
+    ass i64 %5 &3 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    call @f.syscall %0 %1 %2 %3 %5 %6 %7 
+    ass u64 %8 %0 
+    ret %8 
+    ret 
+
+define u64 @f.sys.kill u64 u64
+    tar bb.19_UNNAMED0 
+    ass i64 %1 62 
+    ass i64 %2 &1 
+    ass i64 %3 &2 
+    ass i64 %4 0 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ass u64 %7 %0 
+    ret %7 
+    ret 
+
+define u64 @f.sys.fcntl u64 u64 u64
+    tar bb.20_UNNAMED0 
+    ass i64 %1 72 
+    ass i64 %2 &1 
+    ass i64 %3 &2 
+    ass i64 %4 &3 
+    ass i64 %5 0 
+    ass i64 %6 0 
+    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
+    ass u64 %7 %0 
+    ret %7 
+    ret 
+
+define u64 @f.sys.time_nano
+    tar bb.21_UNNAMED0 
+    allocs 16 %sp 
+    ass i64 %1 228 
+    ass i64 %2 1 
+    ass ptr %4 %sp 
+    ass u64 %5 %4 
+    ass i64 %3 %5 
+    ass i64 %6 0 
+    ass i64 %7 0 
+    ass i64 %8 0 
+    call @f.syscall %0 %1 %2 %3 %6 %7 %8 
+    add ptr %9 %sp 0 
+    load u64 %10 %9 
+    ass u64 %11 %10 
+    mul u64 %12 %11 1000000000 
+    add ptr %13 %sp 8 
+    load u64 %14 %13 
+    ass u64 %15 %14 
+    add u64 %16 %12 %15 
+    ass u64 %17 %16 
+    destroy %sp 
+    ret %17 
+    destroy %sp 
+    ret 
+
+define u64 @f.sys.time_micro
+    tar bb.22_UNNAMED0 
+    call @f.sys.time_nano %0 
+    div u64 %1 %0 1000 
+    ass u64 %2 %1 
+    ret %2 
+    ret 
+
+define u64 @f.sys.time_milli
+    tar bb.23_UNNAMED0 
+    call @f.sys.time_nano %0 
+    div u64 %1 %0 1000000 
+    ass u64 %2 %1 
+    ret %2 
+    ret 
+
 define i64 @f.cstr.len ptr
-    tar bb.0_UNNAMED0 
+    tar bb.24_UNNAMED0 
     alloca i64 %size 
     store i64 %size 0 
-    tar l.0_WHILE2_0 
+    tar l.0_WHILE2_1 
     load i64 %1 %size 
     add ptr %2 &1 %1 
     ass ptr %3 %2 
     load i8 %4 %3 
     nq i8 %5 %4 0 
     ass u8 %0 %5 
-    brc %0 l.2_WHILE2_0 l.1_WHILE2_0 
-    tar l.2_WHILE2_0 
+    brc %0 l.2_WHILE2_1 l.1_WHILE2_1 
+    tar l.2_WHILE2_1 
     load i64 %6 %size 
     add i64 %7 %6 1 
     store i64 %size %7 
-    jmp l.0_WHILE2_0 
-    tar l.1_WHILE2_0 
+    jmp l.0_WHILE2_1 
+    tar l.1_WHILE2_1 
     load i64 %9 %size 
     ass i64 %8 %9 
     destroy %size 
@@ -60,29 +355,7 @@ define i64 @f.cstr.len ptr
     ret 
 
 define @f.cstr.set ptr i8 i64
-    tar bb.1_UNNAMED0 
-    alloca i64 %i 
-    store i64 %i 0 
-    tar l.0_WHILE2_1 
-    load i64 %1 %i 
-    lt i64 %2 %1 &2 
-    ass u8 %0 %2 
-    brc %0 l.2_WHILE2_1 l.1_WHILE2_1 
-    tar l.2_WHILE2_1 
-    load i64 %3 %i 
-    add ptr %4 &0 %3 
-    ass ptr %5 %4 
-    store i8 %5 &1 
-    load i64 %6 %i 
-    add i64 %7 %6 1 
-    store i64 %i %7 
-    jmp l.0_WHILE2_1 
-    tar l.1_WHILE2_1 
-    destroy %i 
-    ret 
-
-define @f.cstr.cpy ptr ptr i64
-    tar bb.2_UNNAMED0 
+    tar bb.25_UNNAMED0 
     alloca i64 %i 
     store i64 %i 0 
     tar l.0_WHILE2_2 
@@ -94,6 +367,28 @@ define @f.cstr.cpy ptr ptr i64
     load i64 %3 %i 
     add ptr %4 &0 %3 
     ass ptr %5 %4 
+    store i8 %5 &1 
+    load i64 %6 %i 
+    add i64 %7 %6 1 
+    store i64 %i %7 
+    jmp l.0_WHILE2_2 
+    tar l.1_WHILE2_2 
+    destroy %i 
+    ret 
+
+define @f.cstr.cpy ptr ptr i64
+    tar bb.26_UNNAMED0 
+    alloca i64 %i 
+    store i64 %i 0 
+    tar l.0_WHILE2_3 
+    load i64 %1 %i 
+    lt i64 %2 %1 &2 
+    ass u8 %0 %2 
+    brc %0 l.2_WHILE2_3 l.1_WHILE2_3 
+    tar l.2_WHILE2_3 
+    load i64 %3 %i 
+    add ptr %4 &0 %3 
+    ass ptr %5 %4 
     load i64 %6 %i 
     add ptr %7 &1 %6 
     ass ptr %8 %7 
@@ -102,13 +397,13 @@ define @f.cstr.cpy ptr ptr i64
     load i64 %10 %i 
     add i64 %11 %10 1 
     store i64 %i %11 
-    jmp l.0_WHILE2_2 
-    tar l.1_WHILE2_2 
+    jmp l.0_WHILE2_3 
+    tar l.1_WHILE2_3 
     destroy %i 
     ret 
 
 define @f.cstr.mov ptr ptr i64
-    tar bb.3_UNNAMED0 
+    tar bb.27_UNNAMED0 
     alloca i64 %i 
     store i64 %i 0 
     tar l.0_FOR3_0 
@@ -138,7 +433,7 @@ define @f.cstr.mov ptr ptr i64
     ret 
 
 define i8 @f.cstr.cmp ptr ptr
-    tar bb.4_UNNAMED0 
+    tar bb.28_UNNAMED0 
     alloca i64 %size1 
     ass ptr %1 &1 
     call @f.cstr.len %0 %1 
@@ -151,14 +446,14 @@ define i8 @f.cstr.cmp ptr ptr
     load i64 %6 %size2 
     nq i64 %7 %5 %6 
     ass u8 %4 %7 
-    brc %4 l.0_IF2_3 l.1_IF2_3 
-    tar l.0_IF2_3 
+    brc %4 l.0_IF2_4 l.1_IF2_4 
+    tar l.0_IF2_4 
     ass i8 %8 false 
     destroy %size2 
     destroy %size1 
     ret %8 
-    tar l.1_LOG2_3 
-    tar l.1_IF2_3 
+    tar l.1_LOG2_4 
+    tar l.1_IF2_4 
     alloca i64 %i 
     store i64 %i 0 
     tar l.0_FOR3_1 
@@ -202,7 +497,7 @@ define i8 @f.cstr.cmp ptr ptr
     ret 
 
 define i64 @f.cstr.find ptr i8
-    tar bb.5_UNNAMED0 
+    tar bb.29_UNNAMED0 
     alloca i64 %size1 
     ass ptr %1 &1 
     call @f.cstr.len %0 %1 
@@ -245,7 +540,7 @@ define i64 @f.cstr.find ptr i8
     ret 
 
 define i64 @f.cstr.findc ptr ptr
-    tar bb.6_UNNAMED0 
+    tar bb.30_UNNAMED0 
     alloca i64 %psize 
     ass ptr %1 &2 
     call @f.cstr.len %0 %1 
@@ -320,7 +615,7 @@ define i64 @f.cstr.findc ptr ptr
     ret 
 
 define i64 @f.cstr.findnot ptr ptr
-    tar bb.7_UNNAMED0 
+    tar bb.31_UNNAMED0 
     alloca u64 %psize 
     ass ptr %1 &2 
     call @f.cstr.len %0 %1 
@@ -406,7 +701,7 @@ define i64 @f.cstr.findnot ptr ptr
     ret 
 
 define u8 @f.char.alpha i8
-    tar bb.8_UNNAMED0 
+    tar bb.32_UNNAMED0 
     gq i8 %0 &1 65 
     lt i8 %1 &1 91 
     and u8 %2 %0 %1 
@@ -419,7 +714,7 @@ define u8 @f.char.alpha i8
     ret 
 
 define u8 @f.char.num i8
-    tar bb.9_UNNAMED0 
+    tar bb.33_UNNAMED0 
     gq i8 %0 &1 48 
     lt i8 %1 &1 58 
     and u8 %2 %0 %1 
@@ -428,7 +723,7 @@ define u8 @f.char.num i8
     ret 
 
 define u8 @f.char.alphanum i8
-    tar bb.10_UNNAMED0 
+    tar bb.34_UNNAMED0 
     ass i8 %1 &1 
     call @f.char.alpha %0 %1 
     ass i8 %3 &1 
@@ -439,24 +734,7 @@ define u8 @f.char.alphanum i8
     ret 
 
 define i8 @f.char.to.dec i64
-    tar bb.11_UNNAMED0 
-    gq i64 %1 &1 0 
-    lt i64 %2 &1 10 
-    and u8 %3 %1 %2 
-    ass u8 %0 %3 
-    brc %0 l.0_IF2_4 l.1_IF2_4 
-    tar l.0_IF2_4 
-    add i64 %4 &1 48 
-    ass i8 %5 %4 
-    ret %5 
-    tar l.1_LOG2_4 
-    tar l.1_IF2_4 
-    ass i8 %6 0 
-    ret %6 
-    ret 
-
-define i8 @f.char.to.hex i64
-    tar bb.12_UNNAMED0 
+    tar bb.35_UNNAMED0 
     gq i64 %1 &1 0 
     lt i64 %2 &1 10 
     and u8 %3 %1 %2 
@@ -468,42 +746,42 @@ define i8 @f.char.to.hex i64
     ret %5 
     tar l.1_LOG2_5 
     tar l.1_IF2_5 
+    ass i8 %6 0 
+    ret %6 
+    ret 
+
+define i8 @f.char.to.hex i64
+    tar bb.36_UNNAMED0 
+    gq i64 %1 &1 0 
+    lt i64 %2 &1 10 
+    and u8 %3 %1 %2 
+    ass u8 %0 %3 
+    brc %0 l.0_IF2_6 l.1_IF2_6 
+    tar l.0_IF2_6 
+    add i64 %4 &1 48 
+    ass i8 %5 %4 
+    ret %5 
+    tar l.1_LOG2_6 
+    tar l.1_IF2_6 
     gq i64 %7 &1 10 
     lt i64 %8 &1 16 
     and u8 %9 %7 %8 
     ass u8 %6 %9 
-    brc %6 l.0_IF2_6 l.1_IF2_6 
-    tar l.0_IF2_6 
+    brc %6 l.0_IF2_7 l.1_IF2_7 
+    tar l.0_IF2_7 
     add i64 %10 &1 55 
     ass i8 %11 %10 
     ret %11 
-    tar l.1_LOG2_6 
-    tar l.1_IF2_6 
+    tar l.1_LOG2_7 
+    tar l.1_IF2_7 
     ass i8 %12 0 
     ret %12 
     ret 
 
 define i8 @f.char.to.oct i64
-    tar bb.13_UNNAMED0 
+    tar bb.37_UNNAMED0 
     gq i64 %1 &1 0 
     lt i64 %2 &1 8 
-    and u8 %3 %1 %2 
-    ass u8 %0 %3 
-    brc %0 l.0_IF2_7 l.1_IF2_7 
-    tar l.0_IF2_7 
-    add i64 %4 &1 48 
-    ass i8 %5 %4 
-    ret %5 
-    tar l.1_LOG2_7 
-    tar l.1_IF2_7 
-    ass i8 %6 0 
-    ret %6 
-    ret 
-
-define i8 @f.char.to.bin i64
-    tar bb.14_UNNAMED0 
-    gq i64 %1 &1 0 
-    lt i64 %2 &1 2 
     and u8 %3 %1 %2 
     ass u8 %0 %3 
     brc %0 l.0_IF2_8 l.1_IF2_8 
@@ -517,25 +795,25 @@ define i8 @f.char.to.bin i64
     ret %6 
     ret 
 
-define i64 @f.char.by.dec i8
-    tar bb.15_UNNAMED0 
-    gq i8 %1 &1 48 
-    lt i8 %2 &1 58 
+define i8 @f.char.to.bin i64
+    tar bb.38_UNNAMED0 
+    gq i64 %1 &1 0 
+    lt i64 %2 &1 2 
     and u8 %3 %1 %2 
     ass u8 %0 %3 
     brc %0 l.0_IF2_9 l.1_IF2_9 
     tar l.0_IF2_9 
-    sub i8 %4 &1 48 
-    ass i64 %5 %4 
+    add i64 %4 &1 48 
+    ass i8 %5 %4 
     ret %5 
     tar l.1_LOG2_9 
     tar l.1_IF2_9 
-    ass i64 %6 0 
+    ass i8 %6 0 
     ret %6 
     ret 
 
-define i64 @f.char.by.hex i8
-    tar bb.16_UNNAMED0 
+define i64 @f.char.by.dec i8
+    tar bb.39_UNNAMED0 
     gq i8 %1 &1 48 
     lt i8 %2 &1 58 
     and u8 %3 %1 %2 
@@ -547,53 +825,53 @@ define i64 @f.char.by.hex i8
     ret %5 
     tar l.1_LOG2_10 
     tar l.1_IF2_10 
+    ass i64 %6 0 
+    ret %6 
+    ret 
+
+define i64 @f.char.by.hex i8
+    tar bb.40_UNNAMED0 
+    gq i8 %1 &1 48 
+    lt i8 %2 &1 58 
+    and u8 %3 %1 %2 
+    ass u8 %0 %3 
+    brc %0 l.0_IF2_11 l.1_IF2_11 
+    tar l.0_IF2_11 
+    sub i8 %4 &1 48 
+    ass i64 %5 %4 
+    ret %5 
+    tar l.1_LOG2_11 
+    tar l.1_IF2_11 
     gq i8 %7 &1 65 
     lt i8 %8 &1 71 
     and u8 %9 %7 %8 
     ass u8 %6 %9 
-    brc %6 l.0_IF2_11 l.1_IF2_11 
-    tar l.0_IF2_11 
+    brc %6 l.0_IF2_12 l.1_IF2_12 
+    tar l.0_IF2_12 
     sub i8 %10 &1 55 
     ass i64 %11 %10 
     ret %11 
-    tar l.1_LOG2_11 
-    tar l.1_IF2_11 
+    tar l.1_LOG2_12 
+    tar l.1_IF2_12 
     gq i8 %13 &1 97 
     lt i8 %14 &1 103 
     and u8 %15 %13 %14 
     ass u8 %12 %15 
-    brc %12 l.0_IF2_12 l.1_IF2_12 
-    tar l.0_IF2_12 
+    brc %12 l.0_IF2_13 l.1_IF2_13 
+    tar l.0_IF2_13 
     sub i8 %16 &1 87 
     ass i64 %17 %16 
     ret %17 
-    tar l.1_LOG2_12 
-    tar l.1_IF2_12 
+    tar l.1_LOG2_13 
+    tar l.1_IF2_13 
     ass i64 %18 0 
     ret %18 
     ret 
 
 define i64 @f.char.by.oct i8
-    tar bb.17_UNNAMED0 
+    tar bb.41_UNNAMED0 
     gq i8 %1 &1 48 
     lt i8 %2 &1 56 
-    and u8 %3 %1 %2 
-    ass u8 %0 %3 
-    brc %0 l.0_IF2_13 l.1_IF2_13 
-    tar l.0_IF2_13 
-    sub i8 %4 &1 48 
-    ass i64 %5 %4 
-    ret %5 
-    tar l.1_LOG2_13 
-    tar l.1_IF2_13 
-    ass i64 %6 0 
-    ret %6 
-    ret 
-
-define i64 @f.char.by.bin i8
-    tar bb.18_UNNAMED0 
-    gq i8 %1 &1 48 
-    lt i8 %2 &1 50 
     and u8 %3 %1 %2 
     ass u8 %0 %3 
     brc %0 l.0_IF2_14 l.1_IF2_14 
@@ -607,26 +885,43 @@ define i64 @f.char.by.bin i8
     ret %6 
     ret 
 
+define i64 @f.char.by.bin i8
+    tar bb.42_UNNAMED0 
+    gq i8 %1 &1 48 
+    lt i8 %2 &1 50 
+    and u8 %3 %1 %2 
+    ass u8 %0 %3 
+    brc %0 l.0_IF2_15 l.1_IF2_15 
+    tar l.0_IF2_15 
+    sub i8 %4 &1 48 
+    ass i64 %5 %4 
+    ret %5 
+    tar l.1_LOG2_15 
+    tar l.1_IF2_15 
+    ass i64 %6 0 
+    ret %6 
+    ret 
+
 define u64 @f.math.uint.pow u64 u64
-    tar bb.19_UNNAMED0 
+    tar bb.43_UNNAMED0 
     alloca u64 %exp 
     store u64 %exp &2 
     alloca u64 %out 
     store u64 %out 1 
-    tar l.0_WHILE2_15 
+    tar l.0_WHILE2_16 
     load u64 %1 %exp 
     gt u64 %2 %1 0 
     ass u8 %0 %2 
-    brc %0 l.2_WHILE2_15 l.1_WHILE2_15 
-    tar l.2_WHILE2_15 
+    brc %0 l.2_WHILE2_16 l.1_WHILE2_16 
+    tar l.2_WHILE2_16 
     load u64 %3 %out 
     mul u64 %4 %3 &1 
     store u64 %out %4 
     load u64 %5 %exp 
     sub u64 %6 %5 1 
     store u64 %exp %6 
-    jmp l.0_WHILE2_15 
-    tar l.1_WHILE2_15 
+    jmp l.0_WHILE2_16 
+    tar l.1_WHILE2_16 
     load u64 %8 %out 
     ass u64 %7 %8 
     destroy %out 
@@ -637,26 +932,26 @@ define u64 @f.math.uint.pow u64 u64
     ret 
 
 define u64 @f.math.uint.logb u64 u64
-    tar bb.20_UNNAMED0 
+    tar bb.44_UNNAMED0 
     alloca u64 %val 
     store u64 %val &2 
     alloca u64 %out 
     neg i64 %0 1 
     store u64 %out %0 
-    tar l.0_WHILE2_16 
+    tar l.0_WHILE2_17 
     load u64 %2 %val 
     gt u64 %3 %2 0 
     ass u8 %1 %3 
-    brc %1 l.2_WHILE2_16 l.1_WHILE2_16 
-    tar l.2_WHILE2_16 
+    brc %1 l.2_WHILE2_17 l.1_WHILE2_17 
+    tar l.2_WHILE2_17 
     load u64 %4 %val 
     div u64 %5 %4 &1 
     store u64 %val %5 
     load u64 %6 %out 
     add u64 %7 %6 1 
     store u64 %out %7 
-    jmp l.0_WHILE2_16 
-    tar l.1_WHILE2_16 
+    jmp l.0_WHILE2_17 
+    tar l.1_WHILE2_17 
     load u64 %9 %out 
     ass u64 %8 %9 
     destroy %out 
@@ -667,7 +962,7 @@ define u64 @f.math.uint.logb u64 u64
     ret 
 
 define u64 @f.math.uint.log10 u64
-    tar bb.21_UNNAMED0 
+    tar bb.45_UNNAMED0 
     ass u64 %1 10 
     ass u64 %2 &1 
     call @f.math.uint.logb %0 %1 %2 
@@ -676,22 +971,8 @@ define u64 @f.math.uint.log10 u64
     ret 
 
 define u64 @f.math.uint.min u64 u64
-    tar bb.22_UNNAMED0 
+    tar bb.46_UNNAMED0 
     lt u64 %1 &1 &2 
-    ass u8 %0 %1 
-    brc %0 l.0_IF2_17 l.1_IF2_17 
-    tar l.0_IF2_17 
-    ass u64 %2 &1 
-    ret %2 
-    tar l.1_LOG2_17 
-    tar l.1_IF2_17 
-    ass u64 %3 &2 
-    ret %3 
-    ret 
-
-define u64 @f.math.uint.max u64 u64
-    tar bb.23_UNNAMED0 
-    gt u64 %1 &1 &2 
     ass u8 %0 %1 
     brc %0 l.0_IF2_18 l.1_IF2_18 
     tar l.0_IF2_18 
@@ -703,46 +984,46 @@ define u64 @f.math.uint.max u64 u64
     ret %3 
     ret 
 
-define i64 @f.math.int.sign i64
-    tar bb.24_UNNAMED0 
-    gt i64 %1 &1 0 
+define u64 @f.math.uint.max u64 u64
+    tar bb.47_UNNAMED0 
+    gt u64 %1 &1 &2 
     ass u8 %0 %1 
     brc %0 l.0_IF2_19 l.1_IF2_19 
     tar l.0_IF2_19 
+    ass u64 %2 &1 
+    ret %2 
+    tar l.1_LOG2_19 
+    tar l.1_IF2_19 
+    ass u64 %3 &2 
+    ret %3 
+    ret 
+
+define i64 @f.math.int.sign i64
+    tar bb.48_UNNAMED0 
+    gt i64 %1 &1 0 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_20 l.1_IF2_20 
+    tar l.0_IF2_20 
     ass i64 %2 1 
     ret %2 
-    jmp l.1_LOG2_19 
-    tar l.1_IF2_19 
+    jmp l.1_LOG2_20 
+    tar l.1_IF2_20 
     lt i64 %4 &1 0 
     ass u8 %3 %4 
-    brc %3 l.0_ELIF2_19_1 l.1_ELIF2_19_1 
-    tar l.0_ELIF2_19_1 
+    brc %3 l.0_ELIF2_20_1 l.1_ELIF2_20_1 
+    tar l.0_ELIF2_20_1 
     neg i64 %5 1 
     ass i64 %6 %5 
     ret %6 
-    tar l.1_LOG2_19 
-    tar l.1_ELIF2_19_1 
+    tar l.1_LOG2_20 
+    tar l.1_ELIF2_20_1 
     ass i64 %7 0 
     ret %7 
     ret 
 
 define i64 @f.math.int.min i64 i64
-    tar bb.25_UNNAMED0 
+    tar bb.49_UNNAMED0 
     lt i64 %1 &1 &2 
-    ass u8 %0 %1 
-    brc %0 l.0_IF2_20 l.1_IF2_20 
-    tar l.0_IF2_20 
-    ass i64 %2 &1 
-    ret %2 
-    tar l.1_LOG2_20 
-    tar l.1_IF2_20 
-    ass i64 %3 &2 
-    ret %3 
-    ret 
-
-define i64 @f.math.int.max i64 i64
-    tar bb.26_UNNAMED0 
-    gt i64 %1 &1 &2 
     ass u8 %0 %1 
     brc %0 l.0_IF2_21 l.1_IF2_21 
     tar l.0_IF2_21 
@@ -754,299 +1035,18 @@ define i64 @f.math.int.max i64 i64
     ret %3 
     ret 
 
-extern u64 @f.syscall i64 i64 i64 i64 i64 i64
-
-extern u64 @f.stdin
-
-extern u64 @f.stdout
-
-extern u64 @f.stderr
-
-define u64 @f.sys.read u64 ptr u64
-    tar bb.31_UNNAMED0 
-    ass i64 %1 0 
-    ass i64 %2 &1 
-    ass u64 %4 &2 
-    ass i64 %3 %4 
-    ass i64 %5 &3 
-    ass i64 %6 0 
-    ass i64 %7 0 
-    call @f.syscall %0 %1 %2 %3 %5 %6 %7 
-    ass u64 %8 %0 
-    ass u64 %9 %8 
-    ret %9 
-    ret 
-
-define u64 @f.sys.write u64 ptr u64
-    tar bb.32_UNNAMED0 
-    ass i64 %1 1 
-    ass i64 %2 &1 
-    ass u64 %4 &2 
-    ass i64 %3 %4 
-    ass i64 %5 &3 
-    ass i64 %6 0 
-    ass i64 %7 0 
-    call @f.syscall %0 %1 %2 %3 %5 %6 %7 
-    ass u64 %8 %0 
-    ass u64 %9 %8 
-    ret %9 
-    ret 
-
-define u64 @f.sys.open ptr u64 u64
-    tar bb.33_UNNAMED0 
-    ass i64 %1 2 
-    ass u64 %3 &1 
-    ass i64 %2 %3 
-    ass i64 %4 &2 
-    ass i64 %5 &3 
-    ass i64 %6 0 
-    ass i64 %7 0 
-    call @f.syscall %0 %1 %2 %4 %5 %6 %7 
-    ass u64 %8 %0 
-    ass u64 %9 %8 
-    ret %9 
-    ret 
-
-define @f.sys.close u64
-    tar bb.34_UNNAMED0 
-    ass i64 %1 3 
-    ass i64 %2 &0 
-    ass i64 %3 0 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.sys.stat ptr ptr
-    tar bb.35_UNNAMED0 
-    ass i64 %1 4 
-    ass u64 %3 &0 
-    ass i64 %2 %3 
-    ass u64 %5 &1 
-    ass i64 %4 %5 
-    ass i64 %6 0 
-    ass i64 %7 0 
-    ass i64 %8 0 
-    call @f.syscall %0 %1 %2 %4 %6 %7 %8 
-    ret 
-
-define @f.sys.fstat u64 ptr
-    tar bb.36_UNNAMED0 
-    ass i64 %1 5 
-    ass i64 %2 &0 
-    ass u64 %4 &1 
-    ass i64 %3 %4 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    ass i64 %7 0 
-    call @f.syscall %0 %1 %2 %3 %5 %6 %7 
-    ret 
-
-define @f.sys.lseek u64 u64 u64
-    tar bb.37_UNNAMED0 
-    ass i64 %1 8 
-    ass i64 %2 &0 
-    ass i64 %3 &1 
-    ass i64 %4 &2 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
-    ret 
-
-define ptr @f.sys.alloc u64
-    tar bb.38_UNNAMED0 
-    alloca i64 %result 
-    ass i64 %1 9 
-    ass i64 %2 0 
-    ass i64 %3 &1 
-    ass i64 %4 3 
-    ass i64 %5 34 
-    neg i64 %7 1 
-    ass i64 %6 %7 
-    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
-    ass i64 %8 %0 
-    store i64 %result %8 
-    load i64 %10 %result 
-    lt i64 %11 %10 0 
-    ass u8 %9 %11 
-    brc %9 l.0_IF2_22 l.1_IF2_22 
+define i64 @f.math.int.max i64 i64
+    tar bb.50_UNNAMED0 
+    gt i64 %1 &1 &2 
+    ass u8 %0 %1 
+    brc %0 l.0_IF2_22 l.1_IF2_22 
     tar l.0_IF2_22 
-    ass ptr %12 0 
-    destroy %result 
-    ret %12 
+    ass i64 %2 &1 
+    ret %2 
     tar l.1_LOG2_22 
     tar l.1_IF2_22 
-    load i64 %13 %result 
-    ass ptr %14 %13 
-    ass ptr %15 %14 
-    destroy %result 
-    ret %15 
-    destroy %result 
-    ret 
-
-define @f.sys.free ptr u64
-    tar bb.39_UNNAMED0 
-    ass i64 %1 11 
-    ass u64 %3 &0 
-    ass i64 %2 %3 
-    ass i64 %4 &1 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    ass i64 %7 0 
-    call @f.syscall %0 %1 %2 %4 %5 %6 %7 
-    ret 
-
-define u64 @f.sys.ioctrl u64 u64 ptr u64
-    tar bb.40_UNNAMED0 
-    ass i64 %1 16 
-    ass i64 %2 &1 
     ass i64 %3 &2 
-    ass u64 %5 &3 
-    ass i64 %4 %5 
-    ass i64 %6 &4 
-    ass i64 %7 0 
-    call @f.syscall %0 %1 %2 %3 %4 %6 %7 
-    ass u64 %8 %0 
-    ret %8 
-    ret 
-
-define @f.sys.pause
-    tar bb.41_UNNAMED0 
-    ass i64 %1 34 
-    ass i64 %2 0 
-    ass i64 %3 0 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
-    ret 
-
-define @f.sys.nanosleep u64
-    tar bb.42_UNNAMED0 
-    allocs 16 %rqtp 
-    add ptr %0 %rqtp 0 
-    div u64 %1 &0 1000000000 
-    store u64 %0 %1 
-    add ptr %2 %rqtp 8 
-    mod u64 %3 &0 1000000000 
-    store u64 %2 %3 
-    ass i64 %5 35 
-    ass ptr %7 %rqtp 
-    ass u64 %8 %7 
-    ass i64 %6 %8 
-    ass i64 %9 0 
-    ass i64 %10 0 
-    ass i64 %11 0 
-    ass i64 %12 0 
-    call @f.syscall %4 %5 %6 %9 %10 %11 %12 
-    destroy %rqtp 
-    ret 
-
-define u64 @f.sys.getpid
-    tar bb.43_UNNAMED0 
-    ass i64 %1 39 
-    ass i64 %2 0 
-    ass i64 %3 0 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
-    ass u64 %7 %0 
-    ret %7 
-    ret 
-
-global @f.sys.exit u64
-    tar bb.44_UNNAMED0 
-    ass i64 %1 60 
-    ass i64 %2 &0 
-    ass i64 %3 0 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
-    ret 
-
-define u64 @f.sys.waitpid u64 ptr u64
-    tar bb.45_UNNAMED0 
-    ass i64 %1 61 
-    ass i64 %2 &1 
-    ass u64 %4 &2 
-    ass i64 %3 %4 
-    ass i64 %5 &3 
-    ass i64 %6 0 
-    ass i64 %7 0 
-    call @f.syscall %0 %1 %2 %3 %5 %6 %7 
-    ass u64 %8 %0 
-    ret %8 
-    ret 
-
-define u64 @f.sys.kill u64 u64
-    tar bb.46_UNNAMED0 
-    ass i64 %1 62 
-    ass i64 %2 &1 
-    ass i64 %3 &2 
-    ass i64 %4 0 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
-    ass u64 %7 %0 
-    ret %7 
-    ret 
-
-define u64 @f.sys.fcntl u64 u64 u64
-    tar bb.47_UNNAMED0 
-    ass i64 %1 72 
-    ass i64 %2 &1 
-    ass i64 %3 &2 
-    ass i64 %4 &3 
-    ass i64 %5 0 
-    ass i64 %6 0 
-    call @f.syscall %0 %1 %2 %3 %4 %5 %6 
-    ass u64 %7 %0 
-    ret %7 
-    ret 
-
-define u64 @f.sys.time_nano
-    tar bb.48_UNNAMED0 
-    allocs 16 %sp 
-    ass i64 %1 228 
-    ass i64 %2 1 
-    ass ptr %4 %sp 
-    ass u64 %5 %4 
-    ass i64 %3 %5 
-    ass i64 %6 0 
-    ass i64 %7 0 
-    ass i64 %8 0 
-    call @f.syscall %0 %1 %2 %3 %6 %7 %8 
-    add ptr %9 %sp 0 
-    load u64 %10 %9 
-    ass u64 %11 %10 
-    mul u64 %12 %11 1000000000 
-    add ptr %13 %sp 8 
-    load u64 %14 %13 
-    ass u64 %15 %14 
-    add u64 %16 %12 %15 
-    ass u64 %17 %16 
-    destroy %sp 
-    ret %17 
-    destroy %sp 
-    ret 
-
-define u64 @f.sys.time_micro
-    tar bb.49_UNNAMED0 
-    call @f.sys.time_nano %0 
-    div u64 %1 %0 1000 
-    ass u64 %2 %1 
-    ret %2 
-    ret 
-
-define u64 @f.sys.time_milli
-    tar bb.50_UNNAMED0 
-    call @f.sys.time_nano %0 
-    div u64 %1 %0 1000000 
-    ass u64 %2 %1 
-    ret %2 
+    ret %3 
     ret 
 
 define @f.ptr.set ptr i8 i64
