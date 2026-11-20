@@ -44,60 +44,42 @@ extern u64 @f.stderr
 
 define u64 @f.sys.read u64 ptr u64
     tar bb.4_UNNAMED0 
-    ass i64 %2 &1 
-    ass u64 %4 &2 
-    ass i64 %5 &3 
-    call @f.syscall %0 0 %2 %4 %5 0 0 
+    call @f.syscall %0 0 &1 &2 &3 0 0 
     ret %0 
 
 define u64 @f.sys.write u64 ptr u64
     tar bb.5_UNNAMED0 
-    ass i64 %2 &1 
-    ass u64 %4 &2 
-    ass i64 %5 &3 
-    call @f.syscall %0 1 %2 %4 %5 0 0 
+    call @f.syscall %0 1 &1 &2 &3 0 0 
     ret %0 
 
 define u64 @f.sys.open ptr u64 u64
     tar bb.6_UNNAMED0 
-    ass u64 %3 &1 
-    ass i64 %4 &2 
-    ass i64 %5 &3 
-    call @f.syscall %0 2 %3 %4 %5 0 0 
+    call @f.syscall %0 2 &1 &2 &3 0 0 
     ret %0 
 
 define @f.sys.close u64
     tar bb.7_UNNAMED0 
-    ass i64 %2 &0 
-    call @f.syscall %0 3 %2 0 0 0 0 
+    call @f.syscall %0 3 &0 0 0 0 0 
     ret 
 
 define @f.sys.stat ptr ptr
     tar bb.8_UNNAMED0 
-    ass u64 %3 &0 
-    ass u64 %5 &1 
-    call @f.syscall %0 4 %3 %5 0 0 0 
+    call @f.syscall %0 4 &0 &1 0 0 0 
     ret 
 
 define @f.sys.fstat u64 ptr
     tar bb.9_UNNAMED0 
-    ass i64 %2 &0 
-    ass u64 %4 &1 
-    call @f.syscall %0 5 %2 %4 0 0 0 
+    call @f.syscall %0 5 &0 &1 0 0 0 
     ret 
 
 define @f.sys.lseek u64 u64 u64
     tar bb.10_UNNAMED0 
-    ass i64 %2 &0 
-    ass i64 %3 &1 
-    ass i64 %4 &2 
-    call @f.syscall %0 8 %2 %3 %4 0 0 
+    call @f.syscall %0 8 &0 &1 &2 0 0 
     ret 
 
 define ptr @f.sys.alloc u64
     tar bb.11_UNNAMED0 
-    ass i64 %3 &1 
-    call @f.syscall %0 9 0 %3 3 34 -1 
+    call @f.syscall %0 9 0 &1 3 34 -1 
     ass i64 %16 %0 
     ass i64 %10 %16 
     lt i64 %11 %10 0 
@@ -110,18 +92,12 @@ define ptr @f.sys.alloc u64
 
 define @f.sys.free ptr u64
     tar bb.12_UNNAMED0 
-    ass u64 %3 &0 
-    ass i64 %4 &1 
-    call @f.syscall %0 11 %3 %4 0 0 0 
+    call @f.syscall %0 11 &0 &1 0 0 0 
     ret 
 
 define u64 @f.sys.ioctrl u64 u64 ptr u64
     tar bb.13_UNNAMED0 
-    ass i64 %2 &1 
-    ass i64 %3 &2 
-    ass u64 %5 &3 
-    ass i64 %6 &4 
-    call @f.syscall %0 16 %2 %3 %5 %6 0 
+    call @f.syscall %0 16 &1 &2 &3 &4 0 
     ret %0 
 
 define @f.sys.pause
@@ -149,31 +125,22 @@ define u64 @f.sys.getpid
 
 global @f.sys.exit u64
     tar bb.17_UNNAMED0 
-    ass i64 %2 &0 
-    call @f.syscall %0 60 %2 0 0 0 0 
+    call @f.syscall %0 60 &0 0 0 0 0 
     ret 
 
 define u64 @f.sys.waitpid u64 ptr u64
     tar bb.18_UNNAMED0 
-    ass i64 %2 &1 
-    ass u64 %4 &2 
-    ass i64 %5 &3 
-    call @f.syscall %0 61 %2 %4 %5 0 0 
+    call @f.syscall %0 61 &1 &2 &3 0 0 
     ret %0 
 
 define u64 @f.sys.kill u64 u64
     tar bb.19_UNNAMED0 
-    ass i64 %2 &1 
-    ass i64 %3 &2 
-    call @f.syscall %0 62 %2 %3 0 0 0 
+    call @f.syscall %0 62 &1 &2 0 0 0 
     ret %0 
 
 define u64 @f.sys.fcntl u64 u64 u64
     tar bb.20_UNNAMED0 
-    ass i64 %2 &1 
-    ass i64 %3 &2 
-    ass i64 %4 &3 
-    call @f.syscall %0 72 %2 %3 %4 0 0 
+    call @f.syscall %0 72 &1 &2 &3 0 0 
     ret %0 
 
 define u64 @f.sys.time_nano
@@ -288,11 +255,9 @@ define @f.cstr.mov ptr ptr i64
 
 define i8 @f.cstr.cmp ptr ptr
     tar bb.28_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.cstr.len %0 %1 
+    call @f.cstr.len %0 &1 
     ass i64 %27 %0 
-    ass ptr %3 &2 
-    call @f.cstr.len %2 %3 
+    call @f.cstr.len %2 &2 
     ass i64 %28 %2 
     ass i64 %5 %27 
     ass i64 %6 %28 
@@ -332,8 +297,7 @@ define i8 @f.cstr.cmp ptr ptr
 
 define i64 @f.cstr.find ptr i8
     tar bb.29_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.cstr.len %0 %1 
+    call @f.cstr.len %0 &1 
     ass i64 %18 %0 
     ass i64 %19 0 
     jmp l.0_FOR3_2 
@@ -362,11 +326,9 @@ define i64 @f.cstr.find ptr i8
 
 define i64 @f.cstr.findc ptr ptr
     tar bb.30_UNNAMED0 
-    ass ptr %1 &2 
-    call @f.cstr.len %0 %1 
+    call @f.cstr.len %0 &2 
     ass i64 %31 %0 
-    ass ptr %3 &1 
-    call @f.cstr.len %2 %3 
+    call @f.cstr.len %2 &1 
     ass i64 %33 %2 
     ass i64 %34 0 
     jmp l.0_FOR3_3 
@@ -415,11 +377,9 @@ define i64 @f.cstr.findc ptr ptr
 
 define i64 @f.cstr.findnot ptr ptr
     tar bb.31_UNNAMED0 
-    ass ptr %1 &2 
-    call @f.cstr.len %0 %1 
+    call @f.cstr.len %0 &2 
     ass u64 %37 %0 
-    ass ptr %3 &1 
-    call @f.cstr.len %2 %3 
+    call @f.cstr.len %2 &1 
     ass u64 %39 %2 
     ass u64 %40 0 
     jmp l.0_FOR3_4 
@@ -496,9 +456,8 @@ define u8 @f.char.num i8
 
 define u8 @f.char.alphanum i8
     tar bb.34_UNNAMED0 
-    ass i8 %1 &1 
-    call @f.char.alpha %0 %1 
-    call @f.char.num %2 %1 
+    call @f.char.alpha %0 &1 
+    call @f.char.num %2 &1 
     or u8 %4 %0 %2 
     ret %4 
 
@@ -668,8 +627,7 @@ define u64 @f.math.uint.logb u64 u64
 
 define u64 @f.math.uint.log10 u64
     tar bb.45_UNNAMED0 
-    ass u64 %2 &1 
-    call @f.math.uint.logb %0 10 %2 
+    call @f.math.uint.logb %0 10 &1 
     ret %0 
 
 define u64 @f.math.uint.min u64 u64
@@ -677,22 +635,18 @@ define u64 @f.math.uint.min u64 u64
     lt u64 %1 &1 &2 
     brc %1 l.0_IF2_18 l.1_IF2_18 
     tar l.0_IF2_18 
-    ass u64 %2 &1 
-    ret %2 
+    ret &1 
     tar l.1_IF2_18 
-    ass u64 %3 &2 
-    ret %3 
+    ret &2 
 
 define u64 @f.math.uint.max u64 u64
     tar bb.47_UNNAMED0 
     gt u64 %1 &1 &2 
     brc %1 l.0_IF2_19 l.1_IF2_19 
     tar l.0_IF2_19 
-    ass u64 %2 &1 
-    ret %2 
+    ret &1 
     tar l.1_IF2_19 
-    ass u64 %3 &2 
-    ret %3 
+    ret &2 
 
 define i64 @f.math.int.sign i64
     tar bb.48_UNNAMED0 
@@ -713,22 +667,18 @@ define i64 @f.math.int.min i64 i64
     lt i64 %1 &1 &2 
     brc %1 l.0_IF2_21 l.1_IF2_21 
     tar l.0_IF2_21 
-    ass i64 %2 &1 
-    ret %2 
+    ret &1 
     tar l.1_IF2_21 
-    ass i64 %3 &2 
-    ret %3 
+    ret &2 
 
 define i64 @f.math.int.max i64 i64
     tar bb.50_UNNAMED0 
     gt i64 %1 &1 &2 
     brc %1 l.0_IF2_22 l.1_IF2_22 
     tar l.0_IF2_22 
-    ass i64 %2 &1 
-    ret %2 
+    ret &1 
     tar l.1_IF2_22 
-    ass i64 %3 &2 
-    ret %3 
+    ret &2 
 
 define @f.ptr.set ptr i8 i64
     tar bb.51_UNNAMED0 
@@ -970,29 +920,25 @@ define @f.ptr.shr ptr i64 i64
 define @f.io.input ptr i64
     tar bb.56_UNNAMED0 
     call @f.stdin %2 
-    ass ptr %3 &0 
-    ass u64 %4 &1 
-    call @f.sys.read %0 %2 %3 %4 
+    call @f.sys.read %0 %2 &0 &1 
     ret 
 
 define @f.io.print ptr
     tar bb.57_UNNAMED0 
-    ass ptr %1 &0 
-    call @f.cstr.len %0 %1 
+    call @f.cstr.len %0 &0 
     ass i64 %8 %0 
     call @f.stdout %4 
     ass i64 %7 %8 
-    call @f.sys.write %2 %4 %1 %7 
+    call @f.sys.write %2 %4 &0 %7 
     ret 
 
 define @f.io.error ptr
     tar bb.58_UNNAMED0 
-    ass ptr %1 &0 
-    call @f.cstr.len %0 %1 
+    call @f.cstr.len %0 &0 
     ass i64 %8 %0 
     call @f.stderr %4 
     ass i64 %7 %8 
-    call @f.sys.write %2 %4 %1 %7 
+    call @f.sys.write %2 %4 &0 %7 
     ret 
 
 define @f.io.print_char i8
@@ -1010,8 +956,7 @@ define @f.io.print_int i64
     allocs 24 %str 
     ass ptr %2 %str 
     call @f.ptr.set %2 0 24 
-    ass i64 %8 &0 
-    call @f.parse.int.get %2 %8 
+    call @f.parse.int.get %2 &0 
     call @f.cstr.len %9 %2 
     ass i64 %19 %9 
     call @f.stdout %14 
@@ -1025,8 +970,7 @@ define @f.io.print_uint u64
     allocs 24 %str 
     ass ptr %2 %str 
     call @f.ptr.set %2 0 24 
-    ass u64 %8 &0 
-    call @f.parse.uint.get %2 %8 
+    call @f.parse.uint.get %2 &0 
     call @f.cstr.len %9 %2 
     ass i64 %19 %9 
     call @f.stdout %14 
@@ -1040,8 +984,7 @@ define @f.io.print_hex u64
     allocs 24 %str 
     ass ptr %2 %str 
     call @f.ptr.set %2 0 24 
-    ass u64 %8 &0 
-    call @f.parse.hex.get %2 %8 
+    call @f.parse.hex.get %2 &0 
     call @f.cstr.len %9 %2 
     ass i64 %19 %9 
     call @f.stdout %14 
@@ -1055,37 +998,32 @@ define @f.parse.boolean.get ptr u8
     eq u8 %1 &1 false 
     brc %1 l.0_IF2_23 l.1_IF2_23 
     tar l.0_IF2_23 
-    ass ptr %3 &0 
-    call @f.cstr.cpy %3 &cstr.0 5 
+    call @f.cstr.cpy &0 &cstr.0 5 
     jmp l.1_LOG2_23 
     tar l.1_IF2_23 
     eq u8 %7 &1 true 
     brc %7 l.0_ELIF2_23_2 l.1_ELIF2_23_2 
     tar l.0_ELIF2_23_2 
-    ass ptr %9 &0 
-    call @f.cstr.cpy %9 &cstr.1 4 
+    call @f.cstr.cpy &0 &cstr.1 4 
     jmp l.1_LOG2_23 
     tar l.1_ELIF2_23_2 
-    ass ptr %13 &0 
-    call @f.cstr.cpy %13 &cstr.2 4 
+    call @f.cstr.cpy &0 &cstr.2 4 
     jmp l.1_LOG2_23 
     tar l.1_LOG2_23 
     ret 
 
 define u8 @f.parse.boolean.by ptr
     tar bb.64_UNNAMED0 
-    ass ptr %2 &1 
-    call @f.cstr.cmp %1 %2 &cstr.3 
-    call @f.cstr.cmp %4 %2 &cstr.4 
+    call @f.cstr.cmp %1 &1 &cstr.3 
+    call @f.cstr.cmp %4 &1 &cstr.4 
     or i8 %7 %1 %4 
     brc %7 l.0_IF2_24 l.1_IF2_24 
     tar l.0_IF2_24 
     ass u8 %8 false 
     ret %8 
     tar l.1_IF2_24 
-    ass ptr %11 &1 
-    call @f.cstr.cmp %10 %11 &cstr.5 
-    call @f.cstr.cmp %13 %11 &cstr.6 
+    call @f.cstr.cmp %10 &1 &cstr.5 
+    call @f.cstr.cmp %13 &1 &cstr.6 
     or i8 %16 %10 %13 
     brc %16 l.0_IF2_25 l.1_IF2_25 
     tar l.0_IF2_25 
@@ -1103,25 +1041,21 @@ define u8 @f.parse.boolean.by_s ptr ptr
     ass u8 %2 false 
     ret %2 
     tar l.1_IF2_26 
-    ass ptr %5 &1 
-    call @f.cstr.cmp %4 %5 &cstr.7 
-    call @f.cstr.cmp %7 %5 &cstr.8 
+    call @f.cstr.cmp %4 &1 &cstr.7 
+    call @f.cstr.cmp %7 &1 &cstr.8 
     or i8 %10 %4 %7 
     brc %10 l.0_IF2_27 l.1_IF2_27 
     tar l.0_IF2_27 
-    ass ptr %11 &2 
-    store u8 %11 false 
+    store u8 &2 false 
     ass u8 %12 true 
     ret %12 
     tar l.1_IF2_27 
-    ass ptr %15 &1 
-    call @f.cstr.cmp %14 %15 &cstr.9 
-    call @f.cstr.cmp %17 %15 &cstr.10 
+    call @f.cstr.cmp %14 &1 &cstr.9 
+    call @f.cstr.cmp %17 &1 &cstr.10 
     or i8 %20 %14 %17 
     brc %20 l.0_IF2_28 l.1_IF2_28 
     tar l.0_IF2_28 
-    ass ptr %21 &2 
-    store u8 %21 true 
+    store u8 &2 true 
     ass u8 %22 true 
     ret %22 
     tar l.1_IF2_28 
@@ -1133,12 +1067,10 @@ define @f.parse.uint.get ptr u64
     eq u64 %1 &1 0 
     brc %1 l.0_IF2_29 l.1_IF2_29 
     tar l.0_IF2_29 
-    ass ptr %2 &0 
-    store i8 %2 48 
+    store i8 &0 48 
     jmp l.1_LOG2_29 
     tar l.1_IF2_29 
-    ass u64 %4 &1 
-    call @f.math.uint.log10 %3 %4 
+    call @f.math.uint.log10 %3 &1 
     ass u64 %20 %3 
     ass u64 %21 &1 
     ass u64 %5 %20 
@@ -1172,8 +1104,7 @@ define @f.parse.uint.get ptr u64
 
 define u64 @f.parse.uint.by ptr
     tar bb.67_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.cstr.len %0 %1 
+    call @f.cstr.len %0 &1 
     ass i64 %33 %0 
     ass u64 %34 0 
     ass i64 %37 0 
@@ -1229,8 +1160,7 @@ define u8 @f.parse.uint.by_s ptr ptr
     ass u8 %2 false 
     ret %2 
     tar l.1_IF2_31 
-    ass ptr %4 &1 
-    call @f.cstr.len %3 %4 
+    call @f.cstr.len %3 &1 
     ass i64 %37 %3 
     ass u64 %38 0 
     ass i64 %41 0 
@@ -1276,9 +1206,8 @@ define u8 @f.parse.uint.by_s ptr ptr
     ass u8 %33 false 
     ret %33 
     tar l.1_WHILE2_32 
-    ass ptr %34 &2 
     ass u64 %35 %40 
-    store u64 %34 %35 
+    store u64 &2 %35 
     ass u8 %36 true 
     ret %36 
 
@@ -1287,8 +1216,7 @@ define @f.parse.int.get ptr i64
     eq i64 %1 &1 0 
     brc %1 l.0_IF2_33 l.1_IF2_33 
     tar l.0_IF2_33 
-    ass ptr %2 &0 
-    store i8 %2 48 
+    store i8 &0 48 
     jmp l.1_LOG2_33 
     tar l.1_IF2_33 
     ass i64 %30 0 
@@ -1297,8 +1225,7 @@ define @f.parse.int.get ptr i64
     brc %4 l.0_IF3_15 l.1_IF3_15 
     tar l.0_IF3_15 
     ass i64 %31 1 
-    ass ptr %5 &0 
-    store i8 %5 45 
+    store i8 &0 45 
     ass i64 %7 %32 
     neg i64 %8 %7 
     ass i64 %33 %8 
@@ -1341,14 +1268,13 @@ define @f.parse.int.get ptr i64
 
 define i64 @f.parse.int.by ptr
     tar bb.70_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.cstr.len %0 %1 
+    call @f.cstr.len %0 &1 
     ass i64 %44 %0 
     ass i64 %45 0 
     ass i64 %49 0 
     ass i64 %50 0 
     ass i64 %53 0 
-    load i8 %5 %1 
+    load i8 %5 &1 
     eq i8 %6 %5 45 
     brc %6 l.0_IF2_34 l.1_IF2_34 
     tar l.0_IF2_34 
@@ -1417,14 +1343,13 @@ define u8 @f.parse.int.by_s ptr ptr
     ass u8 %2 false 
     ret %2 
     tar l.1_IF2_37 
-    ass ptr %4 &1 
-    call @f.cstr.len %3 %4 
+    call @f.cstr.len %3 &1 
     ass i64 %48 %3 
     ass i64 %49 0 
     ass i64 %53 0 
     ass i64 %54 0 
     ass i64 %57 0 
-    load i8 %8 %4 
+    load i8 %8 &1 
     eq i8 %9 %8 45 
     brc %9 l.0_IF2_38 l.1_IF2_38 
     tar l.0_IF2_38 
@@ -1483,16 +1408,14 @@ define u8 @f.parse.int.by_s ptr ptr
     ass i64 %51 %44 
     jmp l.1_IF2_40 
     tar l.1_IF2_40 
-    ass ptr %45 &2 
     phi i64 %46 %52 l.1_WHILE2_39 %51 l.0_IF2_40 
-    store i64 %45 %46 
+    store i64 &2 %46 
     ass u8 %47 true 
     ret %47 
 
 define @f.parse.hex.get ptr u64
     tar bb.72_UNNAMED0 
-    ass ptr %0 &0 
-    store i8 %0 48 
+    store i8 &0 48 
     add ptr %1 &0 1 
     store i8 %1 120 
     eq u64 %4 &1 0 
@@ -1502,8 +1425,7 @@ define @f.parse.hex.get ptr u64
     store i8 %5 48 
     jmp l.1_LOG2_41 
     tar l.1_IF2_41 
-    ass u64 %9 &1 
-    call @f.math.uint.logb %7 16 %9 
+    call @f.math.uint.logb %7 16 &1 
     ass u64 %27 %7 
     ass u64 %28 &1 
     ass u64 %10 %27 
@@ -1538,8 +1460,7 @@ define @f.parse.hex.get ptr u64
 
 define u64 @f.parse.hex.by ptr
     tar bb.73_UNNAMED0 
-    ass ptr %1 &1 
-    load i8 %2 %1 
+    load i8 %2 &1 
     nq i8 %3 %2 48 
     add ptr %4 &1 1 
     load i8 %6 %4 
@@ -1549,8 +1470,7 @@ define u64 @f.parse.hex.by ptr
     tar l.0_IF2_42 
     ret 0 
     tar l.1_IF2_42 
-    ass ptr %11 &1 
-    call @f.cstr.len %10 %11 
+    call @f.cstr.len %10 &1 
     ass i64 %42 %10 
     ass u64 %43 0 
     ass i64 %46 0 
@@ -1605,8 +1525,7 @@ define u8 @f.parse.hex.by_s ptr ptr
     ass u8 %2 false 
     ret %2 
     tar l.1_IF2_44 
-    ass ptr %4 &1 
-    load i8 %5 %4 
+    load i8 %5 &1 
     nq i8 %6 %5 48 
     add ptr %7 &1 1 
     load i8 %9 %7 
@@ -1617,8 +1536,7 @@ define u8 @f.parse.hex.by_s ptr ptr
     ass u8 %12 false 
     ret %12 
     tar l.1_IF2_45 
-    ass ptr %14 &1 
-    call @f.cstr.len %13 %14 
+    call @f.cstr.len %13 &1 
     ass i64 %46 %13 
     ass u64 %47 0 
     ass i64 %50 0 
@@ -1663,16 +1581,14 @@ define u8 @f.parse.hex.by_s ptr ptr
     ass u8 %42 false 
     ret %42 
     tar l.1_WHILE2_46 
-    ass ptr %43 &2 
     ass u64 %44 %49 
-    store u64 %43 %44 
+    store u64 &2 %44 
     ass u8 %45 true 
     ret %45 
 
 define @f.parse.oct.get ptr u64
     tar bb.75_UNNAMED0 
-    ass ptr %0 &0 
-    store i8 %0 48 
+    store i8 &0 48 
     add ptr %1 &0 1 
     store i8 %1 111 
     eq u64 %4 &1 0 
@@ -1682,8 +1598,7 @@ define @f.parse.oct.get ptr u64
     store i8 %5 48 
     jmp l.1_LOG2_47 
     tar l.1_IF2_47 
-    ass u64 %9 &1 
-    call @f.math.uint.logb %7 8 %9 
+    call @f.math.uint.logb %7 8 &1 
     ass u64 %27 %7 
     ass u64 %28 &1 
     ass u64 %10 %27 
@@ -1718,8 +1633,7 @@ define @f.parse.oct.get ptr u64
 
 define u64 @f.parse.oct.by ptr
     tar bb.76_UNNAMED0 
-    ass ptr %1 &1 
-    load i8 %2 %1 
+    load i8 %2 &1 
     nq i8 %3 %2 48 
     add ptr %4 &1 1 
     load i8 %6 %4 
@@ -1729,8 +1643,7 @@ define u64 @f.parse.oct.by ptr
     tar l.0_IF2_48 
     ret 0 
     tar l.1_IF2_48 
-    ass ptr %11 &1 
-    call @f.cstr.len %10 %11 
+    call @f.cstr.len %10 &1 
     ass i64 %42 %10 
     ass u64 %43 0 
     ass i64 %46 0 
@@ -1785,8 +1698,7 @@ define u8 @f.parse.oct.by_s ptr ptr
     ass u8 %2 false 
     ret %2 
     tar l.1_IF2_50 
-    ass ptr %4 &1 
-    load i8 %5 %4 
+    load i8 %5 &1 
     nq i8 %6 %5 48 
     add ptr %7 &1 1 
     load i8 %9 %7 
@@ -1797,8 +1709,7 @@ define u8 @f.parse.oct.by_s ptr ptr
     ass u8 %12 false 
     ret %12 
     tar l.1_IF2_51 
-    ass ptr %14 &1 
-    call @f.cstr.len %13 %14 
+    call @f.cstr.len %13 &1 
     ass i64 %46 %13 
     ass u64 %47 0 
     ass i64 %50 0 
@@ -1843,16 +1754,14 @@ define u8 @f.parse.oct.by_s ptr ptr
     ass u8 %42 false 
     ret %42 
     tar l.1_WHILE2_52 
-    ass ptr %43 &2 
     ass u64 %44 %49 
-    store u64 %43 %44 
+    store u64 &2 %44 
     ass u8 %45 true 
     ret %45 
 
 define @f.parse.bin.get ptr u64
     tar bb.78_UNNAMED0 
-    ass ptr %0 &0 
-    store i8 %0 48 
+    store i8 &0 48 
     add ptr %1 &0 1 
     store i8 %1 98 
     eq u64 %4 &1 0 
@@ -1862,8 +1771,7 @@ define @f.parse.bin.get ptr u64
     store i8 %5 48 
     jmp l.1_LOG2_53 
     tar l.1_IF2_53 
-    ass u64 %9 &1 
-    call @f.math.uint.logb %7 2 %9 
+    call @f.math.uint.logb %7 2 &1 
     ass u64 %27 %7 
     ass u64 %28 &1 
     ass u64 %10 %27 
@@ -1898,8 +1806,7 @@ define @f.parse.bin.get ptr u64
 
 define u64 @f.parse.bin.by ptr
     tar bb.79_UNNAMED0 
-    ass ptr %1 &1 
-    load i8 %2 %1 
+    load i8 %2 &1 
     nq i8 %3 %2 48 
     add ptr %4 &1 1 
     load i8 %6 %4 
@@ -1909,8 +1816,7 @@ define u64 @f.parse.bin.by ptr
     tar l.0_IF2_54 
     ret 0 
     tar l.1_IF2_54 
-    ass ptr %11 &1 
-    call @f.cstr.len %10 %11 
+    call @f.cstr.len %10 &1 
     ass i64 %42 %10 
     ass u64 %43 0 
     ass i64 %46 0 
@@ -1965,8 +1871,7 @@ define u8 @f.parse.bin.by_s ptr ptr
     ass u8 %2 false 
     ret %2 
     tar l.1_IF2_56 
-    ass ptr %4 &1 
-    load i8 %5 %4 
+    load i8 %5 &1 
     nq i8 %6 %5 48 
     add ptr %7 &1 1 
     load i8 %9 %7 
@@ -1977,8 +1882,7 @@ define u8 @f.parse.bin.by_s ptr ptr
     ass u8 %12 false 
     ret %12 
     tar l.1_IF2_57 
-    ass ptr %14 &1 
-    call @f.cstr.len %13 %14 
+    call @f.cstr.len %13 &1 
     ass i64 %46 %13 
     ass u64 %47 0 
     ass i64 %50 0 
@@ -2023,9 +1927,8 @@ define u8 @f.parse.bin.by_s ptr ptr
     ass u8 %42 false 
     ret %42 
     tar l.1_WHILE2_58 
-    ass ptr %43 &2 
     ass u64 %44 %49 
-    store u64 %43 %44 
+    store u64 &2 %44 
     ass u8 %45 true 
     ret %45 
 
@@ -2034,19 +1937,17 @@ define @f.mem.Allocator.init ptr ptr u64
     eq ptr %1 &0 0 
     lt u64 %2 &2 8 
     or u8 %3 %1 %2 
-    ass u32 %4 &2 
-    nq u64 %5 &2 %4 
+    nq u64 %5 &2 &2 
     or u8 %6 %3 %5 
     brc %6 l.0_IF2_59 l.1_IF2_59 
     tar l.0_IF2_59 
     nq ptr %8 &0 0 
     brc %8 l.0_IF3_24 l.1_IF3_24 
     tar l.0_IF3_24 
-    ass ptr %9 &0 
-    store ptr %9 0 
-    add ptr %12 %9 8 
+    store ptr &0 0 
+    add ptr %12 &0 8 
     store u32 %12 0 
-    add ptr %14 %9 12 
+    add ptr %14 &0 12 
     store u32 %14 0 
     jmp l.1_IF3_24 
     tar l.1_IF3_24 
@@ -2055,37 +1956,30 @@ define @f.mem.Allocator.init ptr ptr u64
     eq ptr %16 &1 0 
     brc %16 l.0_IF2_60 l.1_IF2_60 
     tar l.0_IF2_60 
-    ass ptr %17 &0 
-    ass u64 %20 &2 
-    call @f.sys.alloc %19 %20 
-    store ptr %17 %19 
-    add ptr %22 %17 12 
+    call @f.sys.alloc %19 &2 
+    store ptr &0 %19 
+    add ptr %22 &0 12 
     store u32 %22 0 
     jmp l.1_LOG2_60 
     tar l.1_IF2_60 
-    ass ptr %23 &0 
-    store ptr %23 &1 
-    add ptr %26 %23 12 
+    store ptr &0 &1 
+    add ptr %26 &0 12 
     store u32 %26 1 
     jmp l.1_LOG2_60 
     tar l.1_LOG2_60 
-    ass ptr %28 &0 
-    load ptr %30 %28 
+    load ptr %30 &0 
     eq ptr %31 %30 0 
     brc %31 l.0_IF2_61 l.1_IF2_61 
     tar l.0_IF2_61 
-    ass ptr %32 &0 
-    add ptr %33 %32 8 
+    add ptr %33 &0 8 
     store u32 %33 0 
     ret 
     tar l.1_IF2_61 
-    ass ptr %34 &0 
-    add ptr %35 %34 8 
+    add ptr %35 &0 8 
     store u32 %35 &2 
-    load ptr %40 %34 
-    ass i64 %42 &2 
-    call @f.ptr.set %40 0 %42 
-    load ptr %45 %34 
+    load ptr %40 &0 
+    call @f.ptr.set %40 0 &2 
+    load ptr %45 &0 
     ass ptr %51 %45 
     ass ptr %46 %51 
     sub u64 %48 &2 8 
@@ -2097,27 +1991,24 @@ define @f.mem.Allocator.init ptr ptr u64
 
 define @f.mem.Allocator.delete ptr
     tar bb.82_UNNAMED0 
-    ass ptr %1 &0 
-    load ptr %3 %1 
+    load ptr %3 &0 
     nq ptr %4 %3 0 
-    add ptr %6 %1 12 
+    add ptr %6 &0 12 
     load u32 %7 %6 
     eq u32 %8 %7 0 
     and u8 %9 %4 %8 
     brc %9 l.0_IF2_62 l.1_IF2_62 
     tar l.0_IF2_62 
-    ass ptr %12 &0 
-    load ptr %14 %12 
-    add ptr %17 %12 8 
+    load ptr %14 &0 
+    add ptr %17 &0 8 
     load u32 %18 %17 
     call @f.sys.free %14 %18 
     jmp l.1_IF2_62 
     tar l.1_IF2_62 
-    ass ptr %19 &0 
-    store ptr %19 0 
-    add ptr %22 %19 8 
+    store ptr &0 0 
+    add ptr %22 &0 8 
     store u32 %22 0 
-    add ptr %24 %19 12 
+    add ptr %24 &0 12 
     store u32 %24 0 
     ret 
 
@@ -2138,8 +2029,7 @@ define ptr u32 u32 @f.mem.Allocator.make u64
     tar bb.84_UNNAMED0 
     allocs 16 %alloc 
     ass ptr %2 %alloc 
-    ass u64 %4 &3 
-    call @f.mem.Allocator.init %2 0 %4 
+    call @f.mem.Allocator.init %2 0 &3 
     load ptr %7 %2 
     add ptr %8 %2 8 
     load u32 %9 %8 
@@ -2152,9 +2042,7 @@ define ptr u32 u32 @f.mem.Allocator.by ptr u64
     tar bb.85_UNNAMED0 
     allocs 16 %alloc 
     ass ptr %2 %alloc 
-    ass ptr %3 &3 
-    ass u64 %4 &4 
-    call @f.mem.Allocator.init %2 %3 %4 
+    call @f.mem.Allocator.init %2 &3 &4 
     load ptr %7 %2 
     add ptr %8 %2 8 
     load u32 %9 %8 
@@ -2166,8 +2054,7 @@ define ptr u32 u32 @f.mem.Allocator.by ptr u64
 define ptr @f.mem.Allocator.alloc ptr u64
     tar bb.86_UNNAMED0 
     eq ptr %1 &1 0 
-    ass ptr %2 &1 
-    load ptr %4 %2 
+    load ptr %4 &1 
     eq ptr %5 %4 0 
     or u8 %6 %1 %5 
     eq u64 %7 &2 0 
@@ -2176,11 +2063,10 @@ define ptr @f.mem.Allocator.alloc ptr u64
     tar l.0_IF2_63 
     ret 0 
     tar l.1_IF2_63 
-    ass ptr %10 &1 
-    load ptr %12 %10 
+    load ptr %12 &1 
     ass ptr %86 %12 
-    add ptr %16 %10 8 
-    load ptr %17 %10 
+    add ptr %16 &1 8 
+    load ptr %17 &1 
     load u32 %18 %16 
     add ptr %19 %17 %18 
     ass ptr %88 %19 
@@ -2273,8 +2159,7 @@ define ptr @f.mem.Allocator.alloc ptr u64
 define @f.mem.Allocator.free ptr ptr
     tar bb.87_UNNAMED0 
     eq ptr %1 &0 0 
-    ass ptr %2 &0 
-    load ptr %4 %2 
+    load ptr %4 &0 
     eq ptr %5 %4 0 
     or u8 %6 %1 %5 
     eq ptr %7 &1 0 
@@ -2283,13 +2168,12 @@ define @f.mem.Allocator.free ptr ptr
     tar l.0_IF2_65 
     ret 
     tar l.1_IF2_65 
-    ass ptr %9 &0 
-    add ptr %12 %9 8 
-    load ptr %13 %9 
+    add ptr %12 &0 8 
+    load ptr %13 &0 
     load u32 %14 %12 
     add ptr %15 %13 %14 
     ass ptr %94 %15 
-    load ptr %19 %9 
+    load ptr %19 &0 
     lt ptr %20 &1 %19 
     ass ptr %21 %94 
     gq ptr %22 &1 %21 
@@ -2299,8 +2183,7 @@ define @f.mem.Allocator.free ptr ptr
     ret 
     tar l.1_IF2_66 
     ass ptr %95 0 
-    ass ptr %24 &0 
-    load ptr %26 %24 
+    load ptr %26 &0 
     ass ptr %98 %26 
     jmp l.0_WHILE2_67 
     tar l.0_WHILE2_67 
@@ -2406,8 +2289,7 @@ define @f.mem.Allocator.free ptr ptr
 define ptr @f.mem.Allocator.realloc ptr ptr u64
     tar bb.88_UNNAMED0 
     eq ptr %1 &1 0 
-    ass ptr %2 &1 
-    load ptr %4 %2 
+    load ptr %4 &1 
     eq ptr %5 %4 0 
     or u8 %6 %1 %5 
     brc %6 l.0_IF2_68 l.1_IF2_68 
@@ -2417,26 +2299,21 @@ define ptr @f.mem.Allocator.realloc ptr ptr u64
     eq ptr %9 &2 0 
     brc %9 l.0_IF2_69 l.1_IF2_69 
     tar l.0_IF2_69 
-    ass ptr %11 &1 
-    ass u64 %12 &3 
-    call @f.mem.Allocator.alloc %10 %11 %12 
+    call @f.mem.Allocator.alloc %10 &1 &3 
     ret %10 
     tar l.1_IF2_69 
     eq u64 %15 &3 0 
     brc %15 l.0_IF2_70 l.1_IF2_70 
     tar l.0_IF2_70 
-    ass ptr %17 &1 
-    ass ptr %18 &2 
-    call @f.mem.Allocator.free %17 %18 
+    call @f.mem.Allocator.free &1 &2 
     ret 0 
     tar l.1_IF2_70 
-    ass ptr %20 &1 
-    add ptr %23 %20 8 
-    load ptr %24 %20 
+    add ptr %23 &1 8 
+    load ptr %24 &1 
     load u32 %25 %23 
     add ptr %26 %24 %25 
     ass ptr %205 %26 
-    load ptr %30 %20 
+    load ptr %30 &1 
     lt ptr %31 &2 %30 
     ass ptr %32 %205 
     gq ptr %33 &2 %32 
@@ -2445,8 +2322,7 @@ define ptr @f.mem.Allocator.realloc ptr ptr u64
     tar l.0_IF2_71 
     ret 0 
     tar l.1_IF2_71 
-    ass ptr %36 &1 
-    load ptr %38 %36 
+    load ptr %38 &1 
     ass ptr %206 %38 
     jmp l.0_WHILE2_72 
     tar l.0_WHILE2_72 
@@ -2538,8 +2414,7 @@ define ptr @f.mem.Allocator.realloc ptr ptr u64
     tar l.1_IF6_3 
     jmp l.1_IF5_4 
     tar l.1_IF5_4 
-    ass ptr %114 &2 
-    ret %114 
+    ret &2 
     tar l.1_IF4_12 
     ass ptr %116 %57 
     add ptr %117 %116 8 
@@ -2620,8 +2495,7 @@ define ptr @f.mem.Allocator.realloc ptr ptr u64
     store u32 %179 %181 
     jmp l.1_LOG7_1 
     tar l.1_LOG7_1 
-    ass ptr %182 &2 
-    ret %182 
+    ret &2 
     tar l.1_IF6_4 
     jmp l.1_IF5_5 
     tar l.1_IF5_5 
@@ -2629,9 +2503,7 @@ define ptr @f.mem.Allocator.realloc ptr ptr u64
     jmp l.1_IF4_13 
     tar l.1_IF4_13 
     phi ptr %209 %66 l.1_IF4_12 %208 l.1_IF5_5 
-    ass ptr %184 &1 
-    ass u64 %185 &3 
-    call @f.mem.Allocator.alloc %183 %184 %185 
+    call @f.mem.Allocator.alloc %183 &1 &3 
     ass ptr %218 %183 
     ass ptr %187 %218 
     eq ptr %188 %187 0 
@@ -2640,12 +2512,10 @@ define ptr @f.mem.Allocator.realloc ptr ptr u64
     ret 0 
     tar l.1_IF4_14 
     ass ptr %192 %187 
-    ass ptr %193 &2 
     ass ptr %195 %209 
     load u32 %197 %195 
-    call @f.ptr.cpy %192 %193 %197 
-    ass ptr %199 &1 
-    call @f.mem.Allocator.free %199 %193 
+    call @f.ptr.cpy %192 &2 %197 
+    call @f.mem.Allocator.free &1 &2 
     ass ptr %202 %192 
     ret %202 
     tar l.1_IF3_33 
@@ -2668,9 +2538,8 @@ define ptr @f.mem.Allocator.calloc ptr u64 u64
     tar l.0_IF2_73 
     ret 0 
     tar l.1_IF2_73 
-    ass ptr %9 &1 
     ass u64 %11 %3 
-    call @f.mem.Allocator.alloc %8 %9 %11 
+    call @f.mem.Allocator.alloc %8 &1 %11 
     ass ptr %24 %8 
     ass ptr %13 %24 
     nq ptr %14 %13 0 
@@ -2692,8 +2561,7 @@ define @f.mem.Allocator.print ptr
     call @f.ptr.set %4 32 128 
     call @f.ptr.cpy %4 &cstr.12 9 
     add ptr %15 %4 10 
-    ass ptr %17 &0 
-    load ptr %19 %17 
+    load ptr %19 &0 
     call @f.parse.hex.get %15 %19 
     add ptr %22 %4 53 
     store i8 %22 124 
@@ -2702,22 +2570,21 @@ define @f.mem.Allocator.print ptr
     call @f.io.print %4 
     call @f.ptr.set %4 32 128 
     call @f.ptr.cpy %4 &cstr.14 9 
-    add ptr %49 %17 8 
+    add ptr %49 &0 8 
     load u32 %50 %49 
     call @f.parse.uint.get %15 %50 
     store i8 %22 124 
     call @f.ptr.cpy %27 &cstr.15 2 
     call @f.io.print %4 
-    load ptr %65 %17 
+    load ptr %65 &0 
     ass ptr %138 %65 
     jmp l.0_WHILE2_75 
     tar l.0_WHILE2_75 
-    ass ptr %67 &0 
     phi ptr %69 %138 bb.90_UNNAMED0 %139 l.2_WHILE2_75 
-    load ptr %70 %67 
+    load ptr %70 &0 
     gq ptr %71 %69 %70 
-    add ptr %75 %67 8 
-    load ptr %76 %67 
+    add ptr %75 &0 8 
+    load ptr %76 &0 
     load u32 %77 %75 
     add ptr %78 %76 %77 
     ass ptr %79 %69 
@@ -2759,47 +2626,40 @@ define @f.mem.Allocator.print ptr
 
 define @f.ios.OStream.init ptr ptr i64
     tar bb.91_UNNAMED0 
-    ass ptr %0 &0 
-    store i64 %0 &2 
-    add ptr %3 %0 32 
+    store i64 &0 &2 
+    add ptr %3 &0 32 
     store ptr %3 &1 
-    add ptr %5 %0 8 
+    add ptr %5 &0 8 
     store u64 %5 0 
-    add ptr %7 %0 16 
+    add ptr %7 &0 16 
     store u64 %7 5 
-    add ptr %9 %0 24 
-    ass ptr %11 &1 
-    call @f.mem.Allocator.alloc %10 %11 5 
+    add ptr %9 &0 24 
+    call @f.mem.Allocator.alloc %10 &1 5 
     store ptr %9 %10 
     ret 
 
 define @f.ios.OStream.delete ptr
     tar bb.92_UNNAMED0 
-    ass ptr %1 &0 
-    load i64 %3 %1 
+    load i64 %3 &0 
     gt i64 %4 %3 2 
     brc %4 l.0_IF2_76 l.1_IF2_76 
     tar l.0_IF2_76 
-    ass ptr %6 &0 
     call @f.stdin %8 
-    load i64 %10 %6 
+    load i64 %10 &0 
     nq i64 %11 %10 %8 
     brc %11 l.0_IF3_34 l.1_IF3_34 
     tar l.0_IF3_34 
-    ass ptr %13 &0 
     call @f.stdout %15 
-    load i64 %17 %13 
+    load i64 %17 &0 
     nq i64 %18 %17 %15 
     brc %18 l.0_IF4_15 l.1_IF4_15 
     tar l.0_IF4_15 
-    ass ptr %20 &0 
     call @f.stderr %22 
-    load i64 %24 %20 
+    load i64 %24 &0 
     nq i64 %25 %24 %22 
     brc %25 l.0_IF5_6 l.1_IF5_6 
     tar l.0_IF5_6 
-    ass ptr %28 &0 
-    load i64 %30 %28 
+    load i64 %30 &0 
     call @f.sys.close %30 
     jmp l.1_IF5_6 
     tar l.1_IF5_6 
@@ -2809,18 +2669,17 @@ define @f.ios.OStream.delete ptr
     tar l.1_IF3_34 
     jmp l.1_IF2_76 
     tar l.1_IF2_76 
-    ass ptr %31 &0 
-    add ptr %32 %31 24 
+    add ptr %32 &0 24 
     load ptr %33 %32 
     ass ptr %49 %33 
-    add ptr %35 %31 32 
+    add ptr %35 &0 32 
     load ptr %38 %35 
     ass ptr %40 %49 
     call @f.mem.Allocator.free %38 %40 
     store ptr %35 0 
-    add ptr %44 %31 8 
+    add ptr %44 &0 8 
     store u64 %44 0 
-    add ptr %46 %31 16 
+    add ptr %46 &0 16 
     store u64 %46 0 
     store ptr %32 0 
     ret 
@@ -2829,9 +2688,7 @@ define i64 u64 u64 ptr ptr @f.ios.OStream.new ptr i64
     tar bb.93_UNNAMED0 
     allocs 40 %stream 
     ass ptr %2 %stream 
-    ass ptr %3 &5 
-    ass i64 %4 &6 
-    call @f.ios.OStream.init %2 %3 %4 
+    call @f.ios.OStream.init %2 &5 &6 
     load i64 %7 %2 
     add ptr %8 %2 8 
     load u64 %9 %8 
@@ -2846,16 +2703,14 @@ define i64 u64 u64 ptr ptr @f.ios.OStream.new ptr i64
 
 define i8 @f.ios.OStream.get ptr u64
     tar bb.94_UNNAMED0 
-    ass ptr %1 &1 
-    add ptr %2 %1 8 
+    add ptr %2 &1 8 
     load u64 %3 %2 
     gq u64 %4 &2 %3 
     brc %4 l.0_IF2_77 l.1_IF2_77 
     tar l.0_IF2_77 
     ret 0 
     tar l.1_IF2_77 
-    ass ptr %6 &1 
-    add ptr %7 %6 24 
+    add ptr %7 &1 24 
     load ptr %8 %7 
     add ptr %9 %8 &2 
     load i8 %12 %9 
@@ -2867,39 +2722,33 @@ define @f.ios.OStream.set_c ptr u64 ptr u64
     gq u64 %2 &1 0 
     and u8 %3 %1 %2 
     add u64 %4 &1 &3 
-    ass ptr %5 &0 
-    add ptr %6 %5 8 
+    add ptr %6 &0 8 
     load u64 %7 %6 
     lq u64 %8 %4 %7 
     and u8 %9 %3 %8 
     brc %9 l.0_IF2_78 l.1_IF2_78 
     tar l.0_IF2_78 
-    ass ptr %12 &0 
-    add ptr %13 %12 24 
+    add ptr %13 &0 24 
     load ptr %14 %13 
     add ptr %15 %14 &1 
-    ass ptr %16 &2 
-    ass i64 %17 &3 
-    call @f.ptr.cpy %15 %16 %17 
+    call @f.ptr.cpy %15 &2 &3 
     jmp l.1_IF2_78 
     tar l.1_IF2_78 
     ret 
 
 define @f.ios.OStream.expand ptr u64
     tar bb.96_UNNAMED0 
-    ass ptr %0 &0 
-    add ptr %1 %0 8 
+    add ptr %1 &0 8 
     load u64 %2 %1 
     add u64 %3 %2 &1 
     ass u64 %52 %3 
-    add ptr %6 %0 16 
+    add ptr %6 &0 16 
     ass u64 %7 %52 
     load u64 %8 %6 
     gt u64 %9 %7 %8 
     brc %9 l.0_IF2_79 l.1_IF2_79 
     tar l.0_IF2_79 
-    ass ptr %10 &0 
-    add ptr %11 %10 16 
+    add ptr %11 &0 16 
     load u64 %12 %11 
     ass u64 %53 %12 
     jmp l.0_WHILE3_35 
@@ -2914,16 +2763,15 @@ define @f.ios.OStream.expand ptr u64
     ass u64 %54 %18 
     jmp l.0_WHILE3_35 
     tar l.1_WHILE3_35 
-    ass ptr %19 &0 
-    add ptr %20 %19 32 
+    add ptr %20 &0 32 
     load ptr %23 %20 
     ass u64 %25 %15 
     call @f.mem.Allocator.alloc %21 %23 %25 
     ass ptr %55 %21 
     ass ptr %28 %55 
-    add ptr %31 %19 24 
+    add ptr %31 &0 24 
     load ptr %32 %31 
-    add ptr %35 %19 8 
+    add ptr %35 &0 8 
     load u64 %36 %35 
     call @f.ptr.cpy %28 %32 %36 
     load ptr %41 %20 
@@ -2931,7 +2779,7 @@ define @f.ios.OStream.expand ptr u64
     call @f.mem.Allocator.free %41 %45 
     ass ptr %48 %28 
     store ptr %31 %48 
-    add ptr %50 %19 16 
+    add ptr %50 &0 16 
     ass u64 %51 %25 
     store u64 %50 %51 
     jmp l.1_IF2_79 
@@ -2940,12 +2788,11 @@ define @f.ios.OStream.expand ptr u64
 
 define @f.ios.OStream.shrink ptr u64
     tar bb.97_UNNAMED0 
-    ass ptr %0 &0 
-    add ptr %1 %0 16 
+    add ptr %1 &0 16 
     load u64 %2 %1 
     shr u64 %3 %2 1 
     ass u64 %46 %3 
-    add ptr %6 %0 8 
+    add ptr %6 &0 8 
     load u64 %7 %6 
     ass u64 %8 %46 
     lq u64 %9 %7 %8 
@@ -2954,16 +2801,15 @@ define @f.ios.OStream.shrink ptr u64
     and u8 %12 %9 %11 
     brc %12 l.0_IF2_80 l.1_IF2_80 
     tar l.0_IF2_80 
-    ass ptr %13 &0 
-    add ptr %14 %13 32 
+    add ptr %14 &0 32 
     load ptr %17 %14 
     ass u64 %19 %10 
     call @f.mem.Allocator.alloc %15 %17 %19 
     ass ptr %47 %15 
     ass ptr %22 %47 
-    add ptr %25 %13 24 
+    add ptr %25 &0 24 
     load ptr %26 %25 
-    add ptr %29 %13 8 
+    add ptr %29 &0 8 
     load u64 %30 %29 
     call @f.ptr.cpy %22 %26 %30 
     load ptr %35 %14 
@@ -2971,7 +2817,7 @@ define @f.ios.OStream.shrink ptr u64
     call @f.mem.Allocator.free %35 %39 
     ass ptr %42 %22 
     store ptr %25 %42 
-    add ptr %44 %13 16 
+    add ptr %44 &0 16 
     ass u64 %45 %19 
     store u64 %44 %45 
     jmp l.1_IF2_80 
@@ -2980,147 +2826,128 @@ define @f.ios.OStream.shrink ptr u64
 
 define @f.ios.OStream.clear ptr
     tar bb.98_UNNAMED0 
-    ass ptr %0 &0 
-    add ptr %1 %0 32 
+    add ptr %1 &0 32 
     load ptr %4 %1 
     call @f.mem.Allocator.alloc %2 %4 5 
     ass ptr %22 %2 
     load ptr %10 %1 
-    add ptr %13 %0 24 
+    add ptr %13 &0 24 
     load ptr %14 %13 
     call @f.mem.Allocator.free %10 %14 
     ass ptr %17 %22 
     store ptr %13 %17 
-    add ptr %19 %0 8 
+    add ptr %19 &0 8 
     store u64 %19 0 
-    add ptr %21 %0 16 
+    add ptr %21 &0 16 
     store u64 %21 5 
     ret 
 
 define @f.ios.OStream.push_c ptr ptr u64
     tar bb.99_UNNAMED0 
-    ass ptr %1 &0 
-    ass u64 %2 &2 
-    call @f.ios.OStream.expand %1 %2 
-    add ptr %4 %1 8 
+    call @f.ios.OStream.expand &0 &2 
+    add ptr %4 &0 8 
     load u64 %5 %4 
     add u64 %6 %5 &2 
     store u64 %4 %6 
     load u64 %12 %4 
     sub u64 %13 %12 &2 
-    ass ptr %14 &1 
-    call @f.ios.OStream.set_c %1 %13 %14 %2 
+    call @f.ios.OStream.set_c &0 %13 &1 &2 
     ret 
 
 define ptr @f.ios.OStream.char ptr i8
     tar bb.100_UNNAMED0 
     alloca i8 %st_ch 
     store i8 %st_ch &2 
-    ass ptr %1 &1 
     ass ptr %3 %st_ch 
-    call @f.ios.OStream.push_c %1 %3 1 
+    call @f.ios.OStream.push_c &1 %3 1 
     destroy %st_ch 
-    ret %1 
+    ret &1 
 
 define ptr @f.ios.OStream.cstr ptr ptr
     tar bb.101_UNNAMED0 
-    ass ptr %1 &2 
-    call @f.cstr.len %0 %1 
+    call @f.cstr.len %0 &2 
     ass u64 %8 %0 
-    ass ptr %3 &1 
     ass u64 %6 %8 
-    call @f.ios.OStream.push_c %3 %1 %6 
-    ret %3 
+    call @f.ios.OStream.push_c &1 &2 %6 
+    ret &1 
 
 define ptr @f.ios.OStream.uint ptr u64
     tar bb.102_UNNAMED0 
     allocs 48 %block 
     ass ptr %2 %block 
     call @f.ptr.set %2 0 48 
-    ass u64 %8 &2 
-    call @f.parse.uint.get %2 %8 
+    call @f.parse.uint.get %2 &2 
     call @f.cstr.len %9 %2 
     ass u64 %19 %9 
-    ass ptr %13 &1 
     ass u64 %17 %19 
-    call @f.ios.OStream.push_c %13 %2 %17 
+    call @f.ios.OStream.push_c &1 %2 %17 
     destroy %block 
-    ret %13 
+    ret &1 
 
 define ptr @f.ios.OStream.int ptr i64
     tar bb.103_UNNAMED0 
     allocs 48 %block 
     ass ptr %2 %block 
     call @f.ptr.set %2 0 48 
-    ass i64 %8 &2 
-    call @f.parse.int.get %2 %8 
+    call @f.parse.int.get %2 &2 
     call @f.cstr.len %9 %2 
     ass u64 %19 %9 
-    ass ptr %13 &1 
     ass u64 %17 %19 
-    call @f.ios.OStream.push_c %13 %2 %17 
+    call @f.ios.OStream.push_c &1 %2 %17 
     destroy %block 
-    ret %13 
+    ret &1 
 
 define ptr @f.ios.OStream.boolean ptr u8
     tar bb.104_UNNAMED0 
     allocs 8 %block 
     ass ptr %2 %block 
     call @f.ptr.set %2 0 8 
-    ass u8 %8 &2 
-    call @f.parse.boolean.get %2 %8 
+    call @f.parse.boolean.get %2 &2 
     call @f.cstr.len %9 %2 
     ass u64 %19 %9 
-    ass ptr %13 &1 
     ass u64 %17 %19 
-    call @f.ios.OStream.push_c %13 %2 %17 
+    call @f.ios.OStream.push_c &1 %2 %17 
     destroy %block 
-    ret %13 
+    ret &1 
 
 define ptr @f.ios.OStream.hex ptr i64
     tar bb.105_UNNAMED0 
     allocs 48 %block 
     ass ptr %2 %block 
     call @f.ptr.set %2 0 48 
-    ass u64 %8 &2 
-    call @f.parse.hex.get %2 %8 
+    call @f.parse.hex.get %2 &2 
     call @f.cstr.len %9 %2 
     ass u64 %19 %9 
-    ass ptr %13 &1 
     ass u64 %17 %19 
-    call @f.ios.OStream.push_c %13 %2 %17 
+    call @f.ios.OStream.push_c &1 %2 %17 
     destroy %block 
-    ret %13 
+    ret &1 
 
 define ptr @f.ios.OStream.oct ptr i64
     tar bb.106_UNNAMED0 
     allocs 48 %block 
     ass ptr %2 %block 
     call @f.ptr.set %2 0 48 
-    ass u64 %8 &2 
-    call @f.parse.oct.get %2 %8 
+    call @f.parse.oct.get %2 &2 
     call @f.cstr.len %9 %2 
     ass u64 %19 %9 
-    ass ptr %13 &1 
     ass u64 %17 %19 
-    call @f.ios.OStream.push_c %13 %2 %17 
+    call @f.ios.OStream.push_c &1 %2 %17 
     destroy %block 
-    ret %13 
+    ret &1 
 
 define ptr @f.ios.OStream.bin ptr i64
     tar bb.107_UNNAMED0 
     allocs 48 %block 
     ass ptr %2 %block 
     call @f.ptr.set %2 0 48 
-    ass u64 %8 &2 
-    call @f.parse.bin.get %2 %8 
+    call @f.parse.bin.get %2 &2 
     call @f.cstr.len %9 %2 
     ass u64 %19 %9 
-    ass ptr %13 &1 
     ass u64 %17 %19 
-    call @f.ios.OStream.push_c %13 %2 %17 
+    call @f.ios.OStream.push_c &1 %2 %17 
     destroy %block 
-    ret %13 
+    ret &1 
 
 define ptr @f.ios.OStream.address ptr ptr
     tar bb.108_UNNAMED0 
@@ -3169,19 +2996,17 @@ define ptr @f.ios.OStream.address ptr ptr
     ass ptr %40 %block 
     call @f.cstr.len %38 %40 
     ass u64 %53 %38 
-    ass ptr %42 &1 
     ass u64 %46 %53 
-    call @f.ios.OStream.push_c %42 %40 %46 
+    call @f.ios.OStream.push_c &1 %40 %46 
     destroy %addr 
     destroy %block 
-    ret %42 
+    ret &1 
 
 define ptr @f.ios.OStream.mem ptr ptr u64
     tar bb.109_UNNAMED0 
     add u64 %0 &3 &3 
     ass u64 %61 %0 
-    ass ptr %1 &1 
-    add ptr %2 %1 32 
+    add ptr %2 &1 32 
     load ptr %5 %2 
     ass u64 %7 %61 
     add u64 %8 %7 1 
@@ -3226,70 +3051,63 @@ define ptr @f.ios.OStream.mem ptr ptr u64
     ass i32 %65 %46 
     jmp l.0_FOR3_37 
     tar l.1_FOR3_37 
-    ass ptr %48 &1 
     ass ptr %50 %63 
     ass u64 %52 %14 
-    call @f.ios.OStream.push_c %48 %50 %52 
-    add ptr %54 %48 32 
+    call @f.ios.OStream.push_c &1 %50 %52 
+    add ptr %54 &1 32 
     load ptr %57 %54 
     ass ptr %59 %50 
     call @f.mem.Allocator.free %57 %59 
-    ret %48 
+    ret &1 
 
 define ptr @f.ios.OStream.flush ptr
     tar bb.110_UNNAMED0 
-    ass ptr %0 &1 
-    add ptr %1 %0 8 
+    add ptr %1 &1 8 
     load u64 %2 %1 
     ass u64 %20 %2 
     ass u64 %4 %20 
     gt u64 %5 %4 0 
     brc %5 l.0_IF2_81 l.1_IF2_81 
     tar l.0_IF2_81 
-    ass ptr %8 &1 
-    load i64 %10 %8 
-    add ptr %13 %8 24 
+    load i64 %10 &1 
+    add ptr %13 &1 24 
     load ptr %14 %13 
     ass u64 %16 %4 
     call @f.sys.write %6 %10 %14 %16 
-    call @f.ios.OStream.clear %8 
+    call @f.ios.OStream.clear &1 
     jmp l.1_IF2_81 
     tar l.1_IF2_81 
-    ass ptr %19 &1 
-    ret %19 
+    ret &1 
 
 define @f.con.Vector.init ptr ptr u64 u64
     tar bb.111_UNNAMED0 
-    ass ptr %0 &0 
-    add ptr %1 %0 32 
+    add ptr %1 &0 32 
     store ptr %1 &1 
-    store u64 %0 &2 
-    add ptr %5 %0 8 
+    store u64 &0 &2 
+    add ptr %5 &0 8 
     store u64 %5 0 
-    add ptr %7 %0 16 
+    add ptr %7 &0 16 
     store u64 %7 &3 
-    add ptr %9 %0 24 
-    ass ptr %11 &1 
+    add ptr %9 &0 24 
     mul u64 %13 &3 &2 
-    call @f.mem.Allocator.alloc %10 %11 %13 
+    call @f.mem.Allocator.alloc %10 &1 %13 
     store ptr %9 %10 
     ret 
 
 define @f.con.Vector.delete ptr
     tar bb.112_UNNAMED0 
-    ass ptr %0 &0 
-    add ptr %1 %0 24 
+    add ptr %1 &0 24 
     load ptr %2 %1 
     ass ptr %20 %2 
-    add ptr %4 %0 32 
+    add ptr %4 &0 32 
     load ptr %7 %4 
     ass ptr %9 %20 
     call @f.mem.Allocator.free %7 %9 
     store ptr %4 0 
-    store u64 %0 0 
-    add ptr %15 %0 8 
+    store u64 &0 0 
+    add ptr %15 &0 8 
     store u64 %15 0 
-    add ptr %17 %0 16 
+    add ptr %17 &0 16 
     store u64 %17 0 
     store ptr %1 0 
     ret 
@@ -3298,9 +3116,7 @@ define u64 u64 u64 ptr ptr @f.con.Vector.new ptr u64
     tar bb.113_UNNAMED0 
     allocs 40 %vec 
     ass ptr %2 %vec 
-    ass ptr %3 &5 
-    ass u64 %4 &6 
-    call @f.con.Vector.init %2 %3 %4 5 
+    call @f.con.Vector.init %2 &5 &6 5 
     load u64 %8 %2 
     add ptr %9 %2 8 
     load u64 %10 %9 
@@ -3317,10 +3133,7 @@ define u64 u64 u64 ptr ptr @f.con.Vector.make ptr u64 u64
     tar bb.114_UNNAMED0 
     allocs 40 %vec 
     ass ptr %2 %vec 
-    ass ptr %3 &5 
-    ass u64 %4 &6 
-    ass u64 %5 &7 
-    call @f.con.Vector.init %2 %3 %4 %5 
+    call @f.con.Vector.init %2 &5 &6 &7 
     load u64 %8 %2 
     add ptr %9 %2 8 
     load u64 %10 %9 
@@ -3336,8 +3149,7 @@ define u64 u64 u64 ptr ptr @f.con.Vector.make ptr u64 u64
 define ptr @f.con.Vector.get ptr u64
     tar bb.115_UNNAMED0 
     lt u64 %1 &2 0 
-    ass ptr %2 &1 
-    add ptr %3 %2 8 
+    add ptr %3 &1 8 
     load u64 %4 %3 
     gq u64 %5 &2 %4 
     or u8 %6 %1 %5 
@@ -3345,9 +3157,8 @@ define ptr @f.con.Vector.get ptr u64
     tar l.0_IF2_82 
     ret 0 
     tar l.1_IF2_82 
-    ass ptr %8 &1 
-    add ptr %9 %8 24 
-    load u64 %12 %8 
+    add ptr %9 &1 24 
+    load u64 %12 &1 
     mul u64 %13 &2 %12 
     load ptr %14 %9 
     add ptr %15 %14 %13 
@@ -3356,22 +3167,19 @@ define ptr @f.con.Vector.get ptr u64
 define @f.con.Vector.set ptr u64 ptr
     tar bb.116_UNNAMED0 
     gq u64 %1 &1 0 
-    ass ptr %2 &0 
-    add ptr %3 %2 8 
+    add ptr %3 &0 8 
     load u64 %4 %3 
     lt u64 %5 &1 %4 
     and u8 %6 %1 %5 
     brc %6 l.0_IF2_83 l.1_IF2_83 
     tar l.0_IF2_83 
-    ass ptr %9 &0 
-    add ptr %10 %9 24 
-    load u64 %13 %9 
+    add ptr %10 &0 24 
+    load u64 %13 &0 
     mul u64 %14 &1 %13 
     load ptr %15 %10 
     add ptr %16 %15 %14 
-    ass ptr %17 &2 
-    load u64 %21 %9 
-    call @f.ptr.cpy %16 %17 %21 
+    load u64 %21 &0 
+    call @f.ptr.cpy %16 &2 %21 
     jmp l.1_IF2_83 
     tar l.1_IF2_83 
     ret 
@@ -3382,42 +3190,37 @@ define @f.con.Vector.set_c ptr u64 ptr u64
     gq u64 %2 &1 0 
     and u8 %3 %1 %2 
     add u64 %4 &1 &3 
-    ass ptr %5 &0 
-    add ptr %6 %5 8 
+    add ptr %6 &0 8 
     load u64 %7 %6 
     lq u64 %8 %4 %7 
     and u8 %9 %3 %8 
     brc %9 l.0_IF2_84 l.1_IF2_84 
     tar l.0_IF2_84 
-    ass ptr %12 &0 
-    add ptr %13 %12 24 
-    load u64 %16 %12 
+    add ptr %13 &0 24 
+    load u64 %16 &0 
     mul u64 %17 &1 %16 
     load ptr %18 %13 
     add ptr %19 %18 %17 
-    ass ptr %20 &2 
-    load u64 %24 %12 
+    load u64 %24 &0 
     mul u64 %25 %24 &3 
-    call @f.ptr.cpy %19 %20 %25 
+    call @f.ptr.cpy %19 &2 %25 
     jmp l.1_IF2_84 
     tar l.1_IF2_84 
     ret 
 
 define @f.con.Vector.expand ptr u64
     tar bb.118_UNNAMED0 
-    ass ptr %0 &0 
-    add ptr %1 %0 8 
+    add ptr %1 &0 8 
     load u64 %2 %1 
     add u64 %3 %2 &1 
     ass u64 %59 %3 
-    add ptr %6 %0 16 
+    add ptr %6 &0 16 
     ass u64 %7 %59 
     load u64 %8 %6 
     gt u64 %9 %7 %8 
     brc %9 l.0_IF2_85 l.1_IF2_85 
     tar l.0_IF2_85 
-    ass ptr %10 &0 
-    add ptr %11 %10 16 
+    add ptr %11 &0 16 
     load u64 %12 %11 
     ass u64 %60 %12 
     jmp l.0_WHILE3_38 
@@ -3432,10 +3235,9 @@ define @f.con.Vector.expand ptr u64
     ass u64 %61 %18 
     jmp l.0_WHILE3_38 
     tar l.1_WHILE3_38 
-    ass ptr %19 &0 
-    load u64 %21 %19 
+    load u64 %21 &0 
     ass u64 %62 %21 
-    add ptr %23 %19 32 
+    add ptr %23 &0 32 
     load ptr %26 %23 
     ass u64 %28 %15 
     ass u64 %29 %62 
@@ -3443,9 +3245,9 @@ define @f.con.Vector.expand ptr u64
     call @f.mem.Allocator.alloc %24 %26 %30 
     ass ptr %63 %24 
     ass ptr %33 %63 
-    add ptr %36 %19 24 
+    add ptr %36 &0 24 
     load ptr %37 %36 
-    add ptr %40 %19 8 
+    add ptr %40 &0 8 
     load u64 %41 %40 
     ass u64 %42 %29 
     mul u64 %43 %41 %42 
@@ -3455,7 +3257,7 @@ define @f.con.Vector.expand ptr u64
     call @f.mem.Allocator.free %48 %52 
     ass ptr %55 %33 
     store ptr %36 %55 
-    add ptr %57 %19 16 
+    add ptr %57 &0 16 
     ass u64 %58 %28 
     store u64 %57 %58 
     jmp l.1_IF2_85 
@@ -3464,12 +3266,11 @@ define @f.con.Vector.expand ptr u64
 
 define @f.con.Vector.shrink ptr u64
     tar bb.119_UNNAMED0 
-    ass ptr %0 &0 
-    add ptr %1 %0 16 
+    add ptr %1 &0 16 
     load u64 %2 %1 
     shr u64 %3 %2 1 
     ass u64 %53 %3 
-    add ptr %6 %0 8 
+    add ptr %6 &0 8 
     load u64 %7 %6 
     ass u64 %8 %53 
     lq u64 %9 %7 %8 
@@ -3478,10 +3279,9 @@ define @f.con.Vector.shrink ptr u64
     and u8 %12 %9 %11 
     brc %12 l.0_IF2_86 l.1_IF2_86 
     tar l.0_IF2_86 
-    ass ptr %13 &0 
-    load u64 %15 %13 
+    load u64 %15 &0 
     ass u64 %54 %15 
-    add ptr %17 %13 32 
+    add ptr %17 &0 32 
     load ptr %20 %17 
     ass u64 %22 %10 
     ass u64 %23 %54 
@@ -3489,9 +3289,9 @@ define @f.con.Vector.shrink ptr u64
     call @f.mem.Allocator.alloc %18 %20 %24 
     ass ptr %55 %18 
     ass ptr %27 %55 
-    add ptr %30 %13 24 
+    add ptr %30 &0 24 
     load ptr %31 %30 
-    add ptr %34 %13 8 
+    add ptr %34 &0 8 
     load u64 %35 %34 
     ass u64 %36 %23 
     mul u64 %37 %35 %36 
@@ -3501,7 +3301,7 @@ define @f.con.Vector.shrink ptr u64
     call @f.mem.Allocator.free %42 %46 
     ass ptr %49 %27 
     store ptr %30 %49 
-    add ptr %51 %13 16 
+    add ptr %51 &0 16 
     ass u64 %52 %22 
     store u64 %51 %52 
     jmp l.1_IF2_86 
@@ -3510,115 +3310,102 @@ define @f.con.Vector.shrink ptr u64
 
 define @f.con.Vector.tozero ptr
     tar bb.120_UNNAMED0 
-    ass ptr %2 &0 
-    add ptr %3 %2 24 
+    add ptr %3 &0 24 
     load ptr %4 %3 
-    add ptr %8 %2 8 
+    add ptr %8 &0 8 
     load u64 %11 %8 
-    load u64 %12 %2 
+    load u64 %12 &0 
     mul u64 %13 %11 %12 
     call @f.ptr.set %4 0 %13 
     ret 
 
 define @f.con.Vector.clear ptr
     tar bb.121_UNNAMED0 
-    ass ptr %0 &0 
-    load u64 %2 %0 
+    load u64 %2 &0 
     ass u64 %27 %2 
-    add ptr %4 %0 32 
+    add ptr %4 &0 32 
     load ptr %7 %4 
     ass u64 %9 %27 
     mul i64 %10 5 %9 
     call @f.mem.Allocator.alloc %5 %7 %10 
     ass ptr %28 %5 
     load ptr %15 %4 
-    add ptr %18 %0 24 
+    add ptr %18 &0 24 
     load ptr %19 %18 
     call @f.mem.Allocator.free %15 %19 
     ass ptr %22 %28 
     store ptr %18 %22 
-    add ptr %24 %0 8 
+    add ptr %24 &0 8 
     store u64 %24 0 
-    add ptr %26 %0 16 
+    add ptr %26 &0 16 
     store u64 %26 5 
     ret 
 
 define ptr @f.con.Vector.get_data ptr
     tar bb.122_UNNAMED0 
-    ass ptr %0 &1 
-    add ptr %1 %0 24 
+    add ptr %1 &1 24 
     load ptr %3 %1 
     ret %3 
 
 define u64 @f.con.Vector.get_size ptr
     tar bb.123_UNNAMED0 
-    ass ptr %0 &1 
-    add ptr %1 %0 8 
+    add ptr %1 &1 8 
     load u64 %3 %1 
     ret %3 
 
 define @f.con.Vector.push ptr ptr
     tar bb.124_UNNAMED0 
-    ass ptr %1 &0 
-    call @f.con.Vector.expand %1 1 
-    add ptr %4 %1 8 
+    call @f.con.Vector.expand &0 1 
+    add ptr %4 &0 8 
     load u64 %5 %4 
     add u64 %6 %5 1 
     store u64 %4 %6 
     load u64 %12 %4 
     sub u64 %13 %12 1 
-    ass ptr %14 &1 
-    call @f.con.Vector.set %1 %13 %14 
+    call @f.con.Vector.set &0 %13 &1 
     ret 
 
 define @f.con.Vector.pop ptr
     tar bb.125_UNNAMED0 
-    ass ptr %0 &0 
-    add ptr %1 %0 8 
+    add ptr %1 &0 8 
     load u64 %2 %1 
     sub u64 %3 %2 1 
     store u64 %1 %3 
-    call @f.con.Vector.shrink %0 1 
+    call @f.con.Vector.shrink &0 1 
     ret 
 
 define @f.con.Vector.push_c ptr ptr u64
     tar bb.126_UNNAMED0 
-    ass ptr %1 &0 
-    ass u64 %2 &2 
-    call @f.con.Vector.expand %1 %2 
-    add ptr %4 %1 8 
+    call @f.con.Vector.expand &0 &2 
+    add ptr %4 &0 8 
     load u64 %5 %4 
     add u64 %6 %5 &2 
     store u64 %4 %6 
     load u64 %12 %4 
     sub u64 %13 %12 &2 
-    ass ptr %14 &1 
-    call @f.con.Vector.set_c %1 %13 %14 %2 
+    call @f.con.Vector.set_c &0 %13 &1 &2 
     ret 
 
 define @f.con.Vector.pop_c ptr u64
     tar bb.127_UNNAMED0 
     ass u64 %17 &1 
-    ass ptr %1 &0 
-    add ptr %2 %1 8 
+    add ptr %2 &0 8 
     load u64 %3 %2 
     lt u64 %4 %3 &1 
     brc %4 l.0_IF2_87 l.1_IF2_87 
     tar l.0_IF2_87 
-    ass ptr %5 &0 
-    add ptr %6 %5 8 
+    add ptr %6 &0 8 
     load u64 %7 %6 
     ass u64 %18 %7 
     jmp l.1_IF2_87 
     tar l.1_IF2_87 
-    ass ptr %8 &0 
-    add ptr %9 %8 8 
+    add ptr %9 &0 8 
     load u64 %10 %9 
     phi u64 %11 %17 bb.127_UNNAMED0 %18 l.0_IF2_87 
     sub u64 %12 %10 %11 
     store u64 %9 %12 
     ass u64 %16 %11 
-    call @f.con.Vector.shrink %8 %16 
+    call @f.con.Vector.shrink &0 %16 
     ret 
 
 define @f.con.Vector.print ptr
@@ -3631,35 +3418,32 @@ define @f.con.Vector.print ptr
     call @f.ptr.cpy %10 &cstr.20 2 
     call @f.ptr.cpy %4 &cstr.21 10 
     add ptr %21 %4 12 
-    ass ptr %23 &0 
-    add ptr %24 %23 24 
+    add ptr %24 &0 24 
     load ptr %25 %24 
     call @f.parse.hex.get %21 %25 
     add ptr %30 %4 30 
-    load u64 %34 %23 
+    load u64 %34 &0 
     call @f.parse.uint.get %30 %34 
     add ptr %39 %4 36 
-    add ptr %42 %23 16 
+    add ptr %42 &0 16 
     load u64 %43 %42 
     call @f.parse.uint.get %39 %43 
     add ptr %48 %4 42 
-    add ptr %51 %23 8 
+    add ptr %51 &0 8 
     load u64 %52 %51 
     call @f.parse.uint.get %48 %52 
     call @f.io.print %4 
     ass u64 %153 0 
     jmp l.0_FOR3_39 
     tar l.0_FOR3_39 
-    ass ptr %58 &0 
-    add ptr %59 %58 8 
+    add ptr %59 &0 8 
     phi u64 %60 %153 bb.128_UNNAMED0 %154 l.1_LOG4_16 
     load u64 %61 %59 
     lt u64 %62 %60 %61 
     brc %62 l.2_FOR3_39 l.1_FOR3_39 
     tar l.2_FOR3_39 
-    ass ptr %64 &0 
     ass u64 %66 %60 
-    call @f.con.Vector.get %63 %64 %66 
+    call @f.con.Vector.get %63 &0 %66 
     ass ptr %155 %63 
     ass u64 %156 0 
     ass ptr %69 %cstr 
@@ -3668,7 +3452,7 @@ define @f.con.Vector.print ptr
     add ptr %80 %69 14 
     ass u64 %82 %66 
     call @f.parse.uint.get %80 %82 
-    load u64 %87 %64 
+    load u64 %87 &0 
     eq u64 %88 %87 1 
     brc %88 l.0_IF4_16 l.1_IF4_16 
     tar l.0_IF4_16 
@@ -3681,8 +3465,7 @@ define @f.con.Vector.print ptr
     store i8 %94 %96 
     jmp l.1_LOG4_16 
     tar l.1_IF4_16 
-    ass ptr %98 &0 
-    load u64 %100 %98 
+    load u64 %100 &0 
     eq u64 %101 %100 2 
     brc %101 l.0_ELIF4_16_1 l.1_ELIF4_16_1 
     tar l.0_ELIF4_16_1 
@@ -3695,8 +3478,7 @@ define @f.con.Vector.print ptr
     call @f.parse.uint.get %110 %112 
     jmp l.1_LOG4_16 
     tar l.1_ELIF4_16_1 
-    ass ptr %114 &0 
-    load u64 %116 %114 
+    load u64 %116 &0 
     eq u64 %117 %116 4 
     brc %117 l.0_ELIF4_16_2 l.1_ELIF4_16_2 
     tar l.0_ELIF4_16_2 
@@ -3733,9 +3515,8 @@ define @f.con.Vector.print ptr
 
 define @f.ios.IStream.init ptr ptr i64
     tar bb.129_UNNAMED0 
-    ass ptr %0 &0 
-    store i64 %0 &2 
-    add ptr %3 %0 8 
+    store i64 &0 &2 
+    add ptr %3 &0 8 
     store ptr %3 &1 
     ret 
 
@@ -3743,9 +3524,7 @@ define i64 ptr @f.ios.IStream.new ptr i64
     tar bb.130_UNNAMED0 
     allocs 16 %stream 
     ass ptr %2 %stream 
-    ass ptr %3 &2 
-    ass i64 %4 &3 
-    call @f.ios.IStream.init %2 %3 %4 
+    call @f.ios.IStream.init %2 &2 &3 
     load i64 %7 %2 
     add ptr %8 %2 8 
     load ptr %9 %8 
@@ -3754,31 +3533,26 @@ define i64 ptr @f.ios.IStream.new ptr i64
 
 define @f.ios.IStream.delete ptr
     tar bb.131_UNNAMED0 
-    ass ptr %1 &0 
-    load i64 %3 %1 
+    load i64 %3 &0 
     gt i64 %4 %3 2 
     brc %4 l.0_IF2_88 l.1_IF2_88 
     tar l.0_IF2_88 
-    ass ptr %6 &0 
     call @f.stdin %8 
-    load i64 %10 %6 
+    load i64 %10 &0 
     nq i64 %11 %10 %8 
     brc %11 l.0_IF3_40 l.1_IF3_40 
     tar l.0_IF3_40 
-    ass ptr %13 &0 
     call @f.stdout %15 
-    load i64 %17 %13 
+    load i64 %17 &0 
     nq i64 %18 %17 %15 
     brc %18 l.0_IF4_17 l.1_IF4_17 
     tar l.0_IF4_17 
-    ass ptr %20 &0 
     call @f.stderr %22 
-    load i64 %24 %20 
+    load i64 %24 &0 
     nq i64 %25 %24 %22 
     brc %25 l.0_IF5_7 l.1_IF5_7 
     tar l.0_IF5_7 
-    ass ptr %28 &0 
-    load i64 %30 %28 
+    load i64 %30 &0 
     call @f.sys.close %30 
     jmp l.1_IF5_7 
     tar l.1_IF5_7 
@@ -3788,14 +3562,12 @@ define @f.ios.IStream.delete ptr
     tar l.1_IF3_40 
     jmp l.1_IF2_88 
     tar l.1_IF2_88 
-    ass ptr %31 &0 
-    store i64 %31 -1 
+    store i64 &0 -1 
     ret 
 
 define u64 @f.ios.IStream.trim_line ptr ptr
     tar bb.132_UNNAMED0 
-    ass ptr %1 &2 
-    call @f.cstr.len %0 %1 
+    call @f.cstr.len %0 &2 
     ass u64 %31 %0 
     ass u64 %3 %31 
     gt u64 %4 %3 0 
@@ -3837,8 +3609,7 @@ define ptr @f.ios.IStream.line ptr
     tar bb.133_UNNAMED0 
     allocs 1 %buffer 
     allocs 40 %vline 
-    ass ptr %6 &1 
-    add ptr %7 %6 8 
+    add ptr %7 &1 8 
     load ptr %8 %7 
     call @f.con.Vector.new %0 %1 %2 %3 %4 %8 1 
     ass ptr %10 %vline 
@@ -3857,8 +3628,7 @@ define ptr @f.ios.IStream.line ptr
     phi u64 %17 %73 bb.133_UNNAMED0 %78 l.1_LOG3_41 
     brc %17 l.2_WHILE2_91 l.1_WHILE2_91 
     tar l.2_WHILE2_91 
-    ass ptr %20 &1 
-    load i64 %22 %20 
+    load i64 %22 &1 
     ass ptr %24 %buffer 
     call @f.sys.read %18 %22 %24 1 
     ass u64 %79 %18 
@@ -3895,8 +3665,7 @@ define ptr @f.ios.IStream.line ptr
     ass ptr %46 %vline 
     call @f.con.Vector.get_size %44 %46 
     ass u64 %80 %44 
-    ass ptr %47 &1 
-    add ptr %48 %47 8 
+    add ptr %48 &1 8 
     load ptr %51 %48 
     ass u64 %53 %80 
     add u64 %54 %53 1 
@@ -3918,13 +3687,12 @@ define ptr @f.ios.IStream.line ptr
 
 define i8 @f.ios.IStream.char ptr
     tar bb.134_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %15 %0 
     ass ptr %2 %15 
     load i8 %5 %2 
     ass i8 %16 %5 
-    add ptr %7 %1 8 
+    add ptr %7 &1 8 
     load ptr %10 %7 
     ass ptr %12 %2 
     call @f.mem.Allocator.free %10 %12 
@@ -3933,8 +3701,7 @@ define i8 @f.ios.IStream.char ptr
 
 define @f.ios.IStream.buff ptr ptr u64
     tar bb.135_UNNAMED0 
-    ass ptr %1 &0 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &0 
     ass ptr %26 %0 
     ass ptr %4 %26 
     call @f.cstr.len %2 %4 
@@ -3943,20 +3710,16 @@ define @f.ios.IStream.buff ptr ptr u64
     lt u64 %7 %6 &2 
     brc %7 l.0_IF2_92 l.1_IF2_92 
     tar l.0_IF2_92 
-    ass ptr %9 &1 
     ass ptr %11 %4 
     ass u64 %13 %6 
-    call @f.ptr.cpy %9 %11 %13 
+    call @f.ptr.cpy &1 %11 %13 
     jmp l.1_LOG2_92 
     tar l.1_IF2_92 
-    ass ptr %15 &1 
     ass ptr %17 %4 
-    ass i64 %18 &2 
-    call @f.ptr.cpy %15 %17 %18 
+    call @f.ptr.cpy &1 %17 &2 
     jmp l.1_LOG2_92 
     tar l.1_LOG2_92 
-    ass ptr %19 &0 
-    add ptr %20 %19 8 
+    add ptr %20 &0 8 
     load ptr %23 %20 
     phi ptr %25 %11 l.0_IF2_92 %17 l.1_IF2_92 
     call @f.mem.Allocator.free %23 %25 
@@ -3964,26 +3727,23 @@ define @f.ios.IStream.buff ptr ptr u64
 
 define ptr @f.ios.IStream.cstr ptr u64
     tar bb.136_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %4 %0 
     ass ptr %3 %4 
     ret %3 
 
 define u64 @f.ios.IStream.uint ptr
     tar bb.137_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %29 %0 
     ass ptr %5 %29 
-    call @f.ios.IStream.trim_line %2 %1 %5 
+    call @f.ios.IStream.trim_line %2 &1 %5 
     ass u64 %30 %2 
     ass u64 %7 %30 
     eq u64 %8 %7 0 
     brc %8 l.0_IF2_93 l.1_IF2_93 
     tar l.0_IF2_93 
-    ass ptr %9 &1 
-    add ptr %10 %9 8 
+    add ptr %10 &1 8 
     load ptr %13 %10 
     ass ptr %15 %5 
     call @f.mem.Allocator.free %13 %15 
@@ -3992,8 +3752,7 @@ define u64 @f.ios.IStream.uint ptr
     ass ptr %19 %5 
     call @f.parse.uint.by %17 %19 
     ass u64 %31 %17 
-    ass ptr %20 &1 
-    add ptr %21 %20 8 
+    add ptr %21 &1 8 
     load ptr %24 %21 
     ass ptr %26 %19 
     call @f.mem.Allocator.free %24 %26 
@@ -4002,18 +3761,16 @@ define u64 @f.ios.IStream.uint ptr
 
 define i64 @f.ios.IStream.int ptr
     tar bb.138_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %29 %0 
     ass ptr %5 %29 
-    call @f.ios.IStream.trim_line %2 %1 %5 
+    call @f.ios.IStream.trim_line %2 &1 %5 
     ass u64 %30 %2 
     ass u64 %7 %30 
     eq u64 %8 %7 0 
     brc %8 l.0_IF2_94 l.1_IF2_94 
     tar l.0_IF2_94 
-    ass ptr %9 &1 
-    add ptr %10 %9 8 
+    add ptr %10 &1 8 
     load ptr %13 %10 
     ass ptr %15 %5 
     call @f.mem.Allocator.free %13 %15 
@@ -4022,8 +3779,7 @@ define i64 @f.ios.IStream.int ptr
     ass ptr %19 %5 
     call @f.parse.int.by %17 %19 
     ass i64 %31 %17 
-    ass ptr %20 &1 
-    add ptr %21 %20 8 
+    add ptr %21 &1 8 
     load ptr %24 %21 
     ass ptr %26 %19 
     call @f.mem.Allocator.free %24 %26 
@@ -4032,18 +3788,16 @@ define i64 @f.ios.IStream.int ptr
 
 define u8 @f.ios.IStream.boolean ptr
     tar bb.139_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %29 %0 
     ass ptr %5 %29 
-    call @f.ios.IStream.trim_line %2 %1 %5 
+    call @f.ios.IStream.trim_line %2 &1 %5 
     ass u64 %30 %2 
     ass u64 %7 %30 
     eq u64 %8 %7 0 
     brc %8 l.0_IF2_95 l.1_IF2_95 
     tar l.0_IF2_95 
-    ass ptr %9 &1 
-    add ptr %10 %9 8 
+    add ptr %10 &1 8 
     load ptr %13 %10 
     ass ptr %15 %5 
     call @f.mem.Allocator.free %13 %15 
@@ -4053,8 +3807,7 @@ define u8 @f.ios.IStream.boolean ptr
     ass ptr %19 %5 
     call @f.parse.boolean.by %17 %19 
     ass u8 %31 %17 
-    ass ptr %20 &1 
-    add ptr %21 %20 8 
+    add ptr %21 &1 8 
     load ptr %24 %21 
     ass ptr %26 %19 
     call @f.mem.Allocator.free %24 %26 
@@ -4063,18 +3816,16 @@ define u8 @f.ios.IStream.boolean ptr
 
 define u64 @f.ios.IStream.hex ptr
     tar bb.140_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %29 %0 
     ass ptr %5 %29 
-    call @f.ios.IStream.trim_line %2 %1 %5 
+    call @f.ios.IStream.trim_line %2 &1 %5 
     ass u64 %30 %2 
     ass u64 %7 %30 
     eq u64 %8 %7 0 
     brc %8 l.0_IF2_96 l.1_IF2_96 
     tar l.0_IF2_96 
-    ass ptr %9 &1 
-    add ptr %10 %9 8 
+    add ptr %10 &1 8 
     load ptr %13 %10 
     ass ptr %15 %5 
     call @f.mem.Allocator.free %13 %15 
@@ -4083,8 +3834,7 @@ define u64 @f.ios.IStream.hex ptr
     ass ptr %19 %5 
     call @f.parse.hex.by %17 %19 
     ass u64 %31 %17 
-    ass ptr %20 &1 
-    add ptr %21 %20 8 
+    add ptr %21 &1 8 
     load ptr %24 %21 
     ass ptr %26 %19 
     call @f.mem.Allocator.free %24 %26 
@@ -4093,18 +3843,16 @@ define u64 @f.ios.IStream.hex ptr
 
 define u64 @f.ios.IStream.oct ptr
     tar bb.141_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %29 %0 
     ass ptr %5 %29 
-    call @f.ios.IStream.trim_line %2 %1 %5 
+    call @f.ios.IStream.trim_line %2 &1 %5 
     ass u64 %30 %2 
     ass u64 %7 %30 
     eq u64 %8 %7 0 
     brc %8 l.0_IF2_97 l.1_IF2_97 
     tar l.0_IF2_97 
-    ass ptr %9 &1 
-    add ptr %10 %9 8 
+    add ptr %10 &1 8 
     load ptr %13 %10 
     ass ptr %15 %5 
     call @f.mem.Allocator.free %13 %15 
@@ -4113,8 +3861,7 @@ define u64 @f.ios.IStream.oct ptr
     ass ptr %19 %5 
     call @f.parse.oct.by %17 %19 
     ass u64 %31 %17 
-    ass ptr %20 &1 
-    add ptr %21 %20 8 
+    add ptr %21 &1 8 
     load ptr %24 %21 
     ass ptr %26 %19 
     call @f.mem.Allocator.free %24 %26 
@@ -4123,18 +3870,16 @@ define u64 @f.ios.IStream.oct ptr
 
 define u64 @f.ios.IStream.bin ptr
     tar bb.142_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %29 %0 
     ass ptr %5 %29 
-    call @f.ios.IStream.trim_line %2 %1 %5 
+    call @f.ios.IStream.trim_line %2 &1 %5 
     ass u64 %30 %2 
     ass u64 %7 %30 
     eq u64 %8 %7 0 
     brc %8 l.0_IF2_98 l.1_IF2_98 
     tar l.0_IF2_98 
-    ass ptr %9 &1 
-    add ptr %10 %9 8 
+    add ptr %10 &1 8 
     load ptr %13 %10 
     ass ptr %15 %5 
     call @f.mem.Allocator.free %13 %15 
@@ -4143,8 +3888,7 @@ define u64 @f.ios.IStream.bin ptr
     ass ptr %19 %5 
     call @f.parse.bin.by %17 %19 
     ass u64 %31 %17 
-    ass ptr %20 &1 
-    add ptr %21 %20 8 
+    add ptr %21 &1 8 
     load ptr %24 %21 
     ass ptr %26 %19 
     call @f.mem.Allocator.free %24 %26 
@@ -4153,18 +3897,16 @@ define u64 @f.ios.IStream.bin ptr
 
 define u8 @f.ios.IStream.uint_s ptr ptr
     tar bb.143_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %30 %0 
     ass ptr %5 %30 
-    call @f.ios.IStream.trim_line %2 %1 %5 
+    call @f.ios.IStream.trim_line %2 &1 %5 
     ass u64 %31 %2 
     ass u64 %7 %31 
     eq u64 %8 %7 0 
     brc %8 l.0_IF2_99 l.1_IF2_99 
     tar l.0_IF2_99 
-    ass ptr %9 &1 
-    add ptr %10 %9 8 
+    add ptr %10 &1 8 
     load ptr %13 %10 
     ass ptr %15 %5 
     call @f.mem.Allocator.free %13 %15 
@@ -4172,11 +3914,9 @@ define u8 @f.ios.IStream.uint_s ptr ptr
     ret %16 
     tar l.1_IF2_99 
     ass ptr %19 %5 
-    ass ptr %20 &2 
-    call @f.parse.uint.by_s %17 %19 %20 
+    call @f.parse.uint.by_s %17 %19 &2 
     ass u8 %32 %17 
-    ass ptr %21 &1 
-    add ptr %22 %21 8 
+    add ptr %22 &1 8 
     load ptr %25 %22 
     ass ptr %27 %19 
     call @f.mem.Allocator.free %25 %27 
@@ -4185,18 +3925,16 @@ define u8 @f.ios.IStream.uint_s ptr ptr
 
 define u8 @f.ios.IStream.int_s ptr ptr
     tar bb.144_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %30 %0 
     ass ptr %5 %30 
-    call @f.ios.IStream.trim_line %2 %1 %5 
+    call @f.ios.IStream.trim_line %2 &1 %5 
     ass u64 %31 %2 
     ass u64 %7 %31 
     eq u64 %8 %7 0 
     brc %8 l.0_IF2_100 l.1_IF2_100 
     tar l.0_IF2_100 
-    ass ptr %9 &1 
-    add ptr %10 %9 8 
+    add ptr %10 &1 8 
     load ptr %13 %10 
     ass ptr %15 %5 
     call @f.mem.Allocator.free %13 %15 
@@ -4204,11 +3942,9 @@ define u8 @f.ios.IStream.int_s ptr ptr
     ret %16 
     tar l.1_IF2_100 
     ass ptr %19 %5 
-    ass ptr %20 &2 
-    call @f.parse.int.by_s %17 %19 %20 
+    call @f.parse.int.by_s %17 %19 &2 
     ass u8 %32 %17 
-    ass ptr %21 &1 
-    add ptr %22 %21 8 
+    add ptr %22 &1 8 
     load ptr %25 %22 
     ass ptr %27 %19 
     call @f.mem.Allocator.free %25 %27 
@@ -4217,18 +3953,16 @@ define u8 @f.ios.IStream.int_s ptr ptr
 
 define u8 @f.ios.IStream.boolean_s ptr ptr
     tar bb.145_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %30 %0 
     ass ptr %5 %30 
-    call @f.ios.IStream.trim_line %2 %1 %5 
+    call @f.ios.IStream.trim_line %2 &1 %5 
     ass u64 %31 %2 
     ass u64 %7 %31 
     eq u64 %8 %7 0 
     brc %8 l.0_IF2_101 l.1_IF2_101 
     tar l.0_IF2_101 
-    ass ptr %9 &1 
-    add ptr %10 %9 8 
+    add ptr %10 &1 8 
     load ptr %13 %10 
     ass ptr %15 %5 
     call @f.mem.Allocator.free %13 %15 
@@ -4236,11 +3970,9 @@ define u8 @f.ios.IStream.boolean_s ptr ptr
     ret %16 
     tar l.1_IF2_101 
     ass ptr %19 %5 
-    ass ptr %20 &2 
-    call @f.parse.boolean.by_s %17 %19 %20 
+    call @f.parse.boolean.by_s %17 %19 &2 
     ass u8 %32 %17 
-    ass ptr %21 &1 
-    add ptr %22 %21 8 
+    add ptr %22 &1 8 
     load ptr %25 %22 
     ass ptr %27 %19 
     call @f.mem.Allocator.free %25 %27 
@@ -4249,18 +3981,16 @@ define u8 @f.ios.IStream.boolean_s ptr ptr
 
 define u8 @f.ios.IStream.hex_s ptr ptr
     tar bb.146_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %30 %0 
     ass ptr %5 %30 
-    call @f.ios.IStream.trim_line %2 %1 %5 
+    call @f.ios.IStream.trim_line %2 &1 %5 
     ass u64 %31 %2 
     ass u64 %7 %31 
     eq u64 %8 %7 0 
     brc %8 l.0_IF2_102 l.1_IF2_102 
     tar l.0_IF2_102 
-    ass ptr %9 &1 
-    add ptr %10 %9 8 
+    add ptr %10 &1 8 
     load ptr %13 %10 
     ass ptr %15 %5 
     call @f.mem.Allocator.free %13 %15 
@@ -4268,11 +3998,9 @@ define u8 @f.ios.IStream.hex_s ptr ptr
     ret %16 
     tar l.1_IF2_102 
     ass ptr %19 %5 
-    ass ptr %20 &2 
-    call @f.parse.hex.by_s %17 %19 %20 
+    call @f.parse.hex.by_s %17 %19 &2 
     ass u8 %32 %17 
-    ass ptr %21 &1 
-    add ptr %22 %21 8 
+    add ptr %22 &1 8 
     load ptr %25 %22 
     ass ptr %27 %19 
     call @f.mem.Allocator.free %25 %27 
@@ -4281,18 +4009,16 @@ define u8 @f.ios.IStream.hex_s ptr ptr
 
 define u8 @f.ios.IStream.oct_s ptr ptr
     tar bb.147_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %30 %0 
     ass ptr %5 %30 
-    call @f.ios.IStream.trim_line %2 %1 %5 
+    call @f.ios.IStream.trim_line %2 &1 %5 
     ass u64 %31 %2 
     ass u64 %7 %31 
     eq u64 %8 %7 0 
     brc %8 l.0_IF2_103 l.1_IF2_103 
     tar l.0_IF2_103 
-    ass ptr %9 &1 
-    add ptr %10 %9 8 
+    add ptr %10 &1 8 
     load ptr %13 %10 
     ass ptr %15 %5 
     call @f.mem.Allocator.free %13 %15 
@@ -4300,11 +4026,9 @@ define u8 @f.ios.IStream.oct_s ptr ptr
     ret %16 
     tar l.1_IF2_103 
     ass ptr %19 %5 
-    ass ptr %20 &2 
-    call @f.parse.oct.by_s %17 %19 %20 
+    call @f.parse.oct.by_s %17 %19 &2 
     ass u8 %32 %17 
-    ass ptr %21 &1 
-    add ptr %22 %21 8 
+    add ptr %22 &1 8 
     load ptr %25 %22 
     ass ptr %27 %19 
     call @f.mem.Allocator.free %25 %27 
@@ -4313,18 +4037,16 @@ define u8 @f.ios.IStream.oct_s ptr ptr
 
 define u8 @f.ios.IStream.bin_s ptr ptr
     tar bb.148_UNNAMED0 
-    ass ptr %1 &1 
-    call @f.ios.IStream.line %0 %1 
+    call @f.ios.IStream.line %0 &1 
     ass ptr %30 %0 
     ass ptr %5 %30 
-    call @f.ios.IStream.trim_line %2 %1 %5 
+    call @f.ios.IStream.trim_line %2 &1 %5 
     ass u64 %31 %2 
     ass u64 %7 %31 
     eq u64 %8 %7 0 
     brc %8 l.0_IF2_104 l.1_IF2_104 
     tar l.0_IF2_104 
-    ass ptr %9 &1 
-    add ptr %10 %9 8 
+    add ptr %10 &1 8 
     load ptr %13 %10 
     ass ptr %15 %5 
     call @f.mem.Allocator.free %13 %15 
@@ -4332,11 +4054,9 @@ define u8 @f.ios.IStream.bin_s ptr ptr
     ret %16 
     tar l.1_IF2_104 
     ass ptr %19 %5 
-    ass ptr %20 &2 
-    call @f.parse.bin.by_s %17 %19 %20 
+    call @f.parse.bin.by_s %17 %19 &2 
     ass u8 %32 %17 
-    ass ptr %21 &1 
-    add ptr %22 %21 8 
+    add ptr %22 &1 8 
     load ptr %25 %22 
     ass ptr %27 %19 
     call @f.mem.Allocator.free %25 %27 
@@ -4345,32 +4065,28 @@ define u8 @f.ios.IStream.bin_s ptr ptr
 
 define @f.con.List.init ptr ptr
     tar bb.149_UNNAMED0 
-    ass ptr %0 &0 
-    add ptr %1 %0 16 
+    add ptr %1 &0 16 
     store ptr %1 &1 
-    add ptr %3 %0 8 
+    add ptr %3 &0 8 
     store u64 %3 0 
-    store ptr %0 0 
+    store ptr &0 0 
     ret 
 
 define @f.con.List.clear ptr
     tar bb.150_UNNAMED0 
-    ass ptr %0 &0 
-    load ptr %2 %0 
+    load ptr %2 &0 
     ass ptr %35 %2 
     ass u64 %38 0 
     jmp l.0_FOR3_42 
     tar l.0_FOR3_42 
     phi ptr %37 %35 bb.150_UNNAMED0 %36 l.2_FOR3_42 
-    ass ptr %4 &0 
-    add ptr %5 %4 8 
+    add ptr %5 &0 8 
     phi u64 %6 %38 bb.150_UNNAMED0 %39 l.2_FOR3_42 
     load u64 %7 %5 
     lt u64 %8 %6 %7 
     brc %8 l.2_FOR3_42 l.1_FOR3_42 
     tar l.2_FOR3_42 
-    ass ptr %9 &0 
-    add ptr %10 %9 16 
+    add ptr %10 &0 16 
     load ptr %13 %10 
     ass ptr %15 %37 
     load ptr %17 %15 
@@ -4389,17 +4105,15 @@ define @f.con.List.clear ptr
     ass u64 %39 %30 
     jmp l.0_FOR3_42 
     tar l.1_FOR3_42 
-    ass ptr %31 &0 
-    store ptr %31 0 
-    add ptr %34 %31 8 
+    store ptr &0 0 
+    add ptr %34 &0 8 
     store u64 %34 0 
     ret 
 
 define @f.con.List.delete ptr
     tar bb.151_UNNAMED0 
-    ass ptr %1 &0 
-    call @f.con.List.clear %1 
-    add ptr %3 %1 16 
+    call @f.con.List.clear &0 
+    add ptr %3 &0 16 
     store ptr %3 0 
     ret 
 
@@ -4407,8 +4121,7 @@ define ptr u64 ptr @f.con.List.new ptr
     tar bb.152_UNNAMED0 
     allocs 24 %list 
     ass ptr %2 %list 
-    ass ptr %3 &3 
-    call @f.con.List.init %2 %3 
+    call @f.con.List.init %2 &3 
     load ptr %6 %2 
     add ptr %7 %2 8 
     load u64 %8 %7 
@@ -4420,8 +4133,7 @@ define ptr u64 ptr @f.con.List.new ptr
 define ptr @f.con.List.find ptr u64
     tar bb.153_UNNAMED0 
     lt u64 %1 &2 0 
-    ass ptr %2 &1 
-    add ptr %3 %2 8 
+    add ptr %3 &1 8 
     load u64 %4 %3 
     gq u64 %5 &2 %4 
     or u8 %6 %1 %5 
@@ -4429,8 +4141,7 @@ define ptr @f.con.List.find ptr u64
     tar l.0_IF2_105 
     ret 0 
     tar l.1_IF2_105 
-    ass ptr %8 &1 
-    load ptr %10 %8 
+    load ptr %10 &1 
     ass ptr %21 %10 
     ass i64 %24 &2 
     jmp l.0_FOR3_43 
@@ -4455,8 +4166,7 @@ define ptr @f.con.List.find ptr u64
 define ptr @f.con.List.get ptr u64
     tar bb.154_UNNAMED0 
     lt u64 %1 &2 0 
-    ass ptr %2 &1 
-    add ptr %3 %2 8 
+    add ptr %3 &1 8 
     load u64 %4 %3 
     gq u64 %5 &2 %4 
     or u8 %6 %1 %5 
@@ -4467,9 +4177,7 @@ define ptr @f.con.List.get ptr u64
     tar l.0_IF2_106 
     ret 0 
     tar l.1_IF2_106 
-    ass ptr %14 &1 
-    ass u64 %15 &2 
-    call @f.con.List.find %13 %14 %15 
+    call @f.con.List.find %13 &1 &2 
     ass ptr %20 %13 
     ass ptr %16 %20 
     load ptr %19 %16 
@@ -4478,18 +4186,15 @@ define ptr @f.con.List.get ptr u64
 define @f.con.List.set ptr u64 ptr u64
     tar bb.155_UNNAMED0 
     gq u64 %1 &1 0 
-    ass ptr %2 &0 
-    add ptr %3 %2 8 
+    add ptr %3 &0 8 
     load u64 %4 %3 
     lt u64 %5 &1 %4 
     and u8 %6 %1 %5 
     brc %6 l.0_IF2_107 l.1_IF2_107 
     tar l.0_IF2_107 
-    ass ptr %8 &0 
-    ass u64 %9 &1 
-    call @f.con.List.find %7 %8 %9 
+    call @f.con.List.find %7 &0 &1 
     ass ptr %37 %7 
-    add ptr %11 %8 16 
+    add ptr %11 &0 16 
     load ptr %14 %11 
     ass ptr %16 %37 
     load ptr %18 %16 
@@ -4499,29 +4204,24 @@ define @f.con.List.set ptr u64 ptr u64
     store u64 %20 &3 
     ass ptr %21 %19 
     load ptr %27 %11 
-    ass u64 %28 &3 
-    call @f.mem.Allocator.alloc %25 %27 %28 
+    call @f.mem.Allocator.alloc %25 %27 &3 
     store ptr %21 %25 
     ass ptr %31 %21 
     load ptr %33 %31 
-    ass ptr %35 &2 
-    ass i64 %36 &3 
-    call @f.ptr.cpy %33 %35 %36 
+    call @f.ptr.cpy %33 &2 &3 
     jmp l.1_IF2_107 
     tar l.1_IF2_107 
     ret 
 
 define u64 @f.con.List.size ptr
     tar bb.156_UNNAMED0 
-    ass ptr %0 &1 
-    add ptr %1 %0 8 
+    add ptr %1 &1 8 
     load u64 %3 %1 
     ret %3 
 
 define @f.con.List.push ptr ptr u64
     tar bb.157_UNNAMED0 
-    ass ptr %0 &0 
-    add ptr %1 %0 16 
+    add ptr %1 &0 16 
     load ptr %4 %1 
     call @f.mem.Allocator.alloc %2 %4 24 
     ass ptr %36 %2 
@@ -4530,21 +4230,18 @@ define @f.con.List.push ptr ptr u64
     store u64 %7 &2 
     ass ptr %8 %6 
     load ptr %14 %1 
-    ass u64 %15 &2 
-    call @f.mem.Allocator.alloc %12 %14 %15 
+    call @f.mem.Allocator.alloc %12 %14 &2 
     store ptr %8 %12 
     ass ptr %18 %8 
     load ptr %20 %18 
-    ass ptr %22 &1 
-    ass i64 %23 &2 
-    call @f.ptr.cpy %20 %22 %23 
+    call @f.ptr.cpy %20 &1 &2 
     ass ptr %24 %18 
     add ptr %25 %24 16 
-    load ptr %28 %0 
+    load ptr %28 &0 
     store ptr %25 %28 
     ass ptr %31 %24 
-    store ptr %0 %31 
-    add ptr %33 %0 8 
+    store ptr &0 %31 
+    add ptr %33 &0 8 
     load u64 %34 %33 
     add u64 %35 %34 1 
     store u64 %33 %35 
@@ -4552,10 +4249,9 @@ define @f.con.List.push ptr ptr u64
 
 define @f.con.List.pop ptr
     tar bb.158_UNNAMED0 
-    ass ptr %0 &0 
-    load ptr %2 %0 
+    load ptr %2 &0 
     ass ptr %34 %2 
-    load ptr %6 %0 
+    load ptr %6 &0 
     nq ptr %7 %6 0 
     brc %7 l.0_IF2_108 l.1_IF2_108 
     tar l.0_IF2_108 
@@ -4563,8 +4259,7 @@ define @f.con.List.pop ptr
     add ptr %9 %8 16 
     load ptr %10 %9 
     ass ptr %35 %10 
-    ass ptr %11 &0 
-    add ptr %12 %11 16 
+    add ptr %12 &0 16 
     load ptr %15 %12 
     ass ptr %17 %8 
     load ptr %19 %17 
@@ -4573,8 +4268,8 @@ define @f.con.List.pop ptr
     ass ptr %26 %17 
     call @f.mem.Allocator.free %24 %26 
     ass ptr %29 %35 
-    store ptr %11 %29 
-    add ptr %31 %11 8 
+    store ptr &0 %29 
+    add ptr %31 &0 8 
     load u64 %32 %31 
     sub u64 %33 %32 1 
     store u64 %31 %33 
@@ -4592,24 +4287,21 @@ define @f.con.List.print ptr
     call @f.ptr.cpy %10 &cstr.26 2 
     call @f.ptr.cpy %4 &cstr.27 17 
     add ptr %21 %4 20 
-    ass ptr %23 &0 
-    add ptr %24 %23 8 
+    add ptr %24 &0 8 
     load u64 %25 %24 
     call @f.parse.uint.get %21 %25 
     call @f.io.print %4 
     ass u64 %134 0 
     jmp l.0_FOR3_44 
     tar l.0_FOR3_44 
-    ass ptr %31 &0 
-    add ptr %32 %31 8 
+    add ptr %32 &0 8 
     phi u64 %33 %134 bb.159_UNNAMED0 %135 l.1_ELIF4_19_5 
     load u64 %34 %32 
     lt u64 %35 %33 %34 
     brc %35 l.2_FOR3_44 l.1_FOR3_44 
     tar l.2_FOR3_44 
-    ass ptr %37 &0 
     ass u64 %39 %33 
-    call @f.con.List.find %36 %37 %39 
+    call @f.con.List.find %36 &0 %39 
     ass ptr %136 %36 
     ass u64 %138 0 
     ass ptr %41 %136 

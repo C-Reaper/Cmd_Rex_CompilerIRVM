@@ -44,6 +44,9 @@ int main(int argc,char** argv){
             IRVM_OPTIMISATION_UCE   |
             IRVM_OPTIMISATION_M2R   |
             IRVM_OPTIMISATION_PR    |
+            //IRVM_OPTIMISATION_COR   |
+            //IRVM_OPTIMISATION_INC   |
+            //IRVM_OPTIMISATION_INR   |
             0
         ));
         //IRVM_Print(&vm);
