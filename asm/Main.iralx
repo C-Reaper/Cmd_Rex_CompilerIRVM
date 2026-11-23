@@ -448,7 +448,7 @@ define i8 @f.cstr.cmp ptr ptr
     ass u8 %4 %7 
     brc %4 l.0_IF2_4 l.1_IF2_4 
     tar l.0_IF2_4 
-    ass i8 %8 false 
+    ass i8 %8 0 
     destroy %size2 
     destroy %size1 
     ret %8 
@@ -475,7 +475,7 @@ define i8 @f.cstr.cmp ptr ptr
     ass u8 %13 %22 
     brc %13 l.0_IF4_0 l.1_IF4_0 
     tar l.0_IF4_0 
-    ass i8 %23 false 
+    ass i8 %23 0 
     destroy %i 
     destroy %size2 
     destroy %size1 
@@ -488,7 +488,7 @@ define i8 @f.cstr.cmp ptr ptr
     jmp l.0_FOR3_1 
     tar l.1_FOR3_1 
     destroy %i 
-    ass i8 %26 true 
+    ass i8 %26 1 
     destroy %size2 
     destroy %size1 
     ret %26 
@@ -1478,7 +1478,7 @@ define @f.io.print_hex u64
 
 define @f.parse.boolean.get ptr u8
     tar bb.63_UNNAMED0 
-    eq u8 %1 &1 false 
+    eq u8 %1 &1 0 
     ass u8 %0 %1 
     brc %0 l.0_IF2_23 l.1_IF2_23 
     tar l.0_IF2_23 
@@ -1488,7 +1488,7 @@ define @f.parse.boolean.get ptr u8
     call @f.cstr.cpy %3 %4 %5 
     jmp l.1_LOG2_23 
     tar l.1_IF2_23 
-    eq u8 %7 &1 true 
+    eq u8 %7 &1 1 
     ass u8 %6 %7 
     brc %6 l.0_ELIF2_23_2 l.1_ELIF2_23_2 
     tar l.0_ELIF2_23_2 
@@ -1518,7 +1518,7 @@ define u8 @f.parse.boolean.by ptr
     ass u8 %0 %7 
     brc %0 l.0_IF2_24 l.1_IF2_24 
     tar l.0_IF2_24 
-    ass u8 %8 false 
+    ass u8 %8 0 
     ret %8 
     tar l.1_LOG2_24 
     tar l.1_IF2_24 
@@ -1532,11 +1532,11 @@ define u8 @f.parse.boolean.by ptr
     ass u8 %9 %16 
     brc %9 l.0_IF2_25 l.1_IF2_25 
     tar l.0_IF2_25 
-    ass u8 %17 true 
+    ass u8 %17 1 
     ret %17 
     tar l.1_LOG2_25 
     tar l.1_IF2_25 
-    ass u8 %18 false 
+    ass u8 %18 0 
     ret %18 
     ret 
 
@@ -1546,7 +1546,7 @@ define u8 @f.parse.boolean.by_s ptr ptr
     ass u8 %0 %1 
     brc %0 l.0_IF2_26 l.1_IF2_26 
     tar l.0_IF2_26 
-    ass u8 %2 false 
+    ass u8 %2 0 
     ret %2 
     tar l.1_LOG2_26 
     tar l.1_IF2_26 
@@ -1561,8 +1561,8 @@ define u8 @f.parse.boolean.by_s ptr ptr
     brc %3 l.0_IF2_27 l.1_IF2_27 
     tar l.0_IF2_27 
     ass ptr %11 &2 
-    store u8 %11 false 
-    ass u8 %12 true 
+    store u8 %11 0 
+    ass u8 %12 1 
     ret %12 
     tar l.1_LOG2_27 
     tar l.1_IF2_27 
@@ -1577,12 +1577,12 @@ define u8 @f.parse.boolean.by_s ptr ptr
     brc %13 l.0_IF2_28 l.1_IF2_28 
     tar l.0_IF2_28 
     ass ptr %21 &2 
-    store u8 %21 true 
-    ass u8 %22 true 
+    store u8 %21 1 
+    ass u8 %22 1 
     ret %22 
     tar l.1_LOG2_28 
     tar l.1_IF2_28 
-    ass u8 %23 false 
+    ass u8 %23 0 
     ret %23 
     ret 
 
@@ -1725,7 +1725,7 @@ define u8 @f.parse.uint.by_s ptr ptr
     ass u8 %0 %1 
     brc %0 l.0_IF2_31 l.1_IF2_31 
     tar l.0_IF2_31 
-    ass u8 %2 false 
+    ass u8 %2 0 
     ret %2 
     tar l.1_LOG2_31 
     tar l.1_IF2_31 
@@ -1782,7 +1782,7 @@ define u8 @f.parse.uint.by_s ptr ptr
     jmp l.1_LOG3_14 
     tar l.1_IF3_14 
     tar l.0_ELSE3_14 
-    ass u8 %33 false 
+    ass u8 %33 0 
     destroy %c 
     destroy %i 
     destroy %digits 
@@ -1797,7 +1797,7 @@ define u8 @f.parse.uint.by_s ptr ptr
     ass ptr %34 &2 
     load u64 %35 %out 
     store u64 %34 %35 
-    ass u8 %36 true 
+    ass u8 %36 1 
     destroy %i 
     destroy %digits 
     destroy %startdigit 
@@ -1996,7 +1996,7 @@ define u8 @f.parse.int.by_s ptr ptr
     ass u8 %0 %1 
     brc %0 l.0_IF2_37 l.1_IF2_37 
     tar l.0_IF2_37 
-    ass u8 %2 false 
+    ass u8 %2 0 
     ret %2 
     tar l.1_LOG2_37 
     tar l.1_IF2_37 
@@ -2066,7 +2066,7 @@ define u8 @f.parse.int.by_s ptr ptr
     jmp l.1_LOG3_17 
     tar l.1_IF3_17 
     tar l.0_ELSE3_17 
-    ass u8 %39 false 
+    ass u8 %39 0 
     destroy %c 
     destroy %i 
     destroy %sign 
@@ -2092,7 +2092,7 @@ define u8 @f.parse.int.by_s ptr ptr
     ass ptr %45 &2 
     load i64 %46 %out 
     store i64 %45 %46 
-    ass u8 %47 true 
+    ass u8 %47 1 
     destroy %i 
     destroy %sign 
     destroy %digits 
@@ -2274,7 +2274,7 @@ define u8 @f.parse.hex.by_s ptr ptr
     ass u8 %0 %1 
     brc %0 l.0_IF2_44 l.1_IF2_44 
     tar l.0_IF2_44 
-    ass u8 %2 false 
+    ass u8 %2 0 
     ret %2 
     tar l.1_LOG2_44 
     tar l.1_IF2_44 
@@ -2289,7 +2289,7 @@ define u8 @f.parse.hex.by_s ptr ptr
     ass u8 %3 %11 
     brc %3 l.0_IF2_45 l.1_IF2_45 
     tar l.0_IF2_45 
-    ass u8 %12 false 
+    ass u8 %12 0 
     ret %12 
     tar l.1_LOG2_45 
     tar l.1_IF2_45 
@@ -2347,7 +2347,7 @@ define u8 @f.parse.hex.by_s ptr ptr
     jmp l.1_LOG3_19 
     tar l.1_IF3_19 
     tar l.0_ELSE3_19 
-    ass u8 %42 false 
+    ass u8 %42 0 
     destroy %num 
     destroy %c 
     destroy %i 
@@ -2364,7 +2364,7 @@ define u8 @f.parse.hex.by_s ptr ptr
     ass ptr %43 &2 
     load u64 %44 %out 
     store u64 %43 %44 
-    ass u8 %45 true 
+    ass u8 %45 1 
     destroy %i 
     destroy %digits 
     destroy %startdigit 
@@ -2544,7 +2544,7 @@ define u8 @f.parse.oct.by_s ptr ptr
     ass u8 %0 %1 
     brc %0 l.0_IF2_50 l.1_IF2_50 
     tar l.0_IF2_50 
-    ass u8 %2 false 
+    ass u8 %2 0 
     ret %2 
     tar l.1_LOG2_50 
     tar l.1_IF2_50 
@@ -2559,7 +2559,7 @@ define u8 @f.parse.oct.by_s ptr ptr
     ass u8 %3 %11 
     brc %3 l.0_IF2_51 l.1_IF2_51 
     tar l.0_IF2_51 
-    ass u8 %12 false 
+    ass u8 %12 0 
     ret %12 
     tar l.1_LOG2_51 
     tar l.1_IF2_51 
@@ -2617,7 +2617,7 @@ define u8 @f.parse.oct.by_s ptr ptr
     jmp l.1_LOG3_21 
     tar l.1_IF3_21 
     tar l.0_ELSE3_21 
-    ass u8 %42 false 
+    ass u8 %42 0 
     destroy %num 
     destroy %c 
     destroy %i 
@@ -2634,7 +2634,7 @@ define u8 @f.parse.oct.by_s ptr ptr
     ass ptr %43 &2 
     load u64 %44 %out 
     store u64 %43 %44 
-    ass u8 %45 true 
+    ass u8 %45 1 
     destroy %i 
     destroy %digits 
     destroy %startdigit 
@@ -2814,7 +2814,7 @@ define u8 @f.parse.bin.by_s ptr ptr
     ass u8 %0 %1 
     brc %0 l.0_IF2_56 l.1_IF2_56 
     tar l.0_IF2_56 
-    ass u8 %2 false 
+    ass u8 %2 0 
     ret %2 
     tar l.1_LOG2_56 
     tar l.1_IF2_56 
@@ -2829,7 +2829,7 @@ define u8 @f.parse.bin.by_s ptr ptr
     ass u8 %3 %11 
     brc %3 l.0_IF2_57 l.1_IF2_57 
     tar l.0_IF2_57 
-    ass u8 %12 false 
+    ass u8 %12 0 
     ret %12 
     tar l.1_LOG2_57 
     tar l.1_IF2_57 
@@ -2887,7 +2887,7 @@ define u8 @f.parse.bin.by_s ptr ptr
     jmp l.1_LOG3_23 
     tar l.1_IF3_23 
     tar l.0_ELSE3_23 
-    ass u8 %42 false 
+    ass u8 %42 0 
     destroy %num 
     destroy %c 
     destroy %i 
@@ -2904,7 +2904,7 @@ define u8 @f.parse.bin.by_s ptr ptr
     ass ptr %43 &2 
     load u64 %44 %out 
     store u64 %43 %44 
-    ass u8 %45 true 
+    ass u8 %45 1 
     destroy %i 
     destroy %digits 
     destroy %startdigit 
@@ -5975,7 +5975,7 @@ define u8 @f.ios.IStream.boolean ptr
     load ptr %15 %line 
     ass ptr %14 %15 
     call @f.mem.Allocator.free %12 %14 
-    ass u8 %16 false 
+    ass u8 %16 0 
     destroy %size 
     destroy %line 
     ret %16 
@@ -6187,7 +6187,7 @@ define u8 @f.ios.IStream.uint_s ptr ptr
     load ptr %15 %line 
     ass ptr %14 %15 
     call @f.mem.Allocator.free %12 %14 
-    ass u8 %16 false 
+    ass u8 %16 0 
     destroy %size 
     destroy %line 
     ret %16 
@@ -6241,7 +6241,7 @@ define u8 @f.ios.IStream.int_s ptr ptr
     load ptr %15 %line 
     ass ptr %14 %15 
     call @f.mem.Allocator.free %12 %14 
-    ass u8 %16 false 
+    ass u8 %16 0 
     destroy %size 
     destroy %line 
     ret %16 
@@ -6295,7 +6295,7 @@ define u8 @f.ios.IStream.boolean_s ptr ptr
     load ptr %15 %line 
     ass ptr %14 %15 
     call @f.mem.Allocator.free %12 %14 
-    ass u8 %16 false 
+    ass u8 %16 0 
     destroy %size 
     destroy %line 
     ret %16 
@@ -6349,7 +6349,7 @@ define u8 @f.ios.IStream.hex_s ptr ptr
     load ptr %15 %line 
     ass ptr %14 %15 
     call @f.mem.Allocator.free %12 %14 
-    ass u8 %16 false 
+    ass u8 %16 0 
     destroy %size 
     destroy %line 
     ret %16 
@@ -6403,7 +6403,7 @@ define u8 @f.ios.IStream.oct_s ptr ptr
     load ptr %15 %line 
     ass ptr %14 %15 
     call @f.mem.Allocator.free %12 %14 
-    ass u8 %16 false 
+    ass u8 %16 0 
     destroy %size 
     destroy %line 
     ret %16 
@@ -6457,7 +6457,7 @@ define u8 @f.ios.IStream.bin_s ptr ptr
     load ptr %15 %line 
     ass ptr %14 %15 
     call @f.mem.Allocator.free %12 %14 
-    ass u8 %16 false 
+    ass u8 %16 0 
     destroy %size 
     destroy %line 
     ret %16 

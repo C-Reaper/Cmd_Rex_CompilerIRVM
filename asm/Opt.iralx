@@ -237,8 +237,7 @@ define i8 @f.cstr.cmp ptr ptr
     nq i64 %7 %0 %2 
     brc %7 l.0_IF2_4 l.1_IF2_4 
     tar l.0_IF2_4 
-    ass i8 %8 false 
-    ret %8 
+    ret 0 
     tar l.1_IF2_4 
     jmp l.0_FOR3_1 
     tar l.0_FOR3_1 
@@ -253,14 +252,12 @@ define i8 @f.cstr.cmp ptr ptr
     nq i8 %22 %20 %21 
     brc %22 l.0_IF4_0 l.1_IF4_0 
     tar l.0_IF4_0 
-    ass i8 %23 false 
-    ret %23 
+    ret 0 
     tar l.1_IF4_0 
     add i64 %25 %10 1 
     jmp l.0_FOR3_1 
     tar l.1_FOR3_1 
-    ass i8 %26 true 
-    ret %26 
+    ret 1 
 
 define i64 @f.cstr.find ptr i8
     tar bb.29_UNNAMED0 
@@ -788,13 +785,13 @@ define @f.io.print_hex u64
 
 define @f.parse.boolean.get ptr u8
     tar bb.63_UNNAMED0 
-    eq u8 %1 &1 false 
+    eq u8 %1 &1 0 
     brc %1 l.0_IF2_23 l.1_IF2_23 
     tar l.0_IF2_23 
     call @f.cstr.cpy &0 &cstr.0 5 
     jmp l.1_LOG2_23 
     tar l.1_IF2_23 
-    eq u8 %7 &1 true 
+    eq u8 %7 &1 1 
     brc %7 l.0_ELIF2_23_2 l.1_ELIF2_23_2 
     tar l.0_ELIF2_23_2 
     call @f.cstr.cpy &0 &cstr.1 4 
@@ -812,48 +809,41 @@ define u8 @f.parse.boolean.by ptr
     or i8 %7 %1 %4 
     brc %7 l.0_IF2_24 l.1_IF2_24 
     tar l.0_IF2_24 
-    ass u8 %8 false 
-    ret %8 
+    ret 0 
     tar l.1_IF2_24 
     call @f.cstr.cmp %10 &1 &cstr.5 
     call @f.cstr.cmp %13 &1 &cstr.6 
     or i8 %16 %10 %13 
     brc %16 l.0_IF2_25 l.1_IF2_25 
     tar l.0_IF2_25 
-    ass u8 %17 true 
-    ret %17 
+    ret 1 
     tar l.1_IF2_25 
-    ass u8 %18 false 
-    ret %18 
+    ret 0 
 
 define u8 @f.parse.boolean.by_s ptr ptr
     tar bb.65_UNNAMED0 
     eq ptr %1 &2 0 
     brc %1 l.0_IF2_26 l.1_IF2_26 
     tar l.0_IF2_26 
-    ass u8 %2 false 
-    ret %2 
+    ret 0 
     tar l.1_IF2_26 
     call @f.cstr.cmp %4 &1 &cstr.7 
     call @f.cstr.cmp %7 &1 &cstr.8 
     or i8 %10 %4 %7 
     brc %10 l.0_IF2_27 l.1_IF2_27 
     tar l.0_IF2_27 
-    store u8 &2 false 
-    ass u8 %12 true 
-    ret %12 
+    store u8 &2 0 
+    ret 1 
     tar l.1_IF2_27 
     call @f.cstr.cmp %14 &1 &cstr.9 
     call @f.cstr.cmp %17 &1 &cstr.10 
     or i8 %20 %14 %17 
     brc %20 l.0_IF2_28 l.1_IF2_28 
     tar l.0_IF2_28 
-    store u8 &2 true 
-    ass u8 %22 true 
-    ret %22 
+    store u8 &2 1 
+    ret 1 
     tar l.1_IF2_28 
-    ass u8 %23 false 
-    ret %23 
+    ret 0 
 
 define @f.parse.uint.get ptr u64
     tar bb.66_UNNAMED0 
@@ -919,8 +909,7 @@ define u8 @f.parse.uint.by_s ptr ptr
     eq ptr %1 &2 0 
     brc %1 l.0_IF2_31 l.1_IF2_31 
     tar l.0_IF2_31 
-    ass u8 %2 false 
-    ret %2 
+    ret 0 
     tar l.1_IF2_31 
     call @f.cstr.len %3 &1 
     sub i64 %6 %3 1 
@@ -947,12 +936,10 @@ define u8 @f.parse.uint.by_s ptr ptr
     sub i64 %32 %8 1 
     jmp l.0_WHILE2_32 
     tar l.1_IF3_14 
-    ass u8 %33 false 
-    ret %33 
+    ret 0 
     tar l.1_WHILE2_32 
     store u64 &2 %40 
-    ass u8 %36 true 
-    ret %36 
+    ret 1 
 
 define @f.parse.int.get ptr i64
     tar bb.69_UNNAMED0 
@@ -1043,8 +1030,7 @@ define u8 @f.parse.int.by_s ptr ptr
     eq ptr %1 &2 0 
     brc %1 l.0_IF2_37 l.1_IF2_37 
     tar l.0_IF2_37 
-    ass u8 %2 false 
-    ret %2 
+    ret 0 
     tar l.1_IF2_37 
     call @f.cstr.len %3 &1 
     load i8 %8 &1 
@@ -1079,8 +1065,7 @@ define u8 @f.parse.int.by_s ptr ptr
     sub i64 %38 %13 1 
     jmp l.0_WHILE2_39 
     tar l.1_IF3_17 
-    ass u8 %39 false 
-    ret %39 
+    ret 0 
     tar l.1_WHILE2_39 
     gt i64 %42 %59 0 
     brc %42 l.0_IF2_40 l.1_IF2_40 
@@ -1090,8 +1075,7 @@ define u8 @f.parse.int.by_s ptr ptr
     tar l.1_IF2_40 
     phi i64 %46 %52 l.1_WHILE2_39 %44 l.0_IF2_40 
     store i64 &2 %46 
-    ass u8 %47 true 
-    ret %47 
+    ret 1 
 
 define @f.parse.hex.get ptr u64
     tar bb.72_UNNAMED0 
@@ -1170,8 +1154,7 @@ define u8 @f.parse.hex.by_s ptr ptr
     eq ptr %1 &2 0 
     brc %1 l.0_IF2_44 l.1_IF2_44 
     tar l.0_IF2_44 
-    ass u8 %2 false 
-    ret %2 
+    ret 0 
     tar l.1_IF2_44 
     load i8 %5 &1 
     nq i8 %6 %5 48 
@@ -1181,8 +1164,7 @@ define u8 @f.parse.hex.by_s ptr ptr
     or u8 %11 %6 %10 
     brc %11 l.0_IF2_45 l.1_IF2_45 
     tar l.0_IF2_45 
-    ass u8 %12 false 
-    ret %12 
+    ret 0 
     tar l.1_IF2_45 
     call @f.cstr.len %13 &1 
     sub i64 %16 %13 1 
@@ -1207,12 +1189,10 @@ define u8 @f.parse.hex.by_s ptr ptr
     sub i64 %41 %18 1 
     jmp l.0_WHILE2_46 
     tar l.1_IF3_19 
-    ass u8 %42 false 
-    ret %42 
+    ret 0 
     tar l.1_WHILE2_46 
     store u64 &2 %49 
-    ass u8 %45 true 
-    ret %45 
+    ret 1 
 
 define @f.parse.oct.get ptr u64
     tar bb.75_UNNAMED0 
@@ -1291,8 +1271,7 @@ define u8 @f.parse.oct.by_s ptr ptr
     eq ptr %1 &2 0 
     brc %1 l.0_IF2_50 l.1_IF2_50 
     tar l.0_IF2_50 
-    ass u8 %2 false 
-    ret %2 
+    ret 0 
     tar l.1_IF2_50 
     load i8 %5 &1 
     nq i8 %6 %5 48 
@@ -1302,8 +1281,7 @@ define u8 @f.parse.oct.by_s ptr ptr
     or u8 %11 %6 %10 
     brc %11 l.0_IF2_51 l.1_IF2_51 
     tar l.0_IF2_51 
-    ass u8 %12 false 
-    ret %12 
+    ret 0 
     tar l.1_IF2_51 
     call @f.cstr.len %13 &1 
     sub i64 %16 %13 1 
@@ -1328,12 +1306,10 @@ define u8 @f.parse.oct.by_s ptr ptr
     sub i64 %41 %18 1 
     jmp l.0_WHILE2_52 
     tar l.1_IF3_21 
-    ass u8 %42 false 
-    ret %42 
+    ret 0 
     tar l.1_WHILE2_52 
     store u64 &2 %49 
-    ass u8 %45 true 
-    ret %45 
+    ret 1 
 
 define @f.parse.bin.get ptr u64
     tar bb.78_UNNAMED0 
@@ -1412,8 +1388,7 @@ define u8 @f.parse.bin.by_s ptr ptr
     eq ptr %1 &2 0 
     brc %1 l.0_IF2_56 l.1_IF2_56 
     tar l.0_IF2_56 
-    ass u8 %2 false 
-    ret %2 
+    ret 0 
     tar l.1_IF2_56 
     load i8 %5 &1 
     nq i8 %6 %5 48 
@@ -1423,8 +1398,7 @@ define u8 @f.parse.bin.by_s ptr ptr
     or u8 %11 %6 %10 
     brc %11 l.0_IF2_57 l.1_IF2_57 
     tar l.0_IF2_57 
-    ass u8 %12 false 
-    ret %12 
+    ret 0 
     tar l.1_IF2_57 
     call @f.cstr.len %13 &1 
     sub i64 %16 %13 1 
@@ -1449,12 +1423,10 @@ define u8 @f.parse.bin.by_s ptr ptr
     sub i64 %41 %18 1 
     jmp l.0_WHILE2_58 
     tar l.1_IF3_23 
-    ass u8 %42 false 
-    ret %42 
+    ret 0 
     tar l.1_WHILE2_58 
     store u64 &2 %49 
-    ass u8 %45 true 
-    ret %45 
+    ret 1 
 
 define @f.mem.Allocator.init ptr ptr u64
     tar bb.81_UNNAMED0 
@@ -2998,8 +2970,7 @@ define u8 @f.ios.IStream.boolean ptr
     add ptr %10 &1 8 
     load ptr %13 %10 
     call @f.mem.Allocator.free %13 %0 
-    ass u8 %16 false 
-    ret %16 
+    ret 0 
     tar l.1_IF2_95 
     call @f.parse.boolean.by %17 %0 
     add ptr %21 &1 8 
@@ -3071,8 +3042,7 @@ define u8 @f.ios.IStream.uint_s ptr ptr
     add ptr %10 &1 8 
     load ptr %13 %10 
     call @f.mem.Allocator.free %13 %0 
-    ass u8 %16 false 
-    ret %16 
+    ret 0 
     tar l.1_IF2_99 
     call @f.parse.uint.by_s %17 %0 &2 
     add ptr %22 &1 8 
@@ -3090,8 +3060,7 @@ define u8 @f.ios.IStream.int_s ptr ptr
     add ptr %10 &1 8 
     load ptr %13 %10 
     call @f.mem.Allocator.free %13 %0 
-    ass u8 %16 false 
-    ret %16 
+    ret 0 
     tar l.1_IF2_100 
     call @f.parse.int.by_s %17 %0 &2 
     add ptr %22 &1 8 
@@ -3109,8 +3078,7 @@ define u8 @f.ios.IStream.boolean_s ptr ptr
     add ptr %10 &1 8 
     load ptr %13 %10 
     call @f.mem.Allocator.free %13 %0 
-    ass u8 %16 false 
-    ret %16 
+    ret 0 
     tar l.1_IF2_101 
     call @f.parse.boolean.by_s %17 %0 &2 
     add ptr %22 &1 8 
@@ -3128,8 +3096,7 @@ define u8 @f.ios.IStream.hex_s ptr ptr
     add ptr %10 &1 8 
     load ptr %13 %10 
     call @f.mem.Allocator.free %13 %0 
-    ass u8 %16 false 
-    ret %16 
+    ret 0 
     tar l.1_IF2_102 
     call @f.parse.hex.by_s %17 %0 &2 
     add ptr %22 &1 8 
@@ -3147,8 +3114,7 @@ define u8 @f.ios.IStream.oct_s ptr ptr
     add ptr %10 &1 8 
     load ptr %13 %10 
     call @f.mem.Allocator.free %13 %0 
-    ass u8 %16 false 
-    ret %16 
+    ret 0 
     tar l.1_IF2_103 
     call @f.parse.oct.by_s %17 %0 &2 
     add ptr %22 &1 8 
@@ -3166,8 +3132,7 @@ define u8 @f.ios.IStream.bin_s ptr ptr
     add ptr %10 &1 8 
     load ptr %13 %10 
     call @f.mem.Allocator.free %13 %0 
-    ass u8 %16 false 
-    ret %16 
+    ret 0 
     tar l.1_IF2_104 
     call @f.parse.bin.by_s %17 %0 &2 
     add ptr %22 &1 8 

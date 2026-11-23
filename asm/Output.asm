@@ -784,9 +784,7 @@ f.cstr.cmp:
     jmp l.1_IF2_4 
     ;------------------------- 
     l.0_IF2_4 : 
-    mov r13b , 0 
-    ;------------------------- 
-    mov bl , r13b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -823,9 +821,7 @@ f.cstr.cmp:
     jmp l.1_IF4_0 
     ;------------------------- 
     l.0_IF4_0 : 
-    mov r13b , 0 
-    ;------------------------- 
-    mov bl , r13b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -837,9 +833,7 @@ f.cstr.cmp:
     jmp l.0_FOR3_1 
     ;------------------------- 
     l.1_FOR3_1 : 
-    mov r13b , 1 
-    ;------------------------- 
-    mov bl , r13b 
+    mov bl , 1 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -2526,9 +2520,7 @@ f.parse.boolean.by:
     jmp l.1_IF2_24 
     ;------------------------- 
     l.0_IF2_24 : 
-    mov r15b , 0 
-    ;------------------------- 
-    mov bl , r15b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -2566,17 +2558,13 @@ f.parse.boolean.by:
     jmp l.1_IF2_25 
     ;------------------------- 
     l.0_IF2_25 : 
-    mov r15b , 1 
-    ;------------------------- 
-    mov bl , r15b 
+    mov bl , 1 
     mov rsp , rbp 
     pop rbp 
     ret 
     ;------------------------- 
     l.1_IF2_25 : 
-    mov r15b , 0 
-    ;------------------------- 
-    mov bl , r15b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -2593,9 +2581,7 @@ f.parse.boolean.by_s:
     jmp l.1_IF2_26 
     ;------------------------- 
     l.0_IF2_26 : 
-    mov r15b , 0 
-    ;------------------------- 
-    mov bl , r15b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -2639,9 +2625,7 @@ f.parse.boolean.by_s:
     l.0_IF2_27 : 
     mov BYTE[rdi] , 0 
     ;------------------------- 
-    mov r15b , 1 
-    ;------------------------- 
-    mov bl , r15b 
+    mov bl , 1 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -2685,17 +2669,13 @@ f.parse.boolean.by_s:
     l.0_IF2_28 : 
     mov BYTE[rdi] , 1 
     ;------------------------- 
-    mov r15b , 1 
-    ;------------------------- 
-    mov bl , r15b 
+    mov bl , 1 
     mov rsp , rbp 
     pop rbp 
     ret 
     ;------------------------- 
     l.1_IF2_28 : 
-    mov r15b , 0 
-    ;------------------------- 
-    mov bl , r15b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -2901,9 +2881,7 @@ f.parse.uint.by_s:
     jmp l.1_IF2_31 
     ;------------------------- 
     l.0_IF2_31 : 
-    mov r12b , 0 
-    ;------------------------- 
-    mov bl , r12b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -3008,9 +2986,7 @@ f.parse.uint.by_s:
     jmp l.0_WHILE2_32 
     ;------------------------- 
     l.1_IF3_14 : 
-    mov r12b , 0 
-    ;------------------------- 
-    mov bl , r12b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -3018,9 +2994,7 @@ f.parse.uint.by_s:
     l.1_WHILE2_32 : 
     mov QWORD[rdi] , r14 
     ;------------------------- 
-    mov r12b , 1 
-    ;------------------------- 
-    mov bl , r12b 
+    mov bl , 1 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -3300,9 +3274,7 @@ f.parse.int.by_s:
     jmp l.1_IF2_37 
     ;------------------------- 
     l.0_IF2_37 : 
-    mov r9b , 0 
-    ;------------------------- 
-    mov bl , r9b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -3441,9 +3413,7 @@ f.parse.int.by_s:
     jmp l.0_WHILE2_39 
     ;------------------------- 
     l.1_IF3_17 : 
-    mov r8b , 0 
-    ;------------------------- 
-    mov bl , r8b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -3467,9 +3437,7 @@ f.parse.int.by_s:
     ;------------------------- 
     mov QWORD[rdi] , r10 
     ;------------------------- 
-    mov r8b , 1 
-    ;------------------------- 
-    mov bl , r8b 
+    mov bl , 1 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -3737,9 +3705,7 @@ f.parse.hex.by_s:
     jmp l.1_IF2_44 
     ;------------------------- 
     l.0_IF2_44 : 
-    mov r12b , 0 
-    ;------------------------- 
-    mov bl , r12b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -3766,9 +3732,7 @@ f.parse.hex.by_s:
     jmp l.1_IF2_45 
     ;------------------------- 
     l.0_IF2_45 : 
-    mov r12b , 0 
-    ;------------------------- 
-    mov bl , r12b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -3882,9 +3846,7 @@ f.parse.hex.by_s:
     jmp l.0_WHILE2_46 
     ;------------------------- 
     l.1_IF3_19 : 
-    mov r11b , 0 
-    ;------------------------- 
-    mov bl , r11b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -3892,9 +3854,7 @@ f.parse.hex.by_s:
     l.1_WHILE2_46 : 
     mov QWORD[rdi] , r14 
     ;------------------------- 
-    mov r11b , 1 
-    ;------------------------- 
-    mov bl , r11b 
+    mov bl , 1 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -4162,9 +4122,7 @@ f.parse.oct.by_s:
     jmp l.1_IF2_50 
     ;------------------------- 
     l.0_IF2_50 : 
-    mov r12b , 0 
-    ;------------------------- 
-    mov bl , r12b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -4191,9 +4149,7 @@ f.parse.oct.by_s:
     jmp l.1_IF2_51 
     ;------------------------- 
     l.0_IF2_51 : 
-    mov r12b , 0 
-    ;------------------------- 
-    mov bl , r12b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -4307,9 +4263,7 @@ f.parse.oct.by_s:
     jmp l.0_WHILE2_52 
     ;------------------------- 
     l.1_IF3_21 : 
-    mov r11b , 0 
-    ;------------------------- 
-    mov bl , r11b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -4317,9 +4271,7 @@ f.parse.oct.by_s:
     l.1_WHILE2_52 : 
     mov QWORD[rdi] , r14 
     ;------------------------- 
-    mov r11b , 1 
-    ;------------------------- 
-    mov bl , r11b 
+    mov bl , 1 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -4587,9 +4539,7 @@ f.parse.bin.by_s:
     jmp l.1_IF2_56 
     ;------------------------- 
     l.0_IF2_56 : 
-    mov r12b , 0 
-    ;------------------------- 
-    mov bl , r12b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -4616,9 +4566,7 @@ f.parse.bin.by_s:
     jmp l.1_IF2_57 
     ;------------------------- 
     l.0_IF2_57 : 
-    mov r12b , 0 
-    ;------------------------- 
-    mov bl , r12b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -4732,9 +4680,7 @@ f.parse.bin.by_s:
     jmp l.0_WHILE2_58 
     ;------------------------- 
     l.1_IF3_23 : 
-    mov r11b , 0 
-    ;------------------------- 
-    mov bl , r11b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -4742,9 +4688,7 @@ f.parse.bin.by_s:
     l.1_WHILE2_58 : 
     mov QWORD[rdi] , r14 
     ;------------------------- 
-    mov r11b , 1 
-    ;------------------------- 
-    mov bl , r11b 
+    mov bl , 1 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -10853,9 +10797,7 @@ f.ios.IStream.boolean:
     mov rsi , QWORD[rbp - 17] 
     mov bl , BYTE[rbp - 9] 
     ;------------------------- 
-    mov r14b , 0 
-    ;------------------------- 
-    mov bl , r14b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -11269,9 +11211,7 @@ f.ios.IStream.uint_s:
     mov rsi , QWORD[rbp - 17] 
     mov bl , BYTE[rbp - 9] 
     ;------------------------- 
-    mov r14b , 0 
-    ;------------------------- 
-    mov bl , r14b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -11384,9 +11324,7 @@ f.ios.IStream.int_s:
     mov rsi , QWORD[rbp - 17] 
     mov bl , BYTE[rbp - 9] 
     ;------------------------- 
-    mov r14b , 0 
-    ;------------------------- 
-    mov bl , r14b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -11499,9 +11437,7 @@ f.ios.IStream.boolean_s:
     mov rsi , QWORD[rbp - 17] 
     mov bl , BYTE[rbp - 9] 
     ;------------------------- 
-    mov r14b , 0 
-    ;------------------------- 
-    mov bl , r14b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -11614,9 +11550,7 @@ f.ios.IStream.hex_s:
     mov rsi , QWORD[rbp - 17] 
     mov bl , BYTE[rbp - 9] 
     ;------------------------- 
-    mov r14b , 0 
-    ;------------------------- 
-    mov bl , r14b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -11729,9 +11663,7 @@ f.ios.IStream.oct_s:
     mov rsi , QWORD[rbp - 17] 
     mov bl , BYTE[rbp - 9] 
     ;------------------------- 
-    mov r14b , 0 
-    ;------------------------- 
-    mov bl , r14b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 
@@ -11844,9 +11776,7 @@ f.ios.IStream.bin_s:
     mov rsi , QWORD[rbp - 17] 
     mov bl , BYTE[rbp - 9] 
     ;------------------------- 
-    mov r14b , 0 
-    ;------------------------- 
-    mov bl , r14b 
+    mov bl , 0 
     mov rsp , rbp 
     pop rbp 
     ret 

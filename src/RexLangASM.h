@@ -1091,7 +1091,7 @@ Token RexLang_GetIRVMToken(RexLang* ll,Token* a){
             return Token_Cpy(a);
         }
         case TOKEN_BOOL:{
-            return Token_Cpy(a);
+            return Token_New_I64(TOKEN_NUMBER,a->v_b1);
         }
         case TOKEN_FLOAT:{
             return Token_Cpy(a);
@@ -1192,7 +1192,7 @@ Token RexLang_GetIRVMTokenSSA(RexLang* ll,Token* a){
             return Token_Cpy(a);
         }
         case TOKEN_BOOL:{
-            return Token_Cpy(a);
+            return Token_New_I64(TOKEN_NUMBER,a->v_b1);
         }
         case TOKEN_FLOAT:{
             return Token_Cpy(a);
