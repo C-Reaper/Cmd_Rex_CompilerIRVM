@@ -1,6 +1,8 @@
 #include "../src/RexLang.h"
 //#include "/home/codeleaded/System/Static/Library/IRVM_Exe.h"
 #include "/home/codeleaded/System/Static/Library/IRVM_Comp.h"
+#include <stdio.h>
+#include <string.h>
 
 #define PATH_SRC        "./code/Main.rex"
 #define PATH_IRVM       "./asm/Main.iralx"
@@ -8,19 +10,26 @@
 #define PATH_ASM        "./asm/Output.asm"
 
 int main(int argc,char** argv){
-    //if(argc<=1){
-    //    printf("Missing Src File ."RexLang_TYPE"!\n");
-    //    return 1;
-    //}
-    //if(argc<=2){
-    //    printf("Missing Output File .asm/s!\n");
-    //    return 1;
-    //}
+    char* target = argc > 1 ? argv[1] : "linux";
+    char* libpath;
 
-    // "./lib/x64/Linux" | "./lib/x64/Win"
-    RexLang ll = RexLang_New("./lib/x64/Linux","./lib/x64/generic",PATH_SRC,PATH_IRVM);
+    if(argc > 2){
+        fprintf(stderr,"Usage: %s [linux|windows]\n",argv[0]);
+        return 2;
+    }
+    if(strcmp(target,"linux") == 0){
+        libpath = "./lib/x64/Linux";
+    }else if(strcmp(target,"windows") == 0){
+        libpath = "./lib/x64/Win";
+    }else{
+        fprintf(stderr,"Unknown target '%s'. Use 'linux' or 'windows'.\n",target);
+        return 2;
+    }
+
+    RexLang ll = RexLang_New(libpath,"./lib/x64/generic",PATH_SRC,PATH_IRVM);
     RexLang_Build(&ll);
     RexLang_SaveIRVM(&ll);
+    int status = ll.ev.error ? 1 : 0;
     
     if(!ll.ev.error){
         IRVM vm = ll.vm;
@@ -54,10 +63,15 @@ int main(int argc,char** argv){
         
         IRVM_Comp exe = IRVM_Comp_New(vm,PATH_ASM);
         IRVM_Comp_Build(&exe);
-        IRVM_Comp_CreateOutput(&exe);
+        if(!exe.state){
+            IRVM_Comp_CreateOutput(&exe);
+        }
+        if(exe.state){
+            status = 1;
+        }
         IRVM_Comp_Free(&exe);
     }
 
     RexLang_Free(&ll);
-    return 0;
+    return status;
 }

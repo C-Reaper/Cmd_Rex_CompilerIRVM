@@ -5,14 +5,13 @@
 
 bits 64
 
-global _start
 global f.syscall
+global main
 
 global f.stdout
 global f.stderr
 global f.stdin
 
-extern f.sys.exit
 extern f.main
 
 section .text
@@ -41,8 +40,16 @@ f.syscall:
 	mov rbx,rax
 	ret
 
-_start:
+main:
+	push rbp
 	mov rbp,rsp
+	sub rsp,16
+	mov [rbp - 8],rbx
 	call f.main
-	mov	rsi,rbx
-	call f.sys.exit
+	mov eax,ebx
+	mov rbx,[rbp - 8]
+	mov rsp,rbp
+	pop rbp
+	ret
+
+section .note.GNU-stack noalloc noexec nowrite progbits

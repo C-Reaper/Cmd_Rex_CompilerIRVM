@@ -1,10 +1,13 @@
 # === Makefile.linux ===
 
 CC = gcc
+WIN_CC = x86_64-w64-mingw32-gcc
+NASM = nasm
 WARNINGS = -Werror
 CFLAGS = -g -O0 -mavx2 -std=gnu17 $(WARNINGS)
 INCLUDES = -Isrc
 LDFLAGS = -lm
+ALXWINDOW_INCLUDE ?= /home/codeleaded/System/Static/Library
 
 SRC_DIR = src
 BUILD_DIR = build
@@ -36,11 +39,14 @@ comp_86_Linux:
 	ld -m elf_i386 -no-pie ./build/Program.o ./build/Entry.o -o ./build/Output
 	./build/Output; echo $$?
 
-comp_64_Linux:
+comp_64_Linux: all
 	mkdir -p ./build
-	nasm -f elf64 -g -F dwarf ./asm/Output.asm -o ./build/Program.o
-	nasm -f elf64 -g -F dwarf ./linker/x64/Linux.asm -o ./build/Entry.o
-	ld -m elf_x86_64 -no-pie ./build/Program.o ./build/Entry.o -o ./build/Output
+	./$(TARGET) linux
+	$(NASM) -f elf64 -g -F dwarf ./asm/Output.asm -o ./build/Program.o
+	$(NASM) -f elf64 -g -F dwarf ./linker/x64/Linux/Syscall.asm -o ./build/Syscall.o
+	$(NASM) -f elf64 -g -F dwarf ./linker/x64/Linux/AlxWindow.asm -o ./build/AlxWindowWrapper.o
+	$(CC) -O0 -mavx2 -std=gnu17 -I$(ALXWINDOW_INCLUDE) -c ./linker/alx/AlxWindow.c -o ./build/AlxWindow.o
+	$(CC) -no-pie ./build/Program.o ./build/Syscall.o ./build/AlxWindowWrapper.o ./build/AlxWindow.o -lX11 -lXrender -lpthread -lpng -ljpeg -lm -o ./build/Output
 	./build/Output; echo $$?
 
 comp_86_Win:
@@ -50,11 +56,14 @@ comp_86_Win:
 	i686-w64-mingw32-gcc -nostdlib -Wl,-e,_start -Wl,--subsystem,console ./build/Program.o ./build/Entry.o -lkernel32 -o ./build/Output.exe
 	wine ./build/Output.exe; echo $$?
 
-comp_64_Win:
+comp_64_Win: all
 	mkdir -p ./build
-	nasm -f win64 -g -F cv8 ./asm/Output.asm -o ./build/Program.o
-	nasm -f win64 -g -F cv8 ./linker/x64/Win.asm -o ./build/Entry.o
-	x86_64-w64-mingw32-gcc -nostdlib -Wl,-e,_start -Wl,--subsystem,console ./build/Program.o ./build/Entry.o -lkernel32 -lntdll -o ./build/Output.exe
+	./$(TARGET) windows
+	$(NASM) -f win64 -g -F cv8 ./asm/Output.asm -o ./build/Program.o
+	$(NASM) -f win64 -g -F cv8 ./linker/x64/Win/Syscall.asm -o ./build/Syscall.o
+	$(NASM) -f win64 -g -F cv8 ./linker/x64/Win/AlxWindow.asm -o ./build/AlxWindowWrapper.o
+	$(WIN_CC) -O0 -mavx2 -std=gnu17 -I$(ALXWINDOW_INCLUDE) -c ./linker/alx/AlxWindow.c -o ./build/AlxWindow.o
+	$(WIN_CC) -Wl,--subsystem,console ./build/Program.o ./build/Syscall.o ./build/AlxWindowWrapper.o ./build/AlxWindow.o -lkernel32 -lntdll -luser32 -lgdi32 -lwinmm -lole32 -loleaut32 -lwindowscodecs -lm -o ./build/Output.exe
 	wine ./build/Output.exe; echo $$?
 
 do: clean all exe

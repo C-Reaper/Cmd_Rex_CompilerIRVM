@@ -1,10 +1,12 @@
 # === Makefile.windows ===
 
 CC = gcc
+NASM = nasm
 WARNINGS = -Werror
 CFLAGS = -O0 -mavx2 -std=gnu17 $(WARNINGS)
 INCLUDES = -Isrc
 LDFLAGS = -lm
+ALXWINDOW_INCLUDE ?= /home/codeleaded/System/Static/Library
 
 SRC_DIR = src
 BUILD_DIR = build
@@ -17,10 +19,12 @@ ifeq ($(findstring cmd,$(SHELL)),cmd)
     MKDIR_CMD = if not exist "$(BUILD_DIR)" mkdir "$(BUILD_DIR)"
     CLEAN_CMD = if exist "$(BUILD_DIR)" del /Q "$(BUILD_DIR)\*" & if exist "$(TARGET)" del "$(TARGET)"
     RUN_CMD   = $(TARGET)
+    OUTPUT_RUN_CMD = $(BUILD_DIR)/Output.exe
 else
     MKDIR_CMD = mkdir -p $(BUILD_DIR)
     CLEAN_CMD = rm -f $(BUILD_DIR)/*.o $(TARGET)
     RUN_CMD   = ./$(TARGET)
+    OUTPUT_RUN_CMD = ./$(BUILD_DIR)/Output.exe
 endif
 
 # -----------------------------
@@ -37,10 +41,20 @@ alldebug: $(BUILD_DIR)
 	$(CC) -g $(CFLAGS) $(INCLUDES) $(SRC_DIR)/*.c -o $(TARGET) $(LDFLAGS)
 
 exe:
-	$(RUN_CMD)
+	$(OUTPUT_RUN_CMD)
 
 debug:
 	gdb $(TARGET)
+
+comp_64_Win: all
+	mkdir -p ./build
+	$(RUN_CMD) windows
+	$(NASM) -f win64 -g -F cv8 ./asm/Output.asm -o ./build/Program.o
+	$(NASM) -f win64 -g -F cv8 ./linker/x64/Win/Syscall.asm -o ./build/Syscall.o
+	$(NASM) -f win64 -g -F cv8 ./linker/x64/Win/AlxWindow.asm -o ./build/AlxWindowWrapper.o
+	$(CC) -O0 -mavx2 -std=gnu17 -I$(ALXWINDOW_INCLUDE) -c ./linker/alx/AlxWindow.c -o ./build/AlxWindow.o
+	$(CC) -Wl,--subsystem,console ./build/Program.o ./build/Syscall.o ./build/AlxWindowWrapper.o ./build/AlxWindow.o -lkernel32 -lntdll -luser32 -lgdi32 -lwinmm -lole32 -loleaut32 -lwindowscodecs -lm -o ./build/Output.exe
+	$(RUN_CMD)
 
 clean:
 	$(CLEAN_CMD)

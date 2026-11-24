@@ -6,7 +6,7 @@
 bits 64
 
 extern f.main
-global _start
+global main
 
 global f.stdout
 global f.stderr
@@ -135,10 +135,14 @@ f.stdin:
     mov rbx, [rax + 0x20]
     ret
 
-_start:
-	mov rbp,rsp
-	call f.main
-	mov	rsi,-1
-	mov	rdi,rbx
-	call f.NtTerminateProcess
-    ud2
+main:
+    push rbp
+    mov rbp, rsp
+    sub rsp, 0x30
+    mov [rbp - 8], rbx
+    call f.main
+    mov eax, ebx
+    mov rbx, [rbp - 8]
+    mov rsp, rbp
+    pop rbp
+    ret
